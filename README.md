@@ -77,6 +77,41 @@ The following table compares DDC and Random coresets using standard distribution
 
 ---
 
+## Example: 5D Gaussian Mixture
+
+We also compare DDC, Random, and Stratified coresets on a 5D Gaussian mixture (4 components, n=50,000). The results are visualized using UMAP 2D projection and marginal distributions.
+
+### Spatial Coverage (UMAP 2D Projection)
+
+![DDC vs Random vs Stratified UMAP](docs/images/ddc_vs_random_vs_stratified_umap_5d.png)
+
+**Left (DDC)**: Representatives are distributed across all modes, capturing the mixture structure.  
+**Middle (Random)**: Representatives are uniformly scattered, missing some modes.  
+**Right (Stratified)**: Representatives respect component proportions, but may miss geometric structure.
+
+### Distributional Approximation
+
+![Marginals Comparison 5D](docs/images/marginals_comparison_5d.png)
+
+All three methods approximate the marginal distributions, with DDC and Stratified showing better fidelity to the full data distribution.
+
+### Quantitative Comparison
+
+| Method | Mean Error (L2) | Cov Error (Fro) | Corr Error (Fro) | W1 Mean | W1 Max | KS Mean | KS Max |
+|--------|-----------------|-----------------|------------------|---------|--------|---------|--------|
+| **DDC** | **0.174** | 4.197 | 0.530 | **0.251** | **0.418** | **0.073** | **0.090** |
+| Random | 0.694 | 4.104 | 0.462 | 0.349 | 0.644 | 0.112 | 0.137 |
+| **Stratified** | 0.315 | **2.708** | **0.246** | 0.213 | 0.361 | **0.063** | **0.080** |
+
+**Observations:**
+- **DDC** excels in mean approximation and Wasserstein distances (best W1 metrics).
+- **Stratified** performs best on covariance and correlation (benefits from known component structure).
+- **Random** shows highest errors across most metrics, confirming the value of structured sampling.
+
+**Takeaway**: When component labels are available, Stratified can outperform DDC on moment-based metrics. However, DDC provides the best unsupervised performance and excels at distributional metrics (Wasserstein, KS).
+
+---
+
 ## Installation
 
 ```bash
