@@ -1,0 +1,18 @@
+DDC vs Random: Quantitative Comparison
+======================================================================
+Dataset: 2D Multimodal (3 Gaussians + Ring, n=8000)
+Parameters: k=80, n0=None
+======================================================================
+
+method  mean_err_l2  cov_err_fro  corr_err_fro  W1_mean   W1_max  KS_mean   KS_max
+   DDC     0.252909     1.779877      0.048891 0.270663 0.277166 0.070489 0.075618
+Random     0.797435     2.486290      0.079529 0.514726 0.806115 0.097863 0.137612
+
+Metrics:
+  - mean_err_l2: L2 norm of mean difference
+  - cov_err_fro: Frobenius norm of covariance difference
+  - corr_err_fro: Frobenius norm of correlation difference
+  - W1_mean: Mean Wasserstein-1 distance across dimensions
+  - W1_max: Maximum Wasserstein-1 distance across dimensions
+  - KS_mean: Mean Kolmogorov-Smirnov statistic across dimensions
+  - KS_max: Maximum Kolmogorov-Smirnov statistic across dimensions
