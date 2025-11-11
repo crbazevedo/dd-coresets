@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dd-coresets"
+version = "0.1.0"
+description = "Density–Diversity Coresets (DDC) for dataset summarization and distributional approximation"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [
+  { name = "Carlos R. B. Azevedo", email = "renatoaz@gmail.com" }
+]
+requires-python = ">=3.8"
+dependencies = [
+  "numpy>=1.24",
+  "scikit-learn>=1.2",
+  "matplotlib>=3.7",
+  "pandas>=2.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/crbazevedo/dd-coresets"
+Repository = "https://github.com/crbazevedo/dd-coresets"
+Issues = "https://github.com/crbazevedo/dd-coresets/issues"
