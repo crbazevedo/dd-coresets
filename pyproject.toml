@@ -23,3 +23,6 @@ dependencies = [
 Homepage = "https://github.com/crbazevedo/dd-coresets"
 Repository = "https://github.com/crbazevedo/dd-coresets"
 Issues = "https://github.com/crbazevedo/dd-coresets/issues"
+
+[tool.setuptools]
+packages = ["dd_coresets"]
