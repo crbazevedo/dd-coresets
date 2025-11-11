@@ -1,0 +1,19 @@
+DDC vs Random vs K-medoids: Quantitative Comparison
+======================================================================
+Dataset: Two Moons (n=5000, noise=0.1)
+Parameters: k=60, n0=None
+======================================================================
+
+   method  mean_err_l2  cov_err_fro  corr_err_fro  W1_mean   W1_max  KS_mean   KS_max
+      DDC     0.069485     0.144380      0.006014 0.061848 0.094430 0.074596 0.081109
+   Random     0.099669     0.109225      0.068557 0.087016 0.101612 0.116606 0.131527
+K-medoids     0.103176     0.077054      0.003552 0.090835 0.112318 0.092168 0.111559
+
+Metrics:
+  - mean_err_l2: L2 norm of mean difference
+  - cov_err_fro: Frobenius norm of covariance difference
+  - corr_err_fro: Frobenius norm of correlation difference
+  - W1_mean: Mean Wasserstein-1 distance across dimensions
+  - W1_max: Maximum Wasserstein-1 distance across dimensions
+  - KS_mean: Mean Kolmogorov-Smirnov statistic across dimensions
+  - KS_max: Maximum Kolmogorov-Smirnov statistic across dimensions
