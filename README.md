@@ -139,13 +139,13 @@ The Two Moons dataset demonstrates DDC's ability to handle non-convex structures
 
 | Method | Mean Error (L2) | Cov Error (Fro) | Corr Error (Fro) | W1 Mean | W1 Max | KS Mean | KS Max |
 |--------|-----------------|-----------------|------------------|---------|--------|---------|--------|
-| **DDC** | **0.023** | 0.430 | **0.004** | **0.083** | **0.129** | **0.060** | **0.062** |
-| Random | 0.082 | **0.259** | 0.138 | 0.109 | 0.136 | 0.090 | 0.111 |
-| K-medoids | 0.141 | 0.430 | 0.011 | 0.147 | 0.237 | 0.096 | 0.104 |
+| **DDC** | **0.069** | 0.144 | **0.006** | **0.062** | **0.094** | **0.075** | **0.081** |
+| Random | 0.100 | **0.109** | 0.069 | 0.087 | 0.102 | 0.117 | 0.132 |
+| K-medoids | 0.103 | 0.077 | 0.004 | 0.091 | 0.112 | 0.092 | 0.112 |
 
 **Key observations:**
-- **DDC** achieves **3.5x lower mean error** than Random and **6.1x lower** than K-medoids.
-- **DDC** shows **2.2x better correlation preservation** than Random and **2.7x better** than K-medoids.
+- **DDC** achieves **1.4x lower mean error** than Random and **1.5x lower** than K-medoids.
+- **DDC** shows **11.5x better correlation preservation** than Random and **1.5x better** than K-medoids.
 - **DDC** demonstrates superior Wasserstein and KS metrics, indicating better distributional fidelity.
 - **K-medoids** struggles with non-convex structures, as its clustering objective focuses on minimizing within-cluster distances rather than preserving global geometry.
 
