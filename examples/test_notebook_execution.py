@@ -35,7 +35,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score, roc_curve, brier_score_loss, accuracy_score
 from sklearn.decomposition import PCA
-from sklearn.datasets import make_classification
+from sklearn.datasets import make_classification, fetch_openml
 
 from scipy.stats import wasserstein_distance, ks_2samp
 
@@ -149,6 +149,28 @@ def execute_notebook():
                     else:
                         raise
             
+            # Handle dataset loading with fallback
+            if 'fetch_openml' in source or 'Loading Adult Census Income' in source:
+                try:
+                    exec(source, env)
+                except Exception as e:
+                    if 'SSL' in str(e) or 'URLError' in str(e) or 'certificate' in str(e).lower():
+                        print(f"   ⚠️  Dataset download failed (SSL/certificate issue), using synthetic fallback")
+                        # Create synthetic dataset as fallback
+                        X, y = make_classification(
+                            n_samples=30_000, n_features=10, n_informative=5, n_redundant=2,
+                            n_clusters_per_class=2, weights=[0.75, 0.25], random_state=42, class_sep=0.8,
+                        )
+                        df = pd.DataFrame(X, columns=[f"feature_{i}" for i in range(X.shape[1])])
+                        df["target"] = y
+                        env['df'] = df
+                        print(f"   ✅ Synthetic fallback dataset created: {df.shape}")
+                        results['executed'] += 1
+                        results['checkpoints']['data_loaded'] = True
+                        continue
+                    else:
+                        raise
+            
             # Execute in shared environment
             exec(source, env)
             results['executed'] += 1
@@ -212,24 +234,24 @@ def execute_notebook():
                             print(f"      ⚠️  Class proportion shift detected (expected for global DDC)")
                     results['checkpoints']['global_ddc'] = True
             
-            elif 'S_labelwise' in source or ('vstack' in source and 'S_labelwise' in env):
-                if 'S_labelwise' in env and 'w_labelwise' in env:
-                    S_labelwise = env['S_labelwise']
-                    w_labelwise = env['w_labelwise']
-                    y_labelwise = env.get('y_labelwise', None)
-                    print(f"   ✅ Label-wise DDC coreset: {S_labelwise.shape}")
-                    print(f"      Weights sum: {w_labelwise.sum():.6f}")
-                    if y_labelwise is not None:
-                        print(f"      Class distribution: {np.bincount(y_labelwise) / len(y_labelwise)}")
+            elif 'S_labelaware' in source or ('vstack' in source and 'S_labelaware' in env) or ('S_labelwise' in source and 'S_labelaware' in env):
+                if 'S_labelaware' in env and 'w_labelaware' in env:
+                    S_labelaware = env['S_labelaware']
+                    w_labelaware = env['w_labelaware']
+                    y_labelaware = env.get('y_labelaware', None)
+                    print(f"   ✅ Label-aware DDC coreset: {S_labelaware.shape}")
+                    print(f"      Weights sum: {w_labelaware.sum():.6f}")
+                    if y_labelaware is not None:
+                        print(f"      Class distribution: {np.bincount(y_labelaware) / len(y_labelaware)}")
                         orig_dist = np.bincount(env['y_train']) / len(env['y_train'])
                         print(f"      Original: {orig_dist}")
                         # Check if proportions preserved
-                        diff = np.abs((np.bincount(y_labelwise) / len(y_labelwise)) - orig_dist)
+                        diff = np.abs((np.bincount(y_labelaware) / len(y_labelaware)) - orig_dist)
                         if np.all(diff < 0.01):
                             print(f"      ✅ Class proportions preserved (within 1%)")
                         else:
                             print(f"      ⚠️  Class proportion difference: {diff}")
-                    results['checkpoints']['labelwise_ddc'] = True
+                    results['checkpoints']['labelaware_ddc'] = True
             
             elif 'dist_results_df' in source or 'results.append' in source:
                 if 'dist_results_df' in env:
@@ -277,7 +299,7 @@ def execute_notebook():
         ('random_subset', 'Random Subset'),
         ('stratified_subset', 'Stratified Subset'),
         ('global_ddc', 'Global DDC'),
-        ('labelwise_ddc', 'Label-wise DDC'),
+        ('labelaware_ddc', 'Label-aware DDC'),
         ('distribution_comparison', 'Distribution Comparison'),
         ('model_comparison', 'Model Comparison'),
     ]
@@ -302,8 +324,8 @@ def execute_notebook():
         'y_test': 'Test labels',
         'S_global': 'Global DDC coreset',
         'w_global': 'Global DDC weights',
-        'S_labelwise': 'Label-wise DDC coreset',
-        'w_labelwise': 'Label-wise DDC weights',
+        'S_labelaware': 'Label-aware DDC coreset',
+        'w_labelaware': 'Label-aware DDC weights',
         'baseline_auc': 'Baseline AUC',
         'comparison_df': 'Model comparison table',
     }
