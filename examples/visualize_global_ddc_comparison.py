@@ -146,17 +146,17 @@ def main():
     w_strat = np.ones(len(X_strat)) / len(X_strat)
     
     # Global DDC default
-    print("  Fitting Global DDC (default)...")
+    print("  Fitting Global DDC (default, n0=None)...")
     S_global_default, w_global_default, _ = fit_ddc_coreset(
-        X_train, k=k_reps, n0=min(50_000, X_train.shape[0]),
+        X_train, k=k_reps, n0=None,
         alpha=0.3, gamma=1.0, m_neighbors=32, refine_iters=1,
         reweight_full=True, random_state=RANDOM_STATE,
     )
     
     # Global DDC optimized
-    print("  Fitting Global DDC (optimized)...")
+    print("  Fitting Global DDC (optimized, n0=None)...")
     S_global_opt, w_global_opt, _ = fit_ddc_coreset(
-        X_train, k=k_reps, n0=min(50_000, X_train.shape[0]),
+        X_train, k=k_reps, n0=None,
         alpha=0.1, gamma=2.0, m_neighbors=16, refine_iters=2,
         reweight_full=True, random_state=RANDOM_STATE,
     )

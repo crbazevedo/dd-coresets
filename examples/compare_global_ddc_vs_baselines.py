@@ -182,9 +182,9 @@ def main():
     print(f"  Done: cov_err={metrics_strat['cov_err_fro']:.4f}, corr_err={metrics_strat['corr_err_fro']:.4f}")
     
     # 3. Global DDC with default parameters
-    print("Computing Global DDC (default: alpha=0.3, gamma=1.0, m_neighbors=32, refine_iters=1)...")
+    print("Computing Global DDC (default: alpha=0.3, gamma=1.0, m_neighbors=32, refine_iters=1, n0=None)...")
     S_global_default, w_global_default, _ = fit_ddc_coreset(
-        X_train, k=k_reps, n0=min(50_000, X_train.shape[0]),
+        X_train, k=k_reps, n0=None,
         alpha=0.3, gamma=1.0, m_neighbors=32, refine_iters=1,
         reweight_full=True, random_state=RANDOM_STATE,
     )
@@ -193,9 +193,9 @@ def main():
     print(f"  Done: cov_err={metrics_global_default['cov_err_fro']:.4f}, corr_err={metrics_global_default['corr_err_fro']:.4f}")
     
     # 4. Global DDC with optimized parameters
-    print("Computing Global DDC (optimized: alpha=0.1, gamma=2.0, m_neighbors=16, refine_iters=2)...")
+    print("Computing Global DDC (optimized: alpha=0.1, gamma=2.0, m_neighbors=16, refine_iters=2, n0=None)...")
     S_global_opt, w_global_opt, _ = fit_ddc_coreset(
-        X_train, k=k_reps, n0=min(50_000, X_train.shape[0]),
+        X_train, k=k_reps, n0=None,
         alpha=0.1, gamma=2.0, m_neighbors=16, refine_iters=2,
         reweight_full=True, random_state=RANDOM_STATE,
     )
