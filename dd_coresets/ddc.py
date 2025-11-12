@@ -488,10 +488,9 @@ def fit_kmedoids_coreset(
         min_dists = np.minimum(min_dists, new_dists)
 
     # PAM-like swap optimization
-    D2_full = _pairwise_sq_dists(X0)
     for _ in range(max_iters):
-        # Assign each point to nearest medoid
-        medoid_dists = D2_full[:, medoid_idx]
+        # Assign each point to nearest medoid (compute distances on-demand)
+        medoid_dists = _pairwise_sq_dists(X0, X0[medoid_idx])
         assignments = np.argmin(medoid_dists, axis=1)
         
         changed = False
@@ -500,8 +499,11 @@ def fit_kmedoids_coreset(
             if cluster_mask.sum() == 0:
                 continue
             
+            cluster_points = X0[cluster_mask]
+            
             # Current cost: sum of distances to medoid j
-            current_cost = np.sqrt(D2_full[cluster_mask, medoid_idx[j]]).sum()
+            current_medoid_dists = _pairwise_sq_dists(cluster_points, X0[medoid_idx[j:j+1]])[:, 0]
+            current_cost = np.sqrt(current_medoid_dists).sum()
             
             # Try swapping with each non-medoid in cluster
             candidates = np.where(cluster_mask)[0]
@@ -515,7 +517,8 @@ def fit_kmedoids_coreset(
             
             for candidate in candidates:
                 # Cost if we swap medoid j with candidate
-                new_cost = np.sqrt(D2_full[cluster_mask, candidate]).sum()
+                candidate_dists = _pairwise_sq_dists(cluster_points, X0[candidate:candidate+1])[:, 0]
+                new_cost = np.sqrt(candidate_dists).sum()
                 if new_cost < best_cost:
                     best_cost = new_cost
                     best_candidate = candidate
