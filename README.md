@@ -1,10 +1,14 @@
 # dd-coresets
 
+[![PyPI version](https://badge.fury.io/py/dd-coresets.svg)](https://pypi.org/project/dd-coresets/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python versions](https://img.shields.io/pypi/pyversions/dd-coresets.svg)](https://pypi.org/project/dd-coresets/)
+
 **Density–Diversity Coresets (DDC)**: a small weighted set of *real* data points that approximates the empirical distribution of a large dataset.
 
 This library exposes a simple API (in the spirit of scikit-learn) to:
 - build an **unsupervised** density–diversity coreset (`fit_ddc_coreset`);
-- compare against **random** and **stratified** baselines (`fit_random_coreset`, `fit_stratified_coreset`).
+- compare against **random**, **stratified**, and **k-medoids** baselines (`fit_random_coreset`, `fit_stratified_coreset`, `fit_kmedoids_coreset`).
 
 The goal is pragmatic: help data scientists work with large datasets using small, distribution-preserving subsets that are easy to simulate, visualise, and explain.
 
@@ -12,148 +16,99 @@ The goal is pragmatic: help data scientists work with large datasets using small
 
 ## Motivation
 
-In practice, we rarely work on the **full dataset** for everything:
+### The Problem
 
-- Exploratory plots and dashboards need **small, interpretable samples**.
-- Scenario analysis and simulations need **few representative points** with **weights**.
-- Prototyping models and ideas is faster on **coresets** than on full data.
+**"We have 30M rows. We want 500 points + weights for EDA/simulation/stress testing."**
 
-Common approaches:
+Large datasets are ubiquitous in data science, but many workflows require small, interpretable subsets:
 
-- **Random sampling**: simple, but can miss important modes or tails.
-- **Stratified sampling**: good when you already know the right strata (segments, classes, products), but needs domain knowledge and alignment with stakeholders.
-- **Cluster centroids (e.g. k-means)**: minimise reconstruction error, but centroids are not real data points and are not explicitly distributional.
+- **Exploratory plots and dashboards** need small, representative samples.
+- **Scenario analysis and simulations** need few representative points with weights.
+- **Prototyping models** is faster on coresets than on full data.
+- **Distributional stress testing** requires faithful approximation of the empirical distribution.
+
+### The Solution: Distributional Fidelity
+
+DDC selects real data points that preserve the distributional properties of your dataset. The weighted coreset closely matches the original distribution across all dimensions:
+
+![Distributional Approximation Example](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/ddc_marginals.png)
+
+**Left**: Full data distribution (gray histogram) vs DDC weighted coreset (red outline).  
+**Right**: The coreset preserves marginal distributions, capturing modes, tails, and correlations.
+
+### Why Not Just Random Sampling?
+
+Common approaches have limitations:
+
+- **Random sampling**: Simple, but can miss important modes or tails, leading to biased estimates.
+- **Stratified sampling**: Good when you already know the right strata (segments, classes, products), but needs domain knowledge and alignment with stakeholders.
+- **Cluster centroids (e.g., k-means)**: Minimize reconstruction error, but centroids are not real data points and are not explicitly distributional.
 
 **DDC** sits in between:
 
-- Unsupervised, geometry-aware.
+- **Unsupervised** and geometry-aware (no domain knowledge required).
 - Selects **real points** (medoids) that cover dense regions and diverse modes.
 - Learns **weights** via soft assignments, approximating the empirical distribution.
 
 ---
 
-## Visual Example: DDC vs Random
+## When to Use / When Not to Use
 
-The following example demonstrates DDC on a 2D multimodal dataset (3 Gaussian blobs + a ring structure, n=8000). We compare DDC against random sampling with the same parameters (k=80, n0=None).
+### - Use DDC when:
 
-### Spatial Coverage
+- You have a **large tabular dataset** and need a small, distribution-preserving subset.
+- You want **faithful mini-distributions** for EDA, simulation, or stress testing.
+- You **don't yet know** the right strata or segments (low-knowledge regime).
+- You need **real data points** (not synthetic centroids) for interpretability.
+- Your data has **multiple modes, complex geometries, or non-convex structures**.
 
-![DDC vs Random Scatter](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/ddc_vs_random_scatter.png)
+### - Don't use DDC when:
 
-**Left (DDC)**: Representatives are strategically placed to cover:
-- All three Gaussian modes (dense regions)
-- The ring structure (diverse, low-density region)
-- Points are weighted by their representativeness
-
-**Right (Random)**: Representatives are uniformly distributed, missing the ring structure and unevenly covering the modes.
-
-### Distributional Approximation
-
-**DDC Marginals:**
-![DDC Marginals](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/ddc_marginals.png)
-
-**Random Marginals:**
-![Random Marginals](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/random_marginals.png)
-
-DDC better preserves the marginal distributions of the original data, especially in the tails and multimodal regions. The weighted coreset (red/blue lines) closely matches the full data distribution (gray histograms).
-
-### Quantitative Comparison
-
-The following table compares DDC and Random coresets using standard distributional metrics:
-
-| Method | Mean Error (L2) | Cov Error (Fro) | Corr Error (Fro) | W1 Mean | W1 Max | KS Mean | KS Max |
-|--------|-----------------|-----------------|------------------|---------|--------|---------|--------|
-| **DDC** | **0.253** | **1.780** | **0.049** | **0.271** | **0.277** | **0.070** | **0.076** |
-| Random | 0.797 | 2.486 | 0.080 | 0.515 | 0.806 | 0.098 | 0.138 |
-
-**Metrics explained:**
-- **Mean Error (L2)**: L2 norm of the difference between full data mean and coreset weighted mean
-- **Cov Error (Fro)**: Frobenius norm of the difference between full data covariance and coreset weighted covariance
-- **Corr Error (Fro)**: Frobenius norm of the difference between correlation matrices
-- **W1 Mean/Max**: Mean and maximum Wasserstein-1 distance across dimensions (lower is better)
-- **KS Mean/Max**: Mean and maximum Kolmogorov-Smirnov statistic across dimensions (lower is better)
-
-**Key takeaway**: DDC provides better spatial coverage and distributional fidelity than random sampling, especially when the data has multiple modes or complex geometries. Across all metrics, DDC achieves **2-3x lower error** compared to random sampling.
+- You need **strong theoretical guarantees** (e.g., coreset-specific for Bayesian inference, Wasserstein DRO, or model-specific coresets).
+- Your **state space is non-Euclidean** (e.g., graphs, strings, manifolds without a good embedding).
+- You have **well-defined strata** that are aligned with your task (use `fit_stratified_coreset` instead).
+- You need **deterministic, reproducible** coresets (DDC uses randomness in initialization and working sample selection).
 
 ---
 
-## Example: 5D Gaussian Mixture
+## Complexity and Scale
 
-We also compare DDC, Random, and Stratified coresets on a 5D Gaussian mixture (4 components, n=50,000). The results are visualized using UMAP 2D projection and marginal distributions.
+**High-level complexity**: After a working sample of size `n₀`, the main costs are:
 
-### Spatial Coverage (UMAP 2D Projection)
+- **O(n₀ log n₀)**: k-NN graph construction for density estimation
+- **O(k n₀ d)**: Greedy selection of k representatives
+- **O(n₀ k d)**: Soft assignment and weighting
+- **O(n k d)**: Optional reweighting step on the full dataset (if `reweight_full=True`)
 
-![DDC vs Random vs Stratified UMAP](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/ddc_vs_random_vs_stratified_umap_5d.png)
+**Practical scaling**: For `n₀ = 20,000`, `k = 500`, `d = 50`:
+- Working sample phase: ~1-2 seconds
+- Full reweighting (if enabled): ~5-10 seconds for `n = 1M`
 
-**Left (DDC)**: Representatives are distributed across all modes, capturing the mixture structure.  
-**Middle (Random)**: Representatives are uniformly scattered, missing some modes.  
-**Right (Stratified)**: Representatives respect component proportions, but may miss geometric structure.
-
-### Distributional Approximation
-
-![Marginals Comparison 5D](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/marginals_comparison_5d.png)
-
-All three methods approximate the marginal distributions, with DDC and Stratified showing better fidelity to the full data distribution.
-
-### Quantitative Comparison
-
-| Method | Mean Error (L2) | Cov Error (Fro) | Corr Error (Fro) | W1 Mean | W1 Max | KS Mean | KS Max |
-|--------|-----------------|-----------------|------------------|---------|--------|---------|--------|
-| **DDC** | **0.174** | 4.197 | 0.530 | **0.251** | **0.418** | **0.073** | **0.090** |
-| Random | 0.694 | 4.104 | 0.462 | 0.349 | 0.644 | 0.112 | 0.137 |
-| **Stratified** | 0.315 | **2.708** | **0.246** | 0.213 | 0.361 | **0.063** | **0.080** |
-
-**Observations:**
-- **DDC** excels in mean approximation and Wasserstein distances (best W1 metrics).
-- **Stratified** performs best on covariance and correlation (benefits from known component structure).
-- **Random** shows highest errors across most metrics, confirming the value of structured sampling.
-
-**Takeaway**: When component labels are available, Stratified can outperform DDC on moment-based metrics. However, DDC provides the best unsupervised performance and excels at distributional metrics (Wasserstein, KS).
+The algorithm is **sublinear in the full dataset size** when `n₀ << n`, making it practical for very large datasets.
 
 ---
 
-## Example: Two Moons (Non-Convex Structure)
+## Relation to Existing Methods
 
-The Two Moons dataset demonstrates DDC's ability to handle non-convex structures. It consists of two interleaving half-circles (n=5000), creating a challenging geometry where random sampling and k-medoids often fail to connect both arcs.
+- **Random / Stratified sampling**: DDC is unsupervised and geometry-aware, while stratified requires known strata. DDC often outperforms random sampling by 2-3x on distributional metrics.
 
-### Spatial Coverage
+- **k-means / k-medoids**: DDC selects real points (like k-medoids) but optimizes for distributional fidelity rather than reconstruction error. DDC better preserves tails, correlations, and non-convex structures.
 
-![Two Moons DDC vs Random vs K-medoids](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/two_moons_ddc_vs_random_vs_kmedoids_scatter.png)
+- **Wasserstein / Sinkhorn coresets**: DDC is a practical heuristic that scales to large datasets, while optimal Wasserstein coresets are computationally expensive. DDC approximates distributional properties without solving full optimal transport.
 
-**Left (DDC)**: Representatives are distributed along both arcs, maintaining connectivity and covering the non-convex structure.  
-**Middle (Random)**: Representatives are scattered uniformly, potentially missing connections between the two moons and creating gaps.  
-**Right (K-medoids)**: Representatives cluster around local centers, but may miss the connectivity between arcs due to the clustering objective.
-
-### Distributional Approximation
-
-**DDC Marginals:**
-![Two Moons DDC Marginals](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/two_moons_ddc_marginals.png)
-
-**Random Marginals:**
-![Two Moons Random Marginals](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/two_moons_random_marginals.png)
-
-**K-medoids Marginals:**
-![Two Moons K-medoids Marginals](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/two_moons_kmedoids_marginals.png)
-
-### Quantitative Comparison
-
-| Method | Mean Error (L2) | Cov Error (Fro) | Corr Error (Fro) | W1 Mean | W1 Max | KS Mean | KS Max |
-|--------|-----------------|-----------------|------------------|---------|--------|---------|--------|
-| **DDC** | **0.069** | 0.144 | **0.006** | **0.062** | **0.094** | **0.075** | **0.081** |
-| Random | 0.100 | **0.109** | 0.069 | 0.087 | 0.102 | 0.117 | 0.132 |
-| K-medoids | 0.103 | 0.077 | 0.004 | 0.091 | 0.112 | 0.092 | 0.112 |
-
-**Key observations:**
-- **DDC** achieves **1.4x lower mean error** than Random and **1.5x lower** than K-medoids.
-- **DDC** shows **11.5x better correlation preservation** than Random and **1.5x better** than K-medoids.
-- **DDC** demonstrates superior Wasserstein and KS metrics, indicating better distributional fidelity.
-- **K-medoids** struggles with non-convex structures, as its clustering objective focuses on minimizing within-cluster distances rather than preserving global geometry.
-
-**Takeaway**: DDC excels at preserving geometric structure in non-convex datasets, outperforming both random sampling and k-medoids. This makes it particularly valuable for complex manifolds and multimodal distributions.
+- **DPP / Diversity sampling**: DDC balances density (covering modes) and diversity (covering the space), while DPP focuses primarily on diversity. DDC's density component helps preserve distributional properties.
 
 ---
 
 ## Installation
+
+### From PyPI
+
+```bash
+pip install dd-coresets
+```
+
+### From Source
 
 ```bash
 git clone https://github.com/crbazevedo/dd-coresets.git
@@ -165,12 +120,11 @@ source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-Dependencies (minimal):
-
-- `numpy`
-- `pandas`
-- `scikit-learn`
-- `matplotlib` (for examples/plots)
+**Dependencies** (minimal):
+- `numpy >= 1.24`
+- `scikit-learn >= 1.2`
+- `matplotlib >= 3.7` (for examples/plots)
+- `pandas >= 2.0` (for examples)
 
 ---
 
@@ -180,7 +134,7 @@ Dependencies (minimal):
 
 ```python
 import numpy as np
-from dd_coresets.ddc import fit_ddc_coreset
+from dd_coresets import fit_ddc_coreset
 
 # X: (n, d) preprocessed features (e.g. scaled, encoded, etc.)
 X = ...  # load your data here
@@ -205,7 +159,6 @@ print(info.method, info.k, info.n, info.n0)
 ```
 
 You can now use `(S, w)` for:
-
 - simulation / scenario analysis,
 - plotting weighted histograms or KDEs,
 - approximate distributional comparisons.
@@ -213,7 +166,7 @@ You can now use `(S, w)` for:
 ### 2. Baselines for comparison
 
 ```python
-from dd_coresets.ddc import (
+from dd_coresets import (
     fit_random_coreset,
     fit_stratified_coreset,
     fit_kmedoids_coreset,
@@ -256,6 +209,24 @@ S_strat, w_strat, info_strat = fit_stratified_coreset(
 ```
 
 Use these baselines to benchmark DDC on your data (moment errors, Wasserstein distances, etc.).
+
+---
+
+## Examples / Notebooks
+
+We provide example notebooks demonstrating DDC usage:
+
+- **[`examples/basic_tabular.ipynb`](examples/basic_tabular.ipynb)** (coming soon)
+  - Installation and basic `fit_ddc_coreset` usage
+  - Comparison with `fit_random_coreset` and `fit_stratified_coreset`
+  - Distributional metrics (Wasserstein-1, Kolmogorov-Smirnov) and visualizations
+
+- **[`examples/multimodal_2d.ipynb`](examples/multimodal_2d.ipynb)** (coming soon)
+  - 2D multimodal dataset (3 Gaussians + ring structure)
+  - Spatial coverage visualization
+  - Marginal distribution comparison with histograms
+
+For now, see the experiment scripts in `experiments/` for working examples.
 
 ---
 
@@ -383,22 +354,145 @@ Clustering-based baseline that selects k real data points (medoids) minimizing w
 
 ---
 
+## Visual Examples
+
+### Example 1: 2D Multimodal Data (3 Gaussians + Ring)
+
+The following example demonstrates DDC on a 2D multimodal dataset (3 Gaussian blobs + a ring structure, n=8000). We compare DDC against random sampling with the same parameters (k=80, n0=None).
+
+#### Spatial Coverage
+
+![DDC vs Random Scatter](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/ddc_vs_random_scatter.png)
+
+**Left (DDC)**: Representatives are strategically placed to cover:
+- All three Gaussian modes (dense regions)
+- The ring structure (diverse, low-density region)
+- Points are weighted by their representativeness
+
+**Right (Random)**: Representatives are uniformly distributed, missing the ring structure and unevenly covering the modes.
+
+#### Distributional Approximation
+
+**DDC Marginals:**
+![DDC Marginals](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/ddc_marginals.png)
+
+**Random Marginals:**
+![Random Marginals](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/random_marginals.png)
+
+DDC better preserves the marginal distributions of the original data, especially in the tails and multimodal regions. The weighted coreset (red/blue lines) closely matches the full data distribution (gray histograms).
+
+#### Quantitative Comparison
+
+The following table compares DDC and Random coresets using standard distributional metrics:
+
+| Method | Mean Error (L2) | Cov Error (Fro) | Corr Error (Fro) | W1 Mean | W1 Max | KS Mean | KS Max |
+|--------|-----------------|-----------------|------------------|---------|--------|---------|--------|
+| **DDC** | **0.253** | **1.780** | **0.049** | **0.271** | **0.277** | **0.070** | **0.076** |
+| Random | 0.797 | 2.486 | 0.080 | 0.515 | 0.806 | 0.098 | 0.138 |
+
+**Metrics explained:**
+- **Mean Error (L2)**: L2 norm of the difference between full data mean and coreset weighted mean
+- **Cov Error (Fro)**: Frobenius norm of the difference between full data covariance and coreset weighted covariance
+- **Corr Error (Fro)**: Frobenius norm of the difference between correlation matrices
+- **W1 Mean/Max**: Mean and maximum Wasserstein-1 distance across dimensions (lower is better)
+- **KS Mean/Max**: Mean and maximum Kolmogorov-Smirnov statistic across dimensions (lower is better)
+
+**Key takeaway**: DDC provides better spatial coverage and distributional fidelity than random sampling, especially when the data has multiple modes or complex geometries. Across all metrics, DDC achieves **2-3x lower error** compared to random sampling.
+
+---
+
+### Example 2: 5D Gaussian Mixture
+
+We also compare DDC, Random, and Stratified coresets on a 5D Gaussian mixture (4 components, n=50,000). The results are visualized using UMAP 2D projection and marginal distributions.
+
+#### Spatial Coverage (UMAP 2D Projection)
+
+![DDC vs Random vs Stratified UMAP](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/ddc_vs_random_vs_stratified_umap_5d.png)
+
+**Left (DDC)**: Representatives are distributed across all modes, capturing the mixture structure.  
+**Middle (Random)**: Representatives are uniformly scattered, missing some modes.  
+**Right (Stratified)**: Representatives respect component proportions, but may miss geometric structure.
+
+#### Distributional Approximation
+
+![Marginals Comparison 5D](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/marginals_comparison_5d.png)
+
+All three methods approximate the marginal distributions, with DDC and Stratified showing better fidelity to the full data distribution.
+
+#### Quantitative Comparison
+
+| Method | Mean Error (L2) | Cov Error (Fro) | Corr Error (Fro) | W1 Mean | W1 Max | KS Mean | KS Max |
+|--------|-----------------|-----------------|------------------|---------|--------|---------|--------|
+| **DDC** | **0.174** | 4.197 | 0.530 | **0.251** | **0.418** | **0.073** | **0.090** |
+| Random | 0.694 | 4.104 | 0.462 | 0.349 | 0.644 | 0.112 | 0.137 |
+| **Stratified** | 0.315 | **2.708** | **0.246** | 0.213 | 0.361 | **0.063** | **0.080** |
+
+**Observations:**
+- **DDC** excels in mean approximation and Wasserstein distances (best W1 metrics).
+- **Stratified** performs best on covariance and correlation (benefits from known component structure).
+- **Random** shows highest errors across most metrics, confirming the value of structured sampling.
+
+**Takeaway**: When component labels are available, Stratified can outperform DDC on moment-based metrics. However, DDC provides the best unsupervised performance and excels at distributional metrics (Wasserstein, KS).
+
+---
+
+### Example 3: Two Moons (Non-Convex Structure)
+
+The Two Moons dataset demonstrates DDC's ability to handle non-convex structures. It consists of two interleaving half-circles (n=5000), creating a challenging geometry where random sampling and k-medoids often fail to connect both arcs.
+
+#### Spatial Coverage
+
+![Two Moons DDC vs Random vs K-medoids](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/two_moons_ddc_vs_random_vs_kmedoids_scatter.png)
+
+**Left (DDC)**: Representatives are distributed along both arcs, maintaining connectivity and covering the non-convex structure.  
+**Middle (Random)**: Representatives are scattered uniformly, potentially missing connections between the two moons and creating gaps.  
+**Right (K-medoids)**: Representatives cluster around local centers, but may miss the connectivity between arcs due to the clustering objective.
+
+#### Distributional Approximation
+
+**DDC Marginals:**
+![Two Moons DDC Marginals](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/two_moons_ddc_marginals.png)
+
+**Random Marginals:**
+![Two Moons Random Marginals](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/two_moons_random_marginals.png)
+
+**K-medoids Marginals:**
+![Two Moons K-medoids Marginals](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/two_moons_kmedoids_marginals.png)
+
+#### Quantitative Comparison
+
+| Method | Mean Error (L2) | Cov Error (Fro) | Corr Error (Fro) | W1 Mean | W1 Max | KS Mean | KS Max |
+|--------|-----------------|-----------------|------------------|---------|--------|---------|--------|
+| **DDC** | **0.069** | 0.144 | **0.006** | **0.062** | **0.094** | **0.075** | **0.081** |
+| Random | 0.100 | **0.109** | 0.069 | 0.087 | 0.102 | 0.117 | 0.132 |
+| K-medoids | 0.103 | 0.077 | 0.004 | 0.091 | 0.112 | 0.092 | 0.112 |
+
+**Key observations:**
+- **DDC** achieves **1.4x lower mean error** than Random and **1.5x lower** than K-medoids.
+- **DDC** shows **11.5x better correlation preservation** than Random and **1.5x better** than K-medoids.
+- **DDC** demonstrates superior Wasserstein and KS metrics, indicating better distributional fidelity.
+- **K-medoids** struggles with non-convex structures, as its clustering objective focuses on minimizing within-cluster distances rather than preserving global geometry.
+
+**Takeaway**: DDC excels at preserving geometric structure in non-convex datasets, outperforming both random sampling and k-medoids. This makes it particularly valuable for complex manifolds and multimodal distributions.
+
+---
+
 ## Experiments
 
 The repo includes three example scripts under `experiments/`:
 
-- `synthetic_ddc_vs_baselines.py`  
+- **`synthetic_ddc_vs_baselines.py`**  
   5D Gaussian mixture (4 components, n=50,000):
   - DDC vs Random vs Stratified comparison,
   - UMAP 2D visualization,
   - metrics: mean/cov/corr errors, Wasserstein-1 marginals, KS.
 
-- `multimodal_2d_ring_ddc.py`  
+- **`multimodal_2d_ring_ddc.py`**  
   2D example (3 Gaussians + ring, n=8,000):
   - visual comparison DDC vs Random,
   - shows how DDC covers multiple modes and a ring structure.
 
-- `two_moons_ddc.py`  
+- **`two_moons_ddc.py`**  
   2D Two Moons (non-convex structure, n=5,000):
   - demonstrates DDC's ability to handle non-convex geometries,
   - DDC vs Random vs K-medoids comparison with quantitative metrics.
@@ -413,18 +507,38 @@ python experiments/two_moons_ddc.py
 
 ---
 
-## When to use what?
+## When to Use What?
 
 - **DDC** (`fit_ddc_coreset`):  
-  Default in **low-knowledge** regimes (no clear strata yet). Better than random sampling for a fixed `k`.
+  Default in **low-knowledge** regimes (no clear strata yet). Better than random sampling for a fixed `k`. Best for unsupervised distributional approximation.
 
 - **Stratified** (`fit_stratified_coreset`):  
-  Preferred in **high-knowledge** regimes (well-defined strata aligned with the task, e.g. risk bands, products), especially when `k` is large enough.
+  Preferred in **high-knowledge** regimes (well-defined strata aligned with the task, e.g. risk bands, products), especially when `k` is large enough. Can outperform DDC on moment-based metrics when strata are known.
 
 - **Random** (`fit_random_coreset`):  
-  Baseline and sanity check; still useful when you want the simplest possible comparison.
+  Baseline and sanity check; still useful when you want the simplest possible comparison. Reflects what many teams do today (simple downsampling).
 
 - **K-medoids** (`fit_kmedoids_coreset`):  
-  Clustering-based baseline; useful for comparison but may struggle with non-convex geometries.
+  Clustering-based baseline; useful for comparison but may struggle with non-convex geometries. Minimizes within-cluster distances rather than distributional fidelity.
 
 ---
+
+## License
+
+MIT License. See [LICENSE](LICENSE) for details.
+
+---
+
+## Citation
+
+If you use `dd-coresets` in your research, please cite:
+
+```bibtex
+@software{dd-coresets,
+  title = {dd-coresets: Density–Diversity Coresets for Dataset Summarization},
+  author = {Azevedo, Carlos R. B.},
+  url = {https://github.com/crbazevedo/dd-coresets},
+  version = {0.1.2},
+  year = {2025}
+}
+```
