@@ -54,7 +54,7 @@ Common approaches have limitations:
 
 ## When to Use / When Not to Use
 
-### ✅ Use DDC when:
+### - Use DDC when:
 
 - You have a **large tabular dataset** and need a small, distribution-preserving subset.
 - You want **faithful mini-distributions** for EDA, simulation, or stress testing.
@@ -62,7 +62,7 @@ Common approaches have limitations:
 - You need **real data points** (not synthetic centroids) for interpretability.
 - Your data has **multiple modes, complex geometries, or non-convex structures**.
 
-### ❌ Don't use DDC when:
+### - Don't use DDC when:
 
 - You need **strong theoretical guarantees** (e.g., coreset-specific for Bayesian inference, Wasserstein DRO, or model-specific coresets).
 - Your **state space is non-Euclidean** (e.g., graphs, strings, manifolds without a good embedding).
