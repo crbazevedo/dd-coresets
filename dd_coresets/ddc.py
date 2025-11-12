@@ -430,3 +430,121 @@ def fit_stratified_coreset(
         selected_indices=selected_global,
     )
     return S0, w, info
+
+
+def fit_kmedoids_coreset(
+    X: np.ndarray,
+    k: int,
+    n0: Optional[int] = 20000,
+    gamma: float = 1.0,
+    reweight_full: bool = True,
+    max_iters: int = 10,
+    random_state: Optional[int] = None,
+) -> Tuple[np.ndarray, np.ndarray, CoresetInfo]:
+    """
+    K-medoids baseline: selects k medoids (real data points) that minimize
+    the sum of distances to nearest medoid. Uses PAM-like algorithm with
+    working sample for efficiency.
+    """
+    rng = np.random.default_rng(random_state)
+    X = np.asarray(X, dtype=float)
+    n, d = X.shape
+
+    # Working sample
+    if (n0 is None) or (n0 >= n):
+        idx_work = np.arange(n, dtype=int)
+    else:
+        idx_work = rng.choice(n, size=n0, replace=False)
+    X0 = X[idx_work]
+    n0_eff = X0.shape[0]
+
+    # Initialize medoids using k-means++ style initialization
+    medoid_idx = np.zeros(k, dtype=int)
+    medoid_idx[0] = rng.integers(0, n0_eff)
+    
+    # Compute distances from all points to first medoid (more efficient than pairwise)
+    min_dists = np.sum((X0 - X0[medoid_idx[0]])**2, axis=1)
+    
+    for i in range(1, k):
+        # Probability proportional to squared distance
+        probs = min_dists / (min_dists.sum() + 1e-10)
+        
+        # Filter out already-selected medoids to ensure uniqueness
+        available_idx = np.setdiff1d(np.arange(n0_eff), medoid_idx[:i])
+        if len(available_idx) == 0:
+            # Fallback: if all points are selected, break early
+            medoid_idx = medoid_idx[:i]
+            break
+        
+        # Map probabilities to available indices
+        probs_available = probs[available_idx]
+        probs_available = probs_available / (probs_available.sum() + 1e-10)
+        
+        selected_available = rng.choice(len(available_idx), p=probs_available)
+        medoid_idx[i] = available_idx[selected_available]
+        
+        # Update minimum distances
+        new_dists = _pairwise_sq_dists(X0, X0[medoid_idx[i:i+1]])[:, 0]
+        min_dists = np.minimum(min_dists, new_dists)
+
+    # PAM-like swap optimization
+    for _ in range(max_iters):
+        # Assign each point to nearest medoid (compute distances on-demand)
+        medoid_dists = _pairwise_sq_dists(X0, X0[medoid_idx])
+        assignments = np.argmin(medoid_dists, axis=1)
+        
+        changed = False
+        for j in range(k):
+            cluster_mask = (assignments == j)
+            if cluster_mask.sum() == 0:
+                continue
+            
+            cluster_points = X0[cluster_mask]
+            
+            # Current cost: sum of distances to medoid j
+            current_medoid_dists = _pairwise_sq_dists(cluster_points, X0[medoid_idx[j:j+1]])[:, 0]
+            current_cost = np.sqrt(current_medoid_dists).sum()
+            
+            # Try swapping with each non-medoid in cluster
+            candidates = np.where(cluster_mask)[0]
+            candidates = candidates[~np.isin(candidates, medoid_idx)]
+            
+            if len(candidates) == 0:
+                continue
+            
+            best_candidate = None
+            best_cost = current_cost
+            
+            for candidate in candidates:
+                # Cost if we swap medoid j with candidate
+                candidate_dists = _pairwise_sq_dists(cluster_points, X0[candidate:candidate+1])[:, 0]
+                new_cost = np.sqrt(candidate_dists).sum()
+                if new_cost < best_cost:
+                    best_cost = new_cost
+                    best_candidate = candidate
+            
+            if best_candidate is not None:
+                medoid_idx[j] = best_candidate
+                changed = True
+        
+        if not changed:
+            break
+
+    S0 = X0[medoid_idx]
+
+    if reweight_full:
+        w, A = _soft_assign_weights(X, S0, gamma=gamma)
+    else:
+        w, A = _soft_assign_weights(X0, S0, gamma=gamma)
+
+    selected_global = idx_work[medoid_idx]
+
+    info = CoresetInfo(
+        method="kmedoids",
+        k=len(S0),
+        n=n,
+        n0=n0_eff,
+        working_indices=idx_work,
+        selected_indices=selected_global,
+    )
+    return S0, w, info
