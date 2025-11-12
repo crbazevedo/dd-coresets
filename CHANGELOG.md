@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.3] - 2025-11-12
+
+### Added
+
+- Comprehensive README improvements with badges (PyPI, License, Python versions)
+- Concrete motivation section with mini-case example ("30M rows → 500 points + weights")
+- "When to Use / When Not to Use" section with clear guidance
+- "Complexity and Scale" section with asymptotic analysis and practical scaling examples
+- "Relation to Existing Methods" section comparing DDC with alternatives
+- "Examples / Notebooks" section with placeholder links
+- Citation section with BibTeX format
+
+### Changed
+
+- Reorganized README content for better flow and readability
+- Standardized API naming throughout documentation
+- Improved visual examples organization
+
 ## [0.1.2] - 2025-11-12
 
 ### Fixed
