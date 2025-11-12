@@ -538,7 +538,7 @@ If you use `dd-coresets` in your research, please cite:
   title = {dd-coresets: Density–Diversity Coresets for Dataset Summarization},
   author = {Azevedo, Carlos R. B.},
   url = {https://github.com/crbazevedo/dd-coresets},
-  version = {0.1.2},
+  version = {0.1.3},
   year = {2025}
 }
 ```
