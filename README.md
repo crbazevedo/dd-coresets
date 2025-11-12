@@ -38,7 +38,7 @@ The following example demonstrates DDC on a 2D multimodal dataset (3 Gaussian bl
 
 ### Spatial Coverage
 
-![DDC vs Random Scatter](docs/images/ddc_vs_random_scatter.png)
+![DDC vs Random Scatter](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/ddc_vs_random_scatter.png)
 
 **Left (DDC)**: Representatives are strategically placed to cover:
 - All three Gaussian modes (dense regions)
@@ -50,10 +50,10 @@ The following example demonstrates DDC on a 2D multimodal dataset (3 Gaussian bl
 ### Distributional Approximation
 
 **DDC Marginals:**
-![DDC Marginals](docs/images/ddc_marginals.png)
+![DDC Marginals](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/ddc_marginals.png)
 
 **Random Marginals:**
-![Random Marginals](docs/images/random_marginals.png)
+![Random Marginals](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/random_marginals.png)
 
 DDC better preserves the marginal distributions of the original data, especially in the tails and multimodal regions. The weighted coreset (red/blue lines) closely matches the full data distribution (gray histograms).
 
@@ -83,7 +83,7 @@ We also compare DDC, Random, and Stratified coresets on a 5D Gaussian mixture (4
 
 ### Spatial Coverage (UMAP 2D Projection)
 
-![DDC vs Random vs Stratified UMAP](docs/images/ddc_vs_random_vs_stratified_umap_5d.png)
+![DDC vs Random vs Stratified UMAP](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/ddc_vs_random_vs_stratified_umap_5d.png)
 
 **Left (DDC)**: Representatives are distributed across all modes, capturing the mixture structure.  
 **Middle (Random)**: Representatives are uniformly scattered, missing some modes.  
@@ -91,7 +91,7 @@ We also compare DDC, Random, and Stratified coresets on a 5D Gaussian mixture (4
 
 ### Distributional Approximation
 
-![Marginals Comparison 5D](docs/images/marginals_comparison_5d.png)
+![Marginals Comparison 5D](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/marginals_comparison_5d.png)
 
 All three methods approximate the marginal distributions, with DDC and Stratified showing better fidelity to the full data distribution.
 
@@ -118,7 +118,7 @@ The Two Moons dataset demonstrates DDC's ability to handle non-convex structures
 
 ### Spatial Coverage
 
-![Two Moons DDC vs Random vs K-medoids](docs/images/two_moons_ddc_vs_random_vs_kmedoids_scatter.png)
+![Two Moons DDC vs Random vs K-medoids](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/two_moons_ddc_vs_random_vs_kmedoids_scatter.png)
 
 **Left (DDC)**: Representatives are distributed along both arcs, maintaining connectivity and covering the non-convex structure.  
 **Middle (Random)**: Representatives are scattered uniformly, potentially missing connections between the two moons and creating gaps.  
@@ -127,13 +127,13 @@ The Two Moons dataset demonstrates DDC's ability to handle non-convex structures
 ### Distributional Approximation
 
 **DDC Marginals:**
-![Two Moons DDC Marginals](docs/images/two_moons_ddc_marginals.png)
+![Two Moons DDC Marginals](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/two_moons_ddc_marginals.png)
 
 **Random Marginals:**
-![Two Moons Random Marginals](docs/images/two_moons_random_marginals.png)
+![Two Moons Random Marginals](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/two_moons_random_marginals.png)
 
 **K-medoids Marginals:**
-![Two Moons K-medoids Marginals](docs/images/two_moons_kmedoids_marginals.png)
+![Two Moons K-medoids Marginals](https://raw.githubusercontent.com/crbazevedo/dd-coresets/main/docs/images/two_moons_kmedoids_marginals.png)
 
 ### Quantitative Comparison
 
