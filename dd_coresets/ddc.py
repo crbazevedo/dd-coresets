@@ -462,8 +462,8 @@ def fit_kmedoids_coreset(
     medoid_idx = np.zeros(k, dtype=int)
     medoid_idx[0] = rng.integers(0, n0_eff)
     
-    D2_to_medoids = _pairwise_sq_dists(X0, X0[medoid_idx[:1]])
-    min_dists = D2_to_medoids[:, 0]
+    # Compute distances from all points to first medoid (more efficient than pairwise)
+    min_dists = np.sum((X0 - X0[medoid_idx[0]])**2, axis=1)
     
     for i in range(1, k):
         # Probability proportional to squared distance
