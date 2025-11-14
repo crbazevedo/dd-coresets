@@ -326,8 +326,8 @@ def test_ddc_with_adaptive_distances():
         coreset_densities_euclidean = densities_euclidean[closest_indices]
         coreset_densities_adaptive = densities_adaptive[closest_indices]
         
-        mean_density_euclidean = coreset_densities_euclidean.mean()
-        mean_density_adaptive = coreset_densities_adaptive.mean()
+        mean_density_coreset_euclidean = coreset_densities_euclidean.mean()
+        mean_density_coreset_adaptive = coreset_densities_adaptive.mean()
         mean_density_full = densities_euclidean.mean()
         
         results.append({
@@ -335,18 +335,18 @@ def test_ddc_with_adaptive_distances():
             'ddc_cov_err': metrics_ddc['cov_err_fro'],
             'random_cov_err': metrics_random['cov_err_fro'],
             'improvement_%': improvement_cov,
-            'mean_density_coreset_euclidean': mean_density_euclidean,
-            'mean_density_coreset_adaptive': mean_density_adaptive,
+            'mean_density_coreset_euclidean': mean_density_coreset_euclidean,
+            'mean_density_coreset_adaptive': mean_density_coreset_adaptive,
             'mean_density_full': mean_density_full,
-            'density_ratio_euclidean': mean_density_coreset_euclidean / mean_density_full,
-            'density_ratio_adaptive': mean_density_coreset_adaptive / mean_density_full,
+            'density_ratio_euclidean': mean_density_coreset_euclidean / (mean_density_full + 1e-10),
+            'density_ratio_adaptive': mean_density_coreset_adaptive / (mean_density_full + 1e-10),
         })
         
         print(f"  DDC Cov Error: {metrics_ddc['cov_err_fro']:.4f}")
         print(f"  Random Cov Error: {metrics_random['cov_err_fro']:.4f}")
         print(f"  Improvement: {improvement_cov:+.1f}%")
-        print(f"  Density ratio (Euclidean): {mean_density_coreset_euclidean / mean_density_full:.3f}")
-        print(f"  Density ratio (Adaptive): {mean_density_coreset_adaptive / mean_density_full:.3f}")
+        print(f"  Density ratio (Euclidean): {mean_density_coreset_euclidean / (mean_density_full + 1e-10):.3f}")
+        print(f"  Density ratio (Adaptive): {mean_density_coreset_adaptive / (mean_density_full + 1e-10):.3f}")
     
     results_df = pd.DataFrame(results)
     
