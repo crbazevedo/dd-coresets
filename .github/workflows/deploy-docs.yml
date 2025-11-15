@@ -33,7 +33,7 @@ jobs:
       - name: Build book
         working-directory: docs/book
         run: |
-          python -m jupyter_book build . --all
+          jb build . --all
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
