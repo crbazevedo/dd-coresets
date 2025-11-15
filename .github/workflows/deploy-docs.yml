@@ -31,8 +31,8 @@ jobs:
           pip install jupyter-book ghp-import
 
       - name: Build book
-        working-directory: docs/book
         run: |
+          cd docs/book
           jupyter-book build . --all
 
       - name: Deploy to GitHub Pages
