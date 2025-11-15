@@ -377,7 +377,7 @@ document.write(`
 <h2>1. Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install dd-coresets (uncomment if needed)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install dd-coresets (uncomment if needed)</span>
 <span class="c1"># !pip install dd-coresets</span>
 </pre></div>
 </div>
@@ -385,7 +385,7 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
@@ -415,6 +415,11 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>UMAP not available, using PCA for visualization
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="generate-high-dimensional-dataset">
@@ -422,7 +427,7 @@ document.write(`
 <p>We’ll create a dataset with <strong>60 features</strong> and <strong>20,000 samples</strong>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate high-dimensional data</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate high-dimensional data</span>
 <span class="n">n_samples</span> <span class="o">=</span> <span class="mi">20000</span>
 <span class="n">n_features</span> <span class="o">=</span> <span class="mi">60</span>  <span class="c1"># High dimensionality</span>
 <span class="n">n_clusters</span> <span class="o">=</span> <span class="mi">5</span>
@@ -445,6 +450,13 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dataset shape: (20000, 60)
+Number of features: 60 (high-dimensional)
+Number of clusters: 5
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="compare-modes-euclidean-vs-auto-with-pca">
@@ -452,7 +464,7 @@ document.write(`
 <p>We’ll compare Euclidean mode (no PCA) with Auto mode (triggers PCA for d ≥ 30).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mi">500</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mi">500</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fitting coresets...&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
@@ -483,6 +495,23 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Fitting coresets...
+============================================================
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✓ Euclidean: 500 representatives
+  Time: 9.31s
+  Pipeline: {&#39;mode&#39;: &#39;euclidean&#39;, &#39;preset&#39;: &#39;balanced&#39;, &#39;adaptive&#39;: False, &#39;pca_used&#39;: False, &#39;d_original&#39;: 60, &#39;d_effective&#39;: 60, &#39;fallbacks&#39;: []}
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✓ Auto: 500 representatives
+  Time: 11.53s
+  Pipeline: {&#39;mode&#39;: &#39;euclidean&#39;, &#39;preset&#39;: &#39;balanced&#39;, &#39;adaptive&#39;: False, &#39;pca_used&#39;: False, &#39;d_original&#39;: 60, &#39;d_effective&#39;: 60, &#39;fallbacks&#39;: []}
+============================================================
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="compute-metrics">
@@ -492,7 +521,7 @@ document.write(`
 <p><em>PCA explained variance showing how dimensionality reduction preserves information. The auto mode automatically applies PCA when d ≥ 50.</em></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Helper functions</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Helper functions</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">weighted_mean</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">S</span> <span class="o">*</span> <span class="n">w</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
@@ -519,7 +548,7 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute metrics</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute metrics</span>
 <span class="n">metrics_euclidean</span> <span class="o">=</span> <span class="n">compute_metrics</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">S_euclidean</span><span class="p">,</span> <span class="n">w_euclidean</span><span class="p">,</span> <span class="s1">&#39;Euclidean&#39;</span><span class="p">)</span>
 <span class="n">metrics_auto</span> <span class="o">=</span> <span class="n">compute_metrics</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">S_auto</span><span class="p">,</span> <span class="n">w_auto</span><span class="p">,</span> <span class="s1">&#39;Auto (PCA)&#39;</span><span class="p">)</span>
 
@@ -538,6 +567,21 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Distributional Metrics:
+============================================================
+            mean_err_l2  cov_err_fro
+method                              
+Euclidean         0.396       2.6443
+Auto (PCA)        0.396       2.6443
+
+Performance:
+  Euclidean: 9.31s
+  Auto (PCA): 11.53s
+  Speedup: 0.81x
+</pre></div>
+</div>
+</div>
 </div>
 <p><img alt="2D projection comparison for Euclidean and Auto modes" src="tutorials/images/tutorials/high_dimensional/projection_comparison.png" /></p>
 <p><em>2D projection comparison: Euclidean mode (left) vs Auto mode with PCA (right). Auto mode handles high-dimensional data more effectively.</em></p>
@@ -547,7 +591,7 @@ document.write(`
 <p>Let’s visualize the coresets in 2D and PCA explained variance.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Project to 2D</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Project to 2D</span>
 <span class="k">if</span> <span class="n">HAS_UMAP</span><span class="p">:</span>
     <span class="n">reducer</span> <span class="o">=</span> <span class="n">umap</span><span class="o">.</span><span class="n">UMAP</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
@@ -577,10 +621,13 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<img alt="../_images/0d98b3769b2484031cb621ba01fba671ea24e1940a6b3ef581cbb178889306ee.png" src="../_images/0d98b3769b2484031cb621ba01fba671ea24e1940a6b3ef581cbb178889306ee.png" />
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Show PCA explained variance if available</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Show PCA explained variance if available</span>
 <span class="k">if</span> <span class="n">info_auto</span><span class="p">[</span><span class="s1">&#39;pipeline&#39;</span><span class="p">][</span><span class="s1">&#39;pca_used&#39;</span><span class="p">]:</span>
     <span class="n">pca_info</span> <span class="o">=</span> <span class="n">info_auto</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pca_info&#39;</span><span class="p">,</span> <span class="p">{})</span>
     <span class="k">if</span> <span class="n">pca_info</span> <span class="ow">and</span> <span class="s1">&#39;explained_variance_ratio&#39;</span> <span class="ow">in</span> <span class="n">pca_info</span><span class="p">:</span>

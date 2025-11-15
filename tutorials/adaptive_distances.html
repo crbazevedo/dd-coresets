@@ -379,7 +379,7 @@ document.write(`
 <h2>1. Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install dd-coresets (uncomment if needed)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install dd-coresets (uncomment if needed)</span>
 <span class="c1"># !pip install dd-coresets</span>
 </pre></div>
 </div>
@@ -387,7 +387,7 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
@@ -416,6 +416,11 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>UMAP not available, using PCA for visualization
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="generate-elliptical-clusters">
@@ -423,7 +428,7 @@ document.write(`
 <p>We’ll create clusters with <strong>elliptical shapes</strong> where adaptive distances excel.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate isotropic clusters first</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate isotropic clusters first</span>
 <span class="n">n_samples</span> <span class="o">=</span> <span class="mi">8000</span>
 <span class="n">n_features</span> <span class="o">=</span> <span class="mi">15</span>  <span class="c1"># Medium dimensionality</span>
 <span class="n">n_clusters</span> <span class="o">=</span> <span class="mi">3</span>
@@ -463,6 +468,13 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dataset shape: (8000, 15)
+Number of clusters: 3
+Features: 15 (medium dimensionality, good for adaptive)
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="compare-euclidean-vs-adaptive-vs-auto">
@@ -470,7 +482,7 @@ document.write(`
 <p>We’ll fit DDC with different modes and compare results.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mi">200</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mi">200</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fitting coresets with different modes...&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
@@ -499,6 +511,25 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Fitting coresets with different modes...
+============================================================
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✓ Euclidean: 200 representatives
+  Pipeline: {&#39;mode&#39;: &#39;euclidean&#39;, &#39;preset&#39;: &#39;balanced&#39;, &#39;adaptive&#39;: False, &#39;pca_used&#39;: False, &#39;d_original&#39;: 15, &#39;d_effective&#39;: 15, &#39;fallbacks&#39;: []}
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✓ Adaptive: 200 representatives
+  Pipeline: {&#39;mode&#39;: &#39;euclidean&#39;, &#39;preset&#39;: &#39;balanced&#39;, &#39;adaptive&#39;: False, &#39;pca_used&#39;: False, &#39;d_original&#39;: 15, &#39;d_effective&#39;: 15, &#39;fallbacks&#39;: []}
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✓ Auto: 200 representatives
+  Pipeline: {&#39;mode&#39;: &#39;euclidean&#39;, &#39;preset&#39;: &#39;balanced&#39;, &#39;adaptive&#39;: False, &#39;pca_used&#39;: False, &#39;d_original&#39;: 15, &#39;d_effective&#39;: 15, &#39;fallbacks&#39;: []}
+============================================================
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="compare-presets">
@@ -506,7 +537,7 @@ document.write(`
 <p>Let’s compare different presets: <code class="docutils literal notranslate"><span class="pre">fast</span></code>, <code class="docutils literal notranslate"><span class="pre">balanced</span></code>, <code class="docutils literal notranslate"><span class="pre">robust</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">presets</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;fast&#39;</span><span class="p">,</span> <span class="s1">&#39;balanced&#39;</span><span class="p">,</span> <span class="s1">&#39;robust&#39;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">presets</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;fast&#39;</span><span class="p">,</span> <span class="s1">&#39;balanced&#39;</span><span class="p">,</span> <span class="s1">&#39;robust&#39;</span><span class="p">]</span>
 <span class="n">results_presets</span> <span class="o">=</span> <span class="p">{}</span>
 
 <span class="k">for</span> <span class="n">preset</span> <span class="ow">in</span> <span class="n">presets</span><span class="p">:</span>
@@ -528,6 +559,22 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✓ fast      : m_neighbors=32, iterations=1
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✓ balanced  : m_neighbors=32, iterations=1
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✓ robust    : m_neighbors=32, iterations=1
+
+Preset comparison:
+  fast:     Quick runs (fewer neighbors, 1 iteration)
+  balanced: Default (good trade-off)
+  robust:   More neighbors, 2 iterations (better quality)
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="compute-metrics">
@@ -537,7 +584,7 @@ document.write(`
 <p><em>Comparison of Euclidean (left) and Adaptive (right) distance modes. Adaptive distances better capture elliptical cluster shapes.</em></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Helper functions (same as basic_tabular)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Helper functions (same as basic_tabular)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">wasserstein_1d_approx</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">w2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">w2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">probs</span> <span class="o">=</span> <span class="n">w2</span> <span class="o">/</span> <span class="n">w2</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
@@ -587,7 +634,7 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute metrics for all methods</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute metrics for all methods</span>
 <span class="n">metrics_euclidean</span> <span class="o">=</span> <span class="n">compute_metrics</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">S_euclidean</span><span class="p">,</span> <span class="n">w_euclidean</span><span class="p">,</span> <span class="s1">&#39;Euclidean&#39;</span><span class="p">)</span>
 <span class="n">metrics_adaptive</span> <span class="o">=</span> <span class="n">compute_metrics</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">S_adaptive</span><span class="p">,</span> <span class="n">w_adaptive</span><span class="p">,</span> <span class="s1">&#39;Adaptive&#39;</span><span class="p">)</span>
 <span class="n">metrics_auto</span> <span class="o">=</span> <span class="n">compute_metrics</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">S_auto</span><span class="p">,</span> <span class="n">w_auto</span><span class="p">,</span> <span class="s1">&#39;Auto&#39;</span><span class="p">)</span>
@@ -608,6 +655,22 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Distributional Metrics Comparison:
+============================================================
+           mean_err_l2  cov_err_fro  W1_mean
+method                                      
+Euclidean       0.1537       0.6217   0.1299
+Adaptive        0.1537       0.6217   0.1282
+Auto            0.1537       0.6217   0.1283
+
+Adaptive Improvement over Euclidean:
+mean_err_l2         :    0.0% better
+cov_err_fro         :    0.0% better
+W1_mean             :    1.3% better
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="visualizations">
@@ -617,7 +680,7 @@ document.write(`
 <p><em>Demonstration of adaptive distances on elliptical clusters. Mahalanobis distance accounts for local covariance structure.</em></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Project to 2D</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Project to 2D</span>
 <span class="k">if</span> <span class="n">HAS_UMAP</span><span class="p">:</span>
     <span class="n">reducer</span> <span class="o">=</span> <span class="n">umap</span><span class="o">.</span><span class="n">UMAP</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
@@ -657,6 +720,9 @@ document.write(`
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ab5929f8fa281fa7953d1892c84d503cb463be9cf91f169e13264c364ec14617.png" src="../_images/ab5929f8fa281fa7953d1892c84d503cb463be9cf91f169e13264c364ec14617.png" />
 </div>
 </div>
 </section>

@@ -595,7 +595,7 @@ Cluster sizes: [3334 3333 3333]
 
 <span class="c1"># Random</span>
 <span class="n">S_random</span><span class="p">,</span> <span class="n">w_random</span><span class="p">,</span> <span class="n">info_random</span> <span class="o">=</span> <span class="n">fit_random_coreset</span><span class="p">(</span>
-    <span class="n">X</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span> <span class="o">+</span> <span class="mi">1</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✓ Random: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">S_random</span><span class="p">)</span><span class="si">}</span><span class="s2"> representatives&quot;</span><span class="p">)</span>
 
@@ -615,20 +615,9 @@ Cluster sizes: [3334 3333 3333]
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✓ DDC: 200 representatives
   Pipeline: {&#39;mode&#39;: &#39;euclidean&#39;, &#39;preset&#39;: &#39;balanced&#39;, &#39;adaptive&#39;: False, &#39;pca_used&#39;: False, &#39;d_original&#39;: 8, &#39;d_effective&#39;: 8, &#39;fallbacks&#39;: []}
-</pre></div>
-</div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">TypeError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">14</span>
-<span class="g g-Whitespace">     </span><span class="mi">11</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Pipeline: </span><span class="si">{</span><span class="n">info_ddc</span><span class="p">[</span><span class="s1">&#39;pipeline&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">13</span> <span class="c1"># Random</span>
-<span class="ne">---&gt; </span><span class="mi">14</span> <span class="n">S_random</span><span class="p">,</span> <span class="n">w_random</span><span class="p">,</span> <span class="n">info_random</span> <span class="o">=</span> <span class="n">fit_random_coreset</span><span class="p">(</span>
-<span class="g g-Whitespace">     </span><span class="mi">15</span>     <span class="n">X</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span> <span class="o">+</span> <span class="mi">1</span>
-<span class="g g-Whitespace">     </span><span class="mi">16</span> <span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">17</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✓ Random: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">S_random</span><span class="p">)</span><span class="si">}</span><span class="s2"> representatives&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">19</span> <span class="c1"># Stratified (by cluster)</span>
-
-<span class="ne">TypeError</span>: fit_random_coreset() got an unexpected keyword argument &#39;mode&#39;
+✓ Random: 200 representatives
+✓ Stratified: 200 representatives
+============================================================
 </pre></div>
 </div>
 </div>
@@ -789,16 +778,27 @@ Cluster sizes: [3334 3333 3333]
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">line</span> <span class="mi">3</span>
-<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="c1"># Compute metrics for all methods</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">metrics_ddc</span> <span class="o">=</span> <span class="n">compute_metrics</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">S_ddc</span><span class="p">,</span> <span class="n">w_ddc</span><span class="p">,</span> <span class="s1">&#39;DDC&#39;</span><span class="p">)</span>
-<span class="ne">----&gt; </span><span class="mi">3</span> <span class="n">metrics_random</span> <span class="o">=</span> <span class="n">compute_metrics</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">S_random</span><span class="p">,</span> <span class="n">w_random</span><span class="p">,</span> <span class="s1">&#39;Random&#39;</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">metrics_strat</span> <span class="o">=</span> <span class="n">compute_metrics</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">S_strat</span><span class="p">,</span> <span class="n">w_strat</span><span class="p">,</span> <span class="s1">&#39;Stratified&#39;</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="c1"># Create comparison table</span>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Distributional Metrics Comparison:
+============================================================
+            mean_err_l2  cov_err_fro  corr_err_fro  W1_mean  W1_max  KS_mean  \
+method                                                                         
+DDC              0.0723       0.6079        0.5399   0.1092  0.1997   0.0665   
+Random           0.1689       0.4534        0.3104   0.0784  0.1138   0.0589   
+Stratified       0.0966       0.4166        0.3023   0.0569  0.0895   0.0498   
 
-<span class="ne">NameError</span>: name &#39;S_random&#39; is not defined
+            KS_max  
+method              
+DDC         0.0947  
+Random      0.0703  
+Stratified  0.0723  
+
+DDC Improvement over Random:
+============================================================
+mean_err_l2         :   57.2% better
+cov_err_fro         :  -34.1% better
+corr_err_fro        :  -73.9% better
+W1_mean             :  -39.2% better
+KS_mean             :  -13.0% better
 </pre></div>
 </div>
 </div>
@@ -856,24 +856,7 @@ Cluster sizes: [3334 3333 3333]
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span> <span class="n">line</span> <span class="mi">14</span>
-<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Full Data&#39;</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">11</span> <span class="c1"># Weighted histograms for coresets</span>
-<span class="g g-Whitespace">     </span><span class="mi">12</span> <span class="k">for</span> <span class="n">S</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="p">[</span>
-<span class="g g-Whitespace">     </span><span class="mi">13</span>     <span class="p">(</span><span class="n">S_ddc</span><span class="p">,</span> <span class="n">w_ddc</span><span class="p">,</span> <span class="s1">&#39;DDC&#39;</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">),</span>
-<span class="ne">---&gt; </span><span class="mi">14</span>     <span class="p">(</span><span class="n">S_random</span><span class="p">,</span> <span class="n">w_random</span><span class="p">,</span> <span class="s1">&#39;Random&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">),</span>
-<span class="g g-Whitespace">     </span><span class="mi">15</span>     <span class="p">(</span><span class="n">S_strat</span><span class="p">,</span> <span class="n">w_strat</span><span class="p">,</span> <span class="s1">&#39;Stratified&#39;</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">16</span> <span class="p">]:</span>
-<span class="g g-Whitespace">     </span><span class="mi">17</span>     <span class="c1"># Sample from weighted distribution</span>
-<span class="g g-Whitespace">     </span><span class="mi">18</span>     <span class="n">n_samples</span> <span class="o">=</span> <span class="mi">5000</span>
-<span class="g g-Whitespace">     </span><span class="mi">19</span>     <span class="n">probs</span> <span class="o">=</span> <span class="n">w</span> <span class="o">/</span> <span class="n">w</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-
-<span class="ne">NameError</span>: name &#39;S_random&#39; is not defined
-</pre></div>
-</div>
-<img alt="../_images/03daf7ad44f5f2b44a748dd517d8ab799905762fefda5843eef60579449b30da.png" src="../_images/03daf7ad44f5f2b44a748dd517d8ab799905762fefda5843eef60579449b30da.png" />
+<img alt="../_images/87c427911d4ae7a31e68712e88419294f37cd794fe53b04dbb812a3d7918dc0a.png" src="../_images/87c427911d4ae7a31e68712e88419294f37cd794fe53b04dbb812a3d7918dc0a.png" />
 </div>
 </div>
 <p><img alt="2D projection comparing spatial coverage of DDC, Random, and Stratified coresets" src="tutorials/images/tutorials/basic_tabular/spatial_coverage_comparison.png" /></p>
@@ -930,19 +913,7 @@ Cluster sizes: [3334 3333 3333]
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span> <span class="n">line</span> <span class="mi">12</span>
-<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="n">width</span> <span class="o">=</span> <span class="mf">0.25</span>
-<span class="g g-Whitespace">     </span><span class="mi">11</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">method</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">methods</span><span class="p">):</span>
-<span class="ne">---&gt; </span><span class="mi">12</span>     <span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="n">results_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">method</span><span class="p">,</span> <span class="n">m</span><span class="p">]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">metrics_to_plot</span><span class="p">]</span>
-<span class="g g-Whitespace">     </span><span class="mi">13</span>     <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">i</span><span class="o">*</span><span class="n">width</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">15</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Metric&#39;</span><span class="p">)</span>
-
-<span class="ne">NameError</span>: name &#39;results_df&#39; is not defined
-</pre></div>
-</div>
-<img alt="../_images/1d4251bc4c335cc802f65a3c4e3fdb41add03437ba1a71cc6485c9bacade10e5.png" src="../_images/1d4251bc4c335cc802f65a3c4e3fdb41add03437ba1a71cc6485c9bacade10e5.png" />
+<img alt="../_images/182ac293a3583e0c86abf50f4e3262921a4043e34ca6281cf2f6dd36cc13b5dd.png" src="../_images/182ac293a3583e0c86abf50f4e3262921a4043e34ca6281cf2f6dd36cc13b5dd.png" />
 </div>
 </div>
 </section>

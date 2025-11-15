@@ -379,7 +379,7 @@ document.write(`
 <h2>1. Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install dd-coresets (uncomment if needed)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install dd-coresets (uncomment if needed)</span>
 <span class="c1"># !pip install dd-coresets</span>
 </pre></div>
 </div>
@@ -387,7 +387,7 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
@@ -417,6 +417,11 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>UMAP not available, using PCA for visualization
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="generate-dataset">
@@ -424,7 +429,7 @@ document.write(`
 <p>We’ll create a Gaussian mixture with <strong>6 clusters</strong> of varying sizes.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate Gaussian mixture with imbalanced clusters</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate Gaussian mixture with imbalanced clusters</span>
 <span class="n">n_samples</span> <span class="o">=</span> <span class="mi">15000</span>
 <span class="n">n_features</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="n">n_clusters</span> <span class="o">=</span> <span class="mi">6</span>
@@ -471,6 +476,20 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dataset shape: (15000, 10)
+Number of clusters: 6
+
+Cluster sizes:
+  Cluster 0: 5,000 samples (33.3%)
+  Cluster 1: 3,000 samples (20.0%)
+  Cluster 2: 2,000 samples (13.3%)
+  Cluster 3: 2,000 samples (13.3%)
+  Cluster 4: 1,500 samples (10.0%)
+  Cluster 5: 1,500 samples (10.0%)
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="fit-coresets">
@@ -478,7 +497,7 @@ document.write(`
 <p>We’ll create coresets using DDC and Random sampling with <code class="docutils literal notranslate"><span class="pre">k=300</span></code> representatives.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mi">300</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mi">300</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fitting coresets...&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
@@ -498,6 +517,17 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Fitting coresets...
+============================================================
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✓ DDC: 300 representatives
+✓ Random: 300 representatives
+============================================================
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="compute-spatial-coverage">
@@ -507,7 +537,7 @@ document.write(`
 <p><em>Cluster coverage visualization showing how DDC ensures all clusters are represented.</em></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Find cluster labels for coreset points</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Find cluster labels for coreset points</span>
 <span class="n">nn</span> <span class="o">=</span> <span class="n">NearestNeighbors</span><span class="p">(</span><span class="n">n_neighbors</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">nn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
@@ -535,6 +565,28 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Cluster 0 (5,000 samples, 33.3%):
+  DDC:    196 points (65.3%)
+  Random: 111 points (37.0%)
+Cluster 1 (3,000 samples, 20.0%):
+  DDC:     48 points (16.0%)
+  Random:  51 points (17.0%)
+Cluster 2 (2,000 samples, 13.3%):
+  DDC:     19 points (6.3%)
+  Random:  35 points (11.7%)
+Cluster 3 (2,000 samples, 13.3%):
+  DDC:     19 points (6.3%)
+  Random:  37 points (12.3%)
+Cluster 4 (1,500 samples, 10.0%):
+  DDC:      7 points (2.3%)
+  Random:  45 points (15.0%)
+Cluster 5 (1,500 samples, 10.0%):
+  DDC:     11 points (3.7%)
+  Random:  21 points (7.0%)
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="visualizations">
@@ -542,7 +594,7 @@ document.write(`
 <p>Let’s visualize the coresets and their spatial coverage.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Project to 2D</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Project to 2D</span>
 <span class="k">if</span> <span class="n">HAS_UMAP</span><span class="p">:</span>
     <span class="n">reducer</span> <span class="o">=</span> <span class="n">umap</span><span class="o">.</span><span class="n">UMAP</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
@@ -577,6 +629,9 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<img alt="../_images/07d9d4161b618db52e514e0862efe9cbbd099a826455c8ce5f8ed0e046a846e6.png" src="../_images/07d9d4161b618db52e514e0862efe9cbbd099a826455c8ce5f8ed0e046a846e6.png" />
+</div>
 </div>
 <p><img alt="Spatial coverage metrics bar chart" src="tutorials/images/tutorials/multimodal_clusters/spatial_coverage_metrics.png" /></p>
 <p><em>Spatial coverage metrics comparing minimum and mean distances to nearest representatives.</em></p>
@@ -588,7 +643,7 @@ document.write(`
 <p>See <a class="reference internal" href="../concepts/algorithm.html"><span class="std std-doc">Algorithm Overview</span></a> for the mathematical details.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Coverage comparison bar chart</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Coverage comparison bar chart</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_clusters</span><span class="p">)</span>
@@ -612,6 +667,9 @@ document.write(`
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/a516805e3ddb827149b85e3e62b063a3db66ce1cbc6e6be71add94a9cea1cca2.png" src="../_images/a516805e3ddb827149b85e3e62b063a3db66ce1cbc6e6be71add94a9cea1cca2.png" />
 </div>
 </div>
 </section>

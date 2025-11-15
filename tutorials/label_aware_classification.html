@@ -685,7 +685,9 @@ Target vector shape: (48842,)
 Test set: 14,653 samples
 
 Training label distribution:
-  Class 0: 26,008 (76.07%)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Class 0: 26,008 (76.07%)
   Class 1: 8,181 (23.93%)
 </pre></div>
 </div>
@@ -908,8 +910,16 @@ Training label distribution:
   Allocating 761 representatives...
 </pre></div>
 </div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/var/folders/cg/mqv8qvn17hx0typ7nf1q0x2jjykzd2/T/ipykernel_23394/23080767.py:34: DeprecationWarning: Parameter &#39;m_neighbors&#39; is deprecated. Use &#39;mode&#39;, &#39;preset&#39;, or &#39;*_cfg&#39; dicts instead.
+  S_class, w_class, info_class = fit_ddc_coreset(
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Class 1: 8,181 samples (23.93%)
   Allocating 239 representatives...
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/var/folders/cg/mqv8qvn17hx0typ7nf1q0x2jjykzd2/T/ipykernel_23394/23080767.py:34: DeprecationWarning: Parameter &#39;m_neighbors&#39; is deprecated. Use &#39;mode&#39;, &#39;preset&#39;, or &#39;*_cfg&#39; dicts instead.
+  S_class, w_class, info_class = fit_ddc_coreset(
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Label-aware DDC coreset created: (1000, 6)
@@ -1088,10 +1098,6 @@ Class proportion preservation:
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/var/folders/cg/mqv8qvn17hx0typ7nf1q0x2jjykzd2/T/ipykernel_14151/4218522511.py:30: DeprecationWarning: `trapz` is deprecated. Use `trapezoid` instead, or one of the numerical integration functions in `scipy.integrate`.
-  w1 = np.trapz(np.abs(source_cdf_interp - target_cdf_interp), all_values)
-</pre></div>
-</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Distribution Preservation Metrics:
 
 Wasserstein-1 Distance (lower is better):
@@ -1109,6 +1115,10 @@ Feature 1     0.0289    0.0173             0.0452
 Feature 2     0.0331    0.0135             0.0637
 Feature 3     0.0092    0.0174             0.0535
 Feature 4     0.0105    0.0090             0.0335
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/var/folders/cg/mqv8qvn17hx0typ7nf1q0x2jjykzd2/T/ipykernel_23394/4218522511.py:30: DeprecationWarning: `trapz` is deprecated. Use `trapezoid` instead, or one of the numerical integration functions in `scipy.integrate`.
+  w1 = np.trapz(np.abs(source_cdf_interp - target_cdf_interp), all_values)
 </pre></div>
 </div>
 </div>
