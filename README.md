@@ -283,6 +283,53 @@ All notebooks are **Kaggle/Colab compatible** and self-contained. See [examples/
 
 ---
 
+## Documentation
+
+**📚 [Full Documentation](https://crbazevedo.github.io/dd-coresets/)** - Interactive Jupyter Book with tutorials, concepts, guides, and API reference.
+
+The documentation includes:
+
+- **Tutorials**: Step-by-step guides with 5 example notebooks
+  - Basic tabular data
+  - Multimodal clusters
+  - Adaptive distances
+  - Label-aware classification
+  - High-dimensional data
+
+- **Concepts**: Theoretical explanations (why it works)
+  - Density estimation and the curse of dimensionality
+  - Algorithm intuition (greedy selection, diversity trade-off)
+  - Metrics explained (Wasserstein, KS, MMD)
+  - Adaptive distances (Mahalanobis, local covariance)
+  - Weighting strategy (soft assignments, kernels)
+
+- **Guides**: Practical advice
+  - Choosing parameters (`k`, `alpha`, `gamma`, presets)
+  - Understanding metrics (how to interpret results)
+  - Troubleshooting (common issues)
+  - Best practices
+
+- **API Reference**: Complete function documentation
+  - All functions with parameters, returns, examples
+  - Configuration and presets
+  - Conceptual notes
+
+- **Use Cases**: Real-world applications
+  - Exploratory data analysis
+  - Classification problems
+  - High-dimensional data
+
+**Building locally:**
+
+```bash
+pip install jupyter-book
+cd docs/book
+jupyter-book build .
+# Open docs/book/_build/html/index.html
+```
+
+---
+
 ## API Overview
 
 All functions assume `X` is a NumPy array of shape `(n, d)` with **preprocessed** numerical features (e.g. scaled, encoded, etc.).

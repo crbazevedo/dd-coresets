@@ -31,10 +31,10 @@
 
 ## In Progress
 
-### Notebooks
-- ⏳ Copy and adapt 5 notebooks to `tutorials/` directory
-- ⏳ Add conceptual content to notebooks (embedded notes)
-- ⏳ Convert notebooks to markdown chapters
+### Testing and Deployment
+- Test Jupyter Book build locally
+- Verify GitHub Pages deployment
+- Update README with documentation link
 
 ### API Reference
 - ⏳ Create `api/reference.md` (auto-generated or manual)
@@ -47,11 +47,12 @@
 
 ## Next Steps
 
-1. **Copy notebooks**: Copy all 5 notebooks to `tutorials/` and add conceptual content
-2. **Build test**: Test Jupyter Book build locally
-3. **Update README**: Add documentation link to main README
-4. **Deploy**: Push to main and verify GitHub Pages deployment
-5. **Add notebooks**: Complete tutorial section with all notebooks
+1. ✅ **Copy notebooks**: All 5 notebooks copied to `tutorials/` with conceptual content script
+2. ✅ **API Reference**: Complete documentation created
+3. ✅ **Use Cases**: 3 pages created (EDA, Classification, High-Dim)
+4. ✅ **Update README**: Documentation link added
+5. ⏳ **Build test**: Test Jupyter Book build locally (requires `pip install jupyter-book`)
+6. ⏳ **Deploy**: Push to main and verify GitHub Pages deployment
 
 ## Content Philosophy
 
