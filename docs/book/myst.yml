@@ -1,0 +1,69 @@
+version: 1
+
+project:
+  title: "dd-coresets Documentation"
+  description: "Complete documentation for the dd-coresets library"
+  authors:
+    - name: "Carlos R. B. Azevedo"
+  toc:
+    - file: intro
+    - file: installation
+    - file: quickstart
+    - title: Tutorials
+      children:
+        - file: tutorials/basic_tabular.ipynb
+        - file: tutorials/multimodal_clusters.ipynb
+        - file: tutorials/adaptive_distances.ipynb
+        - file: tutorials/label_aware_classification.ipynb
+        - file: tutorials/high_dimensional.ipynb
+    - title: Concepts
+      children:
+        - file: concepts/density_estimation
+        - file: concepts/algorithm
+        - file: concepts/metrics
+        - file: concepts/adaptive_distances
+        - file: concepts/weighting
+    - title: Guides
+      children:
+        - file: guides/choosing_parameters
+        - file: guides/understanding_metrics
+        - file: guides/troubleshooting
+        - file: guides/best_practices
+    - title: API Reference
+      children:
+        - file: api/reference
+    - title: Use Cases
+      children:
+        - file: use_cases/eda
+        - file: use_cases/classification
+        - file: use_cases/high_dim
+
+execute:
+  execute_notebooks: "off"
+  timeout: 60
+
+parse:
+  myst_enable_extensions:
+    - colon_fence
+    - ampersand
+    - html_image
+
+html:
+  use_edit_page_button: false
+  use_repository_button: true
+  repository_url: https://github.com/crbazevedo/dd-coresets
+  use_issues_button: true
+  use_download_button: true
+  home_page_in_navbar: true
+  baseurl: ""
+
+latex:
+  latex_engine: pdflatex
+
+sphinx:
+  config:
+    html_theme_options:
+      navigation_depth: 2
+      show_prev_next: true
+      logo_only: false
+

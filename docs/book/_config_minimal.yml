@@ -1,0 +1,12 @@
+# Minimal Jupyter Book configuration for testing
+title: dd-coresets Documentation
+author: Carlos R. B. Azevedo
+
+# Minimal HTML settings
+html:
+  repository_url: https://github.com/crbazevedo/dd-coresets
+
+# Execute notebooks
+execute:
+  execute_notebooks: "off"
+
