@@ -34,6 +34,7 @@ latex:
 # Sphinx settings
 sphinx:
   config:
+    copyright: "2025, Carlos R. B. Azevedo"
     html_theme_options:
       navigation_depth: 2
       show_prev_next: true
