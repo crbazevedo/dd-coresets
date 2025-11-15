@@ -1,0 +1,44 @@
+# Jupyter Book configuration
+
+title: dd-coresets Documentation
+author: Carlos R. B. Azevedo
+logo: logo.png
+
+# Book settings
+html:
+  use_edit_button: false
+  use_repository_button: true
+  repository_url: https://github.com/crbazevedo/dd-coresets
+  use_issues_button: true
+  use_download_button: true
+  home_page_in_navbar: true
+  baseurl: ""
+
+# Execute notebooks
+execute:
+  execute_notebooks: "off"  # We'll execute manually before building
+  timeout: 60
+
+# Parse and execute notebooks
+parse:
+  myst_enable_extensions:
+    - colon_fence
+    - ampersand
+    - html_image
+
+# Bibliography
+bibtex_bibfiles:
+  - references.bib
+
+# LaTeX
+latex:
+  latex_engine: pdflatex
+
+# Sphinx settings
+sphinx:
+  config:
+    html_theme_options:
+      navigation_depth: 2
+      show_prev_next: true
+      logo_only: false
+
