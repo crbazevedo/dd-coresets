@@ -67,7 +67,8 @@ def add_conceptual_cells(notebook_path, notebook_type):
         for i, cell in enumerate(cells):
             new_cells.append(cell)
             
-            if i > 0 and 'scatter' in ''.join(cell.get('source', [])) and 'cluster' in ''.join(cell.get('source', []).lower()):
+            cell_source = ''.join(cell.get('source', [])).lower()
+            if i > 0 and 'scatter' in cell_source and 'cluster' in cell_source:
                 new_cells.append({
                     "cell_type": "markdown",
                     "metadata": {},

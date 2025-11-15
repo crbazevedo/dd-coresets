@@ -7,11 +7,11 @@ chapters:
   - file: quickstart
   - part: Tutorials
     chapters:
-      - file: tutorials/basic_tabular
-      - file: tutorials/multimodal_clusters
-      - file: tutorials/adaptive_distances
-      - file: tutorials/label_aware
-      - file: tutorials/high_dimensional
+      - file: tutorials/basic_tabular.ipynb
+      - file: tutorials/multimodal_clusters.ipynb
+      - file: tutorials/adaptive_distances.ipynb
+      - file: tutorials/label_aware_classification.ipynb
+      - file: tutorials/high_dimensional.ipynb
   - part: Concepts
     chapters:
       - file: concepts/density_estimation
