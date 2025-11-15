@@ -503,6 +503,8 @@ document.write(`
 <section id="compute-spatial-coverage">
 <h2>4. Compute Spatial Coverage<a class="headerlink" href="#compute-spatial-coverage" title="Link to this heading">#</a></h2>
 <p>We’ll compute how many coreset points are in each cluster.</p>
+<p><img alt="Cluster coverage comparison" src="tutorials/images/tutorials/multimodal_clusters/cluster_coverage.png" /></p>
+<p><em>Cluster coverage visualization showing how DDC ensures all clusters are represented.</em></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Find cluster labels for coreset points</span>
@@ -576,6 +578,8 @@ document.write(`
 </div>
 </div>
 </div>
+<p><img alt="Spatial coverage metrics bar chart" src="tutorials/images/tutorials/multimodal_clusters/spatial_coverage_metrics.png" /></p>
+<p><em>Spatial coverage metrics comparing minimum and mean distances to nearest representatives.</em></p>
 <section id="spatial-coverage-why-it-matters">
 <h3>Spatial Coverage: Why It Matters<a class="headerlink" href="#spatial-coverage-why-it-matters" title="Link to this heading">#</a></h3>
 <p>When data has multiple clusters of varying sizes, <strong>spatial coverage</strong> becomes crucial. Random sampling may miss small clusters entirely, especially when k (number of representatives) is small relative to the number of clusters.</p>
@@ -736,7 +740,7 @@ By Carlos R. B. Azevedo
 
   <p class="copyright">
     
-      © Copyright 2023.
+      © Copyright 2025, Carlos R. B. Azevedo.
       <br/>
     
   </p>

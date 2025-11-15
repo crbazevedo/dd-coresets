@@ -533,6 +533,8 @@ document.write(`
 <section id="compute-metrics">
 <h2>5. Compute Metrics<a class="headerlink" href="#compute-metrics" title="Link to this heading">#</a></h2>
 <p>We’ll compute distributional metrics to compare methods.</p>
+<p><img alt="Euclidean vs Adaptive distance coreset comparison" src="tutorials/images/tutorials/adaptive_distances/euclidean_vs_adaptive.png" /></p>
+<p><em>Comparison of Euclidean (left) and Adaptive (right) distance modes. Adaptive distances better capture elliptical cluster shapes.</em></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Helper functions (same as basic_tabular)</span>
@@ -611,6 +613,8 @@ document.write(`
 <section id="visualizations">
 <h2>6. Visualizations<a class="headerlink" href="#visualizations" title="Link to this heading">#</a></h2>
 <p>Let’s visualize the coresets in 2D.</p>
+<p><img alt="Elliptical cluster visualization with adaptive distances" src="tutorials/images/tutorials/adaptive_distances/elliptical_cluster_demo.png" /></p>
+<p><em>Demonstration of adaptive distances on elliptical clusters. Mahalanobis distance accounts for local covariance structure.</em></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Project to 2D</span>
@@ -787,7 +791,7 @@ By Carlos R. B. Azevedo
 
   <p class="copyright">
     
-      © Copyright 2023.
+      © Copyright 2025, Carlos R. B. Azevedo.
       <br/>
     
   </p>
