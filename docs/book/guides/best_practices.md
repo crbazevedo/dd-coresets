@@ -116,25 +116,25 @@ Visualizations help understand coreset quality:
 
 ## Common Mistakes
 
-### ❌ Don't: Use DDC blindly
+### Don't: Use DDC blindly
 
-**Do**: Understand when DDC helps (clustered data, small k, spatial coverage)
+**Do**: Understand when DDC helps (clustered data, small k, spatial coverage). DDC is not always better than Random—it excels in specific scenarios.
 
-### ❌ Don't: Ignore Random baseline
+### Don't: Ignore Random baseline
 
-**Do**: Always compare with Random to understand trade-offs
+**Do**: Always compare with Random to understand trade-offs. Random may preserve global covariance better in some cases.
 
-### ❌ Don't: Use very small k without tuning
+### Don't: Use very small k without tuning
 
-**Do**: Decrease `alpha` for small k to ensure coverage
+**Do**: Decrease `alpha` for small k to ensure coverage. With limited representatives, diversity becomes crucial.
 
-### ❌ Don't: Forget random_state
+### Don't: Forget random_state
 
-**Do**: Always set `random_state` for reproducibility
+**Do**: Always set `random_state` for reproducibility. DDC uses randomness in working sample selection and initialization.
 
-### ❌ Don't: Use DDC for uniform distributions
+### Don't: Use DDC for uniform distributions
 
-**Do**: Use Random if data is uniform or has no clear structure
+**Do**: Use Random if data is uniform or has no clear structure. DDC's density-based approach provides no advantage when density is uniform.
 
 ## Further Reading
 

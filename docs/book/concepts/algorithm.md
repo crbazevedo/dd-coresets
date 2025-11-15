@@ -30,7 +30,7 @@ Where:
 - `min_distance(x, selected_reps)` is the minimum distance to already-selected representatives
 - `α` (alpha) controls the trade-off (default 0.3)
 
-**Why greedy works**: The diversity term (distance) ensures we don't select points too close to already-selected points. This is similar to facility location problems (submodular optimization).
+**Why greedy works**: The diversity term (distance) ensures we don't select points too close to already-selected points. This is similar to facility location problems and k-medoids clustering (Kaufman & Rousseeuw, 1990), where we want to place facilities (representatives) to cover all regions while minimizing cost. The greedy approach, while not globally optimal, provides a good approximation with O(k × n) complexity instead of exponential.
 
 **Intuition**: At each step, we pick the point that:
 1. Has high density (important region)
@@ -85,6 +85,24 @@ After selection, DDC optionally refines representatives by:
 2. Replace the representative with the medoid
 
 **Why**: This improves the coreset by ensuring representatives are truly representative of their regions.
+
+## Theoretical Connections
+
+The DDC algorithm connects to several well-established areas:
+
+**Coresets**: The theoretical foundation comes from Feldman & Langberg (2011), who established a unified framework for coreset construction. DDC applies this framework to distributional approximation.
+
+**Facility Location**: The greedy selection strategy is related to facility location problems, where we want to place k facilities to serve n customers. The diversity term in DDC ensures "facilities" (representatives) are well-distributed.
+
+**k-Medoids**: Like k-medoids clustering (Kaufman & Rousseeuw, 1990), DDC selects real data points (medoids) rather than synthetic centroids. This ensures interpretability and allows the coreset to be used directly in analysis.
+
+**Submodular Optimization**: The greedy selection can be viewed as submodular maximization, where the objective function (density × diversity) has diminishing returns—a property that makes greedy algorithms effective.
+
+## References
+
+- Feldman, D., & Langberg, M. (2011). A unified framework for approximating and clustering data. *Proceedings of the 43rd annual ACM symposium on Theory of computing*.
+
+- Kaufman, L., & Rousseeuw, P. J. (1990). *Finding groups in data: an introduction to cluster analysis*. John Wiley & Sons.
 
 ## Further Reading
 

@@ -44,7 +44,7 @@ Where `R` is the correlation matrix (normalized covariance).
 
 **Intuition**: Imagine you have piles of dirt (distribution 1) and need to move them to match another shape (distribution 2). W1 is the minimum "work" (distance × mass) needed.
 
-**Mathematical definition**: For 1D distributions, W₁(P, Q) = ∫ |F_P(x) - F_Q(x)| dx, where F is the cumulative distribution function.
+**Mathematical definition**: For 1D distributions, W₁(P, Q) = ∫ |F_P(x) - F_Q(x)| dx, where F is the cumulative distribution function. This connects to optimal transport theory (Villani, 2009), where Wasserstein distance measures the minimum "cost" of transforming one distribution into another.
 
 **Why it matters for DDC**: Lower W1 means the coreset distribution is closer to the original. This is especially important for **marginal distributions** (per-feature). DDC typically achieves 20-30% better W1 than Random.
 
@@ -104,6 +104,20 @@ Where `R` is the correlation matrix (normalized covariance).
 
 - **Use DDC when**: You have clustered data, need spatial coverage, or have small k
 - **Use Random when**: Preserving exact global covariance is critical, or data is high-dimensional and sparse
+
+## Theoretical Background
+
+**Wasserstein Distance**: Named after Leonid Wasserstein, this distance metric comes from optimal transport theory (Villani, 2009). It measures the minimum "work" needed to transform one distribution into another, making it a natural metric for distributional approximation.
+
+**Kolmogorov-Smirnov Test**: The KS statistic is a classical non-parametric test for comparing distributions (Kolmogorov, 1933; Smirnov, 1948). It measures the maximum deviation between cumulative distribution functions, making it sensitive to systematic biases.
+
+**Maximum Mean Discrepancy**: MMD was introduced by Gretton et al. (2012) as a kernel-based method for comparing distributions. It measures the distance between distributions in a reproducing kernel Hilbert space (RKHS), capturing both mean and higher-order moments.
+
+## References
+
+- Villani, C. (2009). *Optimal transport: old and new* (Vol. 338). Springer.
+
+- Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf, B., & Smola, A. (2012). A kernel two-sample test. *Journal of Machine Learning Research*, 13(Mar), 723-773.
 
 ## Further Reading
 

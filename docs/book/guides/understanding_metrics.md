@@ -8,12 +8,12 @@ This guide explains how to interpret the metrics used to evaluate DDC coresets a
 
 | Metric | What It Measures | Lower is Better? | DDC Typically Wins? |
 |--------|-----------------|------------------|---------------------|
-| Mean Error | Center of distribution | ✅ Yes | ✅ Yes (50-70% better) |
-| Cov Error | Shape and scale | ✅ Yes | ⚠️ Sometimes (Random may win) |
-| Corr Error | Feature relationships | ✅ Yes | ✅ Yes (in clustered data) |
-| W1 (Wasserstein-1) | Distribution distance | ✅ Yes | ✅ Yes (20-30% better) |
-| KS (Kolmogorov-Smirnov) | Worst-case deviation | ✅ Yes | ✅ Yes (marginals) |
-| MMD | Comprehensive distance | ✅ Yes | ✅ Yes |
+| Mean Error | Center of distribution | Yes | Yes (50-70% better) |
+| Cov Error | Shape and scale | Yes | Sometimes (Random may win) |
+| Corr Error | Feature relationships | Yes | Yes (in clustered data) |
+| W1 (Wasserstein-1) | Distribution distance | Yes | Yes (20-30% better) |
+| KS (Kolmogorov-Smirnov) | Worst-case deviation | Yes | Yes (marginals) |
+| MMD | Comprehensive distance | Yes | Yes |
 
 ## Distributional Metrics
 
