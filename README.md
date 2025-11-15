@@ -18,7 +18,7 @@ The goal is pragmatic: help data scientists work with large datasets using small
 
 ### The Problem
 
-**"We have 30M rows. We want 500 points + weights for EDA/simulation/stress testing."**
+**"Random sampling can miss important clusters and modes. We need a small weighted subset that guarantees spatial coverage and preserves marginal distributions—not just global covariance."**
 
 Large datasets are ubiquitous in data science, but many workflows require small, interpretable subsets:
 
