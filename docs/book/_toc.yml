@@ -1,0 +1,36 @@
+# Table of contents for Jupyter Book
+
+format: jb-book
+root: intro
+chapters:
+  - file: installation
+  - file: quickstart
+  - part: Tutorials
+    chapters:
+      - file: tutorials/basic_tabular
+      - file: tutorials/multimodal_clusters
+      - file: tutorials/adaptive_distances
+      - file: tutorials/label_aware
+      - file: tutorials/high_dimensional
+  - part: Concepts
+    chapters:
+      - file: concepts/density_estimation
+      - file: concepts/algorithm
+      - file: concepts/metrics
+      - file: concepts/adaptive_distances
+      - file: concepts/weighting
+  - part: Guides
+    chapters:
+      - file: guides/choosing_parameters
+      - file: guides/understanding_metrics
+      - file: guides/troubleshooting
+      - file: guides/best_practices
+  - part: API Reference
+    chapters:
+      - file: api/reference
+  - part: Use Cases
+    chapters:
+      - file: use_cases/eda
+      - file: use_cases/classification
+      - file: use_cases/high_dim
+
