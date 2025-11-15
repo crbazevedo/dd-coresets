@@ -35,6 +35,17 @@ jobs:
           cd docs/book
           jupyter-book build . --all
 
+      - name: Copy images to build directory
+        run: |
+          cd docs/book
+          # Ensure _images directory exists
+          mkdir -p _build/html/_images
+          # Copy all tutorial images to _images
+          if [ -d "images/tutorials" ]; then
+            find images/tutorials -name "*.png" -exec cp {} _build/html/_images/ \;
+          fi
+          echo "Copied images to _build/html/_images/"
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
