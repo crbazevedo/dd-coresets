@@ -252,19 +252,34 @@ print(info["k_per_class"])  # [150, 200, 150] for 3 classes
 
 ## Examples / Notebooks
 
-We provide example notebooks demonstrating DDC usage:
+We provide **5 self-contained example notebooks** demonstrating DDC from basic to advanced:
 
-- **[`examples/basic_tabular.ipynb`](examples/basic_tabular.ipynb)** (coming soon)
-  - Installation and basic `fit_ddc_coreset` usage
-  - Comparison with `fit_random_coreset` and `fit_stratified_coreset`
-  - Distributional metrics (Wasserstein-1, Kolmogorov-Smirnov) and visualizations
+1. **[basic_tabular.ipynb](examples/basic_tabular.ipynb)** - Basic usage with simple tabular data
+   - Installation and basic `fit_ddc_coreset` usage
+   - Comparison with `fit_random_coreset` and `fit_stratified_coreset`
+   - Distributional metrics (Wasserstein-1, Kolmogorov-Smirnov) and visualizations
 
-- **[`examples/multimodal_2d.ipynb`](examples/multimodal_2d.ipynb)** (coming soon)
-  - 2D multimodal dataset (3 Gaussians + ring structure)
-  - Spatial coverage visualization
-  - Marginal distribution comparison with histograms
+2. **[multimodal_clusters.ipynb](examples/multimodal_clusters.ipynb)** - Clustered data and spatial coverage
+   - Gaussian mixture with multiple clusters of varying sizes
+   - Spatial coverage visualization per cluster
+   - Demonstrates DDC advantage in well-separated clusters
 
-For now, see the experiment scripts in `experiments/` for working examples.
+3. **[adaptive_distances.ipynb](examples/adaptive_distances.ipynb)** - Adaptive distances and presets (v0.2.0)
+   - Elliptical clusters demonstrating adaptive advantage
+   - Comparison: Euclidean vs Adaptive vs Auto
+   - Presets: `fast`, `balanced`, `robust`
+
+4. **[label_aware_classification.ipynb](examples/label_aware_classification.ipynb)** - Supervised problems
+   - Binary classification with label-aware DDC
+   - Preserves class proportions using `fit_ddc_coreset_by_label`
+   - Impact on downstream model performance
+
+5. **[high_dimensional.ipynb](examples/high_dimensional.ipynb)** - High-dimensional data
+   - Automatic PCA reduction (d ≥ 30)
+   - Performance comparison
+   - Explained variance analysis
+
+All notebooks are **Kaggle/Colab compatible** and self-contained. See [examples/README.md](examples/README.md) for detailed descriptions.
 
 ---
 
