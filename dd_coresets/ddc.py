@@ -14,9 +14,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, asdict
 from typing import Optional, Dict, Any, Tuple
+import warnings
 
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
+from sklearn.covariance import OAS, LedoitWolf
 
 
 # --------- Dataclass de retorno (opcional, mas útil) --------- #
@@ -54,9 +56,9 @@ def _pairwise_sq_dists(X: np.ndarray, Y: Optional[np.ndarray] = None) -> np.ndar
     return np.maximum(D2, 0.0)
 
 
-def _density_knn(X: np.ndarray, m_neighbors: int = 32) -> np.ndarray:
+def _density_knn_euclidean(X: np.ndarray, m_neighbors: int = 32) -> np.ndarray:
     """
-    kNN-based local density proxy.
+    kNN-based local density proxy (Euclidean).
 
     p_i ∝ 1 / r_k(x_i)^d, normalised to sum to 1.
     """
@@ -73,6 +75,10 @@ def _density_knn(X: np.ndarray, m_neighbors: int = 32) -> np.ndarray:
     p = 1.0 / (rk ** d)
     p /= p.sum()
     return p
+
+
+# Backward compatibility alias
+_density_knn = _density_knn_euclidean
 
 
 def _select_reps_greedy(
@@ -156,6 +162,7 @@ def _medoid_refinement(
     selected_idx: np.ndarray,
     A: np.ndarray,
     max_iters: int = 1,
+    gamma: float = 1.0,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
     Few medoid refinement iterations.
@@ -171,6 +178,10 @@ def _medoid_refinement(
     selected_idx = np.asarray(selected_idx, dtype=int)
     n, d = X.shape
     k = len(selected_idx)
+
+    # Initialize
+    S = X[selected_idx]
+    w, A = _soft_assign_weights(X, S, gamma=gamma)
 
     for _ in range(max_iters):
         C = np.argmax(A, axis=1)  # hard cluster
@@ -193,7 +204,7 @@ def _medoid_refinement(
             selected_idx[j] = new_idx
 
         S = X[selected_idx]
-        w, A = _soft_assign_weights(X, S)
+        w, A = _soft_assign_weights(X, S, gamma=gamma)
         if not changed:
             break
 
@@ -201,19 +212,243 @@ def _medoid_refinement(
     return selected_idx, S, w, A
 
 
+# --------- Adaptive density estimation --------- #
+
+def _estimate_density_adaptive(
+    X: np.ndarray,
+    nbrs_idx: np.ndarray,  # (n0, m+1) euclidean neighbors (first is self)
+    *,
+    m_neighbors: int,
+    iterations: int,
+    shrinkage: str,  # "oas" | "lw" | "none"
+    reg_eps: float,
+) -> np.ndarray:
+    """
+    Local Mahalanobis density estimation.
+
+    Parameters
+    ----------
+    X : (n0, d_eff) array
+        Working sample data.
+    nbrs_idx : (n0, m+1) array
+        Euclidean neighbor indices (first column is self).
+    m_neighbors : int
+        Number of neighbors (excluding self).
+    iterations : int
+        Number of refinement iterations.
+    shrinkage : str
+        "oas" | "lw" | "none"
+    reg_eps : float
+        Regularization epsilon.
+
+    Returns
+    -------
+    p : (n0,) array
+        Density estimates (sum to 1).
+    """
+    X = np.asarray(X, dtype=float)
+    n0, d_eff = X.shape
+
+    # Initialize with Euclidean (use passed neighbor indices)
+    # nbrs_idx[i, m_neighbors] is the k-th neighbor (0-indexed, so m_neighbors is k+1-th)
+    rk_euclidean = np.zeros(n0)
+    for i in range(n0):
+        kth_nbr_idx = nbrs_idx[i, m_neighbors]
+        rk_euclidean[i] = np.linalg.norm(X[i] - X[kth_nbr_idx])
+    rk_euclidean = np.maximum(rk_euclidean, 1e-12)
+    p = m_neighbors / (rk_euclidean ** d_eff + 1e-10)
+
+    # Iterative refinement
+    for iteration in range(iterations):
+        new_p = np.zeros(n0)
+
+        for i in range(n0):
+            # Get neighbors (exclude self)
+            neighbor_indices = nbrs_idx[i, 1 : m_neighbors + 1]
+            neighbors = X[neighbor_indices]
+
+            if len(neighbors) <= d_eff:
+                new_p[i] = p[i]
+                continue
+
+            # Local mean
+            mu_local = neighbors.mean(axis=0)
+
+            # Local covariance with shrinkage
+            if shrinkage == "oas":
+                oas = OAS()
+                oas.fit(neighbors)
+                C = oas.covariance_
+            elif shrinkage == "lw":
+                lw = LedoitWolf()
+                lw.fit(neighbors)
+                C = lw.covariance_
+            else:  # "none"
+                C = np.cov(neighbors.T)
+
+            # Regularization
+            C += np.eye(d_eff) * reg_eps
+
+            try:
+                # Cholesky decomposition
+                L = np.linalg.cholesky(C)
+                detC = (np.diag(L).prod()) ** 2
+
+                # Mahalanobis distances to neighbors only
+                D = neighbors - mu_local
+                Y = np.linalg.solve(L, D.T)  # (d_eff, m_neighbors)
+                dM = np.sqrt((Y * Y).sum(axis=0))  # (m_neighbors,)
+
+                # k-th Mahalanobis neighbor
+                rk_mahal = np.partition(dM, m_neighbors - 1)[m_neighbors - 1]
+                rk_mahal = np.maximum(rk_mahal, 1e-12)
+
+                # Adaptive density
+                new_p[i] = m_neighbors / (rk_mahal ** d_eff * np.sqrt(detC) + 1e-12)
+            except (np.linalg.LinAlgError, ValueError):
+                # Fallback to Euclidean
+                new_p[i] = p[i]
+
+        p = new_p
+
+    # Normalize
+    p = np.maximum(p, 1e-18)
+    p /= p.sum()
+    return p
+
+
+# --------- Config resolution --------- #
+
+def _resolve_config(
+    mode: str,
+    preset: str,
+    distance_cfg: Optional[Dict[str, Any]],
+    pipeline_cfg: Optional[Dict[str, Any]],
+    legacy_kwargs: Dict[str, Any],
+    d: int,
+) -> Tuple[Dict[str, Any], Dict[str, Any], Dict[str, Any]]:
+    """
+    Resolve configuration from presets, user overrides, and legacy kwargs.
+
+    Returns
+    -------
+    distance_cfg_resolved : dict
+    pipeline_cfg_resolved : dict
+    meta_info : dict
+        {"mode": str, "preset": str, "fallbacks": list, "deprecations": list}
+    """
+    from .pipelines import PRESETS
+
+    deprecations = []
+    fallbacks = []
+
+    # Start with preset defaults (or empty if manual)
+    if preset == "manual":
+        base_distance_cfg = {}
+        base_pipeline_cfg = {}
+    elif preset not in PRESETS:
+        raise ValueError(f"preset must be one of {list(PRESETS.keys())} or 'manual', got {preset}")
+    else:
+        base_distance_cfg = PRESETS[preset]["distance_cfg"].copy()
+        base_pipeline_cfg = PRESETS[preset]["pipeline_cfg"].copy()
+
+    # Override with user configs
+    if distance_cfg is not None:
+        base_distance_cfg.update(distance_cfg)
+    if pipeline_cfg is not None:
+        base_pipeline_cfg.update(pipeline_cfg)
+
+    # Map legacy kwargs
+    legacy_mappings = {
+        "use_adaptive_distance": ("mode", lambda x: "adaptive" if x else "euclidean"),
+        "m_neighbors": ("distance_cfg", "m_neighbors"),
+        "adaptive_iterations": ("distance_cfg", "iterations"),
+        "dim_threshold_adaptive": ("pipeline_cfg", "dim_threshold_adaptive"),
+        "pca_n_components": ("pipeline_cfg", "cap_components"),
+        "shrinkage": ("distance_cfg", "shrinkage"),
+        "reg_eps": ("distance_cfg", "reg_eps"),
+    }
+
+    for legacy_key, value in legacy_kwargs.items():
+        if legacy_key in legacy_mappings:
+            deprecations.append(legacy_key)
+            mapping = legacy_mappings[legacy_key]
+            if callable(mapping[1]):
+                # Transform function
+                if legacy_key == "use_adaptive_distance":
+                    mode = mapping[1](value)
+            else:
+                # Direct mapping
+                cfg_key = mapping[0]
+                param_key = mapping[1]
+                if cfg_key == "distance_cfg":
+                    base_distance_cfg[param_key] = value
+                elif cfg_key == "pipeline_cfg":
+                    base_pipeline_cfg[param_key] = value
+
+    # Emit deprecation warnings
+    for dep_key in deprecations:
+        warnings.warn(
+            f"Parameter '{dep_key}' is deprecated. Use 'mode', 'preset', or '*_cfg' dicts instead.",
+            DeprecationWarning,
+            stacklevel=3,
+        )
+
+    # Validate mode
+    if mode not in {"euclidean", "adaptive", "auto"}:
+        raise ValueError(f"mode must be one of {{'euclidean', 'adaptive', 'auto'}}, got {mode}")
+
+    # Fill defaults for manual preset if missing
+    if preset == "manual":
+        # Default distance config
+        if "m_neighbors" not in base_distance_cfg:
+            base_distance_cfg["m_neighbors"] = 32
+        if "iterations" not in base_distance_cfg:
+            base_distance_cfg["iterations"] = 1
+        if "shrinkage" not in base_distance_cfg:
+            base_distance_cfg["shrinkage"] = "oas"
+        if "reg_eps" not in base_distance_cfg:
+            base_distance_cfg["reg_eps"] = 1e-6
+        
+        # Default pipeline config
+        if "dim_threshold_adaptive" not in base_pipeline_cfg:
+            base_pipeline_cfg["dim_threshold_adaptive"] = 30
+        if "reduce" not in base_pipeline_cfg:
+            base_pipeline_cfg["reduce"] = "auto"
+        if "retain_variance" not in base_pipeline_cfg:
+            base_pipeline_cfg["retain_variance"] = 0.95
+        if "cap_components" not in base_pipeline_cfg:
+            base_pipeline_cfg["cap_components"] = 50
+
+    meta_info = {
+        "mode": mode,
+        "preset": preset,
+        "fallbacks": fallbacks,
+        "deprecations": deprecations,
+    }
+
+    return base_distance_cfg, base_pipeline_cfg, meta_info
+
+
 # --------- API pública --------- #
 
 def fit_ddc_coreset(
     X: np.ndarray,
     k: int,
-    n0: Optional[int] = 20000,
-    m_neighbors: int = 32,
+    *,
+    n0: Optional[int] = None,
     alpha: float = 0.3,
     gamma: float = 1.0,
     refine_iters: int = 1,
     reweight_full: bool = True,
     random_state: Optional[int] = None,
-) -> Tuple[np.ndarray, np.ndarray, CoresetInfo]:
+    # New surface:
+    mode: str = "euclidean",  # "euclidean" | "adaptive" | "auto"
+    preset: str = "balanced",  # "fast" | "balanced" | "robust" | "manual"
+    distance_cfg: Optional[Dict[str, Any]] = None,  # used if preset="manual"
+    pipeline_cfg: Optional[Dict[str, Any]] = None,  # used if preset="manual"
+    **legacy_kwargs,
+) -> Tuple[np.ndarray, np.ndarray, Dict[str, Any]]:
     """
     Fit a Density–Diversity Coreset (DDC) on X.
 
@@ -223,55 +458,138 @@ def fit_ddc_coreset(
         Preprocessed data.
     k : int
         Number of representatives.
-    n0 : int or None
+    n0 : int or None, default=None
         Working sample size. If None or >= n, all data are used.
-    m_neighbors : int
-        Number of neighbors for kNN density proxy.
-    alpha : float
+    alpha : float, default=0.3
         Density–diversity trade-off (0 ≈ diversity, 1 ≈ density).
-    gamma : float
+    gamma : float, default=1.0
         Kernel scale multiplier for soft assignments.
-    refine_iters : int
+    refine_iters : int, default=1
         Number of medoid refinement iterations.
-    reweight_full : bool
+    reweight_full : bool, default=True
         If True, recompute weights using full X; else, use working sample.
-    random_state : int or None
+    random_state : int or None, default=None
         RNG seed.
+    mode : str, default="euclidean"
+        Distance mode: "euclidean" (default, backward compatible),
+        "adaptive" (Mahalanobis), or "auto" (choose based on d).
+    preset : str, default="balanced"
+        Preset configuration: "fast", "balanced", "robust", or "manual".
+    distance_cfg : dict or None, default=None
+        Override distance config (used if preset="manual").
+    pipeline_cfg : dict or None, default=None
+        Override pipeline config (used if preset="manual").
+    **legacy_kwargs
+        Legacy parameters (deprecated, emit warnings).
 
     Returns
     -------
-    S : (k, d)
-        Representatives.
-    w : (k,)
+    S : (k, d) array
+        Representatives (always in original feature space).
+    w : (k,) array
         Weights (sum to 1).
-    info : CoresetInfo
-        Metadata (indices, parameters, etc.).
+    info : dict
+        Metadata including resolved configs, pipeline info, fallbacks.
     """
+    from .pipelines import choose_pipeline, reduce_dimensionality_if_needed
+
     rng = np.random.default_rng(random_state)
     X = np.asarray(X, dtype=float)
     n, d = X.shape
 
+    # Default n0 for backward compatibility
+    if n0 is None:
+        n0 = 20000
+
+    # Resolve configuration
+    distance_cfg_resolved, pipeline_cfg_resolved, meta_info = _resolve_config(
+        mode=mode,
+        preset=preset,
+        distance_cfg=distance_cfg,
+        pipeline_cfg=pipeline_cfg,
+        legacy_kwargs=legacy_kwargs,
+        d=d,
+    )
+
+    m_neighbors = distance_cfg_resolved["m_neighbors"]
+    dim_threshold_adaptive = pipeline_cfg_resolved["dim_threshold_adaptive"]
+
+    # Choose pipeline strategy
+    pipeline_decision = choose_pipeline(
+        d=d,
+        m_neighbors=m_neighbors,
+        mode=mode,
+        dim_threshold_adaptive=dim_threshold_adaptive,
+    )
+
+    # Reduce dimensionality if needed
+    X_eff = X
+    pca_info = {"pca_model": None, "n_components": d, "explained_variance_ratio": None}
+    if pipeline_decision["do_pca"]:
+        X_eff, pca_info = reduce_dimensionality_if_needed(
+            X,
+            reduce=pipeline_cfg_resolved["reduce"],
+            retain_variance=pipeline_cfg_resolved["retain_variance"],
+            cap_components=pipeline_cfg_resolved["cap_components"],
+        )
+    d_eff = X_eff.shape[1]
+
     # Working sample
-    if (n0 is None) or (n0 >= n):
+    if n0 >= n:
         idx_work = np.arange(n, dtype=int)
     else:
         idx_work = rng.choice(n, size=n0, replace=False)
-    X0 = X[idx_work]
+    X0 = X_eff[idx_work]
     n0_eff = X0.shape[0]
 
-    # Density proxy
-    p0 = _density_knn(X0, m_neighbors=m_neighbors)
+    # Build Euclidean kNN (always, for neighbor graph)
+    # Adjust m_neighbors if working sample is too small
+    m_eff = min(m_neighbors + 1, max(2, n0_eff))
+    nn = NearestNeighbors(n_neighbors=m_eff, metric="euclidean")
+    nn.fit(X0)
+    dists_euclidean, nbrs_idx = nn.kneighbors(X0, return_distance=True)
+    # Adjust m_neighbors for density estimation if needed
+    m_neighbors_eff = min(m_neighbors, n0_eff - 1)
 
-    # Greedy selection on working sample
+    # Compute density
+    use_adaptive = pipeline_decision["adaptive"] and (m_neighbors_eff > d_eff)
+    if use_adaptive:
+        p0 = _estimate_density_adaptive(
+            X0,
+            nbrs_idx,
+            m_neighbors=m_neighbors_eff,
+            iterations=distance_cfg_resolved["iterations"],
+            shrinkage=distance_cfg_resolved["shrinkage"],
+            reg_eps=distance_cfg_resolved["reg_eps"],
+        )
+    else:
+        if pipeline_decision["adaptive"] and not (m_neighbors_eff > d_eff):
+            meta_info["fallbacks"].append(
+                f"Adaptive requested but m_neighbors ({m_neighbors_eff}) <= d_eff ({d_eff}), using Euclidean"
+            )
+        p0 = _density_knn_euclidean(X0, m_neighbors=m_neighbors_eff)
+
+    # Greedy selection on working sample (in effective space)
     selected_idx0 = _select_reps_greedy(
         X0, p0, k, alpha=alpha, random_state=random_state
     )
-    S0 = X0[selected_idx0]
+    S0_eff = X0[selected_idx0]
 
-    # Soft assign + medoid refinement on working sample
-    w0, A0 = _soft_assign_weights(X0, S0, gamma=gamma)
+    # Map back to original space if PCA was used
+    if pca_info["pca_model"] is not None:
+        S0 = pca_info["pca_model"].inverse_transform(S0_eff)
+    else:
+        S0 = S0_eff
+
+    # Soft assign + medoid refinement on working sample (use original space for distances)
+    X0_orig = X[idx_work]
+    # selected_idx0 are indices relative to X0 (working sample in effective space)
+    # For refinement, we need to work in original space, so we use S0 (already mapped back)
+    # and refine by finding closest points in X0_orig to S0
+    w0, A0 = _soft_assign_weights(X0_orig, S0, gamma=gamma)
+    # Refinement: find medoids in original space based on soft assignments
     selected_idx_ref0, S_ref0, w_ref0, A_ref0 = _medoid_refinement(
-        X0, selected_idx0, A0, max_iters=refine_iters
+        X0_orig, selected_idx0, A0, max_iters=refine_iters, gamma=gamma
     )
 
     # Reweight on full data if requested
@@ -286,18 +604,34 @@ def fit_ddc_coreset(
     # Map selected_idx_ref0 (índices relativos ao working sample) para X
     selected_global = idx_work[selected_idx_ref0]
 
-    info = CoresetInfo(
-        method="ddc",
-        k=k,
-        n=n,
-        n0=n0_eff,
-        working_indices=idx_work,
-        selected_indices=selected_global,
-        alpha=alpha,
-        m_neighbors=m_neighbors,
-        gamma=gamma,
-        refine_iters=refine_iters,
-    )
+    # Build info dict (extended)
+    info = {
+        "method": "ddc",
+        "k": k,
+        "n": n,
+        "n0": n0_eff,
+        "working_indices": idx_work,
+        "selected_indices": selected_global,
+        "alpha": alpha,
+        "gamma": gamma,
+        "refine_iters": refine_iters,
+        "pipeline": {
+            "mode": meta_info["mode"],
+            "preset": meta_info["preset"],
+            "adaptive": use_adaptive,
+            "pca_used": pca_info["pca_model"] is not None,
+            "d_original": d,
+            "d_effective": d_eff,
+            "fallbacks": meta_info["fallbacks"],
+        },
+        "config": {
+            "distance_cfg": distance_cfg_resolved,
+            "pipeline_cfg": pipeline_cfg_resolved,
+        },
+        "pca": pca_info,
+        "deprecations": meta_info["deprecations"],
+        "random_state": random_state,
+    }
 
     return S, w, info
 

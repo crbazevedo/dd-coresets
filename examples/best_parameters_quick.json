@@ -1,0 +1,6 @@
+{
+  "alpha": 0.2,
+  "gamma": 1.5,
+  "m_neighbors": 16,
+  "refine_iters": 2
+}

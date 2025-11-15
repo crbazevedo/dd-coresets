@@ -1,0 +1,12 @@
+{
+  "alpha": 0.1,
+  "gamma": 0.5,
+  "m_neighbors": 16,
+  "refine_iters": 3,
+  "metrics": {
+    "mean_err_l2": 0.19046360060710524,
+    "cov_err_fro": 0.48244513643859144,
+    "corr_err_fro": 0.111010039613424,
+    "mmd": 0.09004118802174374
+  }
+}

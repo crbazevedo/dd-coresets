@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dd-coresets"
-version = "0.1.3"
+version = "0.2.0"
 description = "Density–Diversity Coresets (DDC) for dataset summarization and distributional approximation"
 readme = "README.md"
 license = "MIT"

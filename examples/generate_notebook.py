@@ -16,12 +16,9 @@ def create_notebook():
         "cell_type": "markdown",
         "metadata": {},
         "source": [
-            "# Density–Diversity Coresets (DDC) for Large Tabular Data: Global vs Label-wise\n",
+            "# Density–Diversity Coresets (DDC) for Large Tabular Data: Label-Aware Approach\n",
             "\n",
-            "This notebook demonstrates how to use the `dd-coresets` library to compress large tabular datasets while preserving distributional properties. We focus on a **binary classification** problem (credit risk) and compare:\n",
-            "\n",
-            "1. **Global, unsupervised DDC coreset**: Compresses the entire dataset without considering labels (may distort class proportions)\n",
-            "2. **Label-wise DDC coreset**: Preserves class proportions by applying DDC separately within each class\n",
+            "This notebook demonstrates how to use the `dd-coresets` library to compress large tabular datasets while preserving distributional properties. We focus on a **binary classification** problem and show how **label-aware DDC** preserves class proportions by applying DDC separately within each class.\n",
             "\n",
             "## The Practical Problem\n",
             "\n",
@@ -32,7 +29,7 @@ def create_notebook():
             "\n",
             "**Why weights matter**: A coreset is not just a set of points—it's a **weighted set** that approximates the full distribution. The weights allow us to reconstruct statistics (means, covariances, marginals) of the original dataset from just a few hundred points.\n",
             "\n",
-            "**The challenge**: `dd-coresets` is **unsupervised**—it only looks at feature distributions, not labels. If used naively on the entire dataset, it can change label proportions, which is problematic for supervised learning tasks."
+            "**The challenge**: `dd-coresets` is **unsupervised**—it only looks at feature distributions, not labels. For supervised learning tasks, we need to preserve class proportions. **Label-aware DDC** solves this by applying DDC separately within each class, preserving both distributional properties and label balance."
         ]
     })
     
@@ -74,6 +71,7 @@ def create_notebook():
             "from sklearn.linear_model import LogisticRegression\n",
             "from sklearn.metrics import roc_auc_score, roc_curve, brier_score_loss, accuracy_score\n",
             "from sklearn.decomposition import PCA\n",
+            "from sklearn.datasets import fetch_openml\n",
             "\n",
             "from scipy.stats import wasserstein_distance, ks_2samp\n",
             "\n",
@@ -92,7 +90,7 @@ def create_notebook():
             "plt.rcParams['figure.figsize'] = (12, 6)\n",
             "plt.rcParams['font.size'] = 10\n",
             "\n",
-            "print(\"✅ Imports successful\")"
+            "print(\"Imports successful\")"
         ]
     })
     
@@ -103,11 +101,9 @@ def create_notebook():
         "source": [
             "## 2. Data Loading\n",
             "\n",
-            "We'll use a **credit risk style dataset** with numeric features and a binary label (default / non-default).\n",
+            "We'll use the **Adult Census Income** dataset, a well-known binary classification dataset from the UCI Machine Learning Repository. This dataset contains demographic and employment information, with the goal of predicting whether income exceeds $50K/year.\n",
             "\n",
-            "**For Kaggle users**: Adapt the path below to your dataset location (e.g., `/kaggle/input/give-me-some-credit-dataset/cs-training.csv`).\n",
-            "\n",
-            "**For Colab users**: Upload your dataset or use the synthetic fallback below."
+            "The dataset is publicly available and can be downloaded via `sklearn.datasets.fetch_openml`."
         ]
     })
     
@@ -117,53 +113,30 @@ def create_notebook():
         "metadata": {},
         "outputs": [],
         "source": [
-            "# ============================================\n",
-            "# KAGGLE-SPECIFIC: Load from Kaggle input\n",
-            "# ============================================\n",
-            "# Uncomment and adapt the path below if running on Kaggle:\n",
-            "#\n",
-            "# import os\n",
-            "# kaggle_path = \"/kaggle/input/give-me-some-credit-dataset/cs-training.csv\"\n",
-            "# if os.path.exists(kaggle_path):\n",
-            "#     df = pd.read_csv(kaggle_path)\n",
-            "#     # Assuming the target column is named 'SeriousDlqin2yrs' or similar\n",
-            "#     # Rename to 'target' for consistency\n",
-            "#     if 'SeriousDlqin2yrs' in df.columns:\n",
-            "#         df = df.rename(columns={'SeriousDlqin2yrs': 'target'})\n",
-            "#     print(f\"✅ Loaded dataset from Kaggle: {df.shape}\")\n",
-            "# else:\n",
-            "#     print(\"⚠️  Kaggle path not found, using synthetic data\")\n",
-            "#     USE_SYNTHETIC = True\n",
+            "# Load Adult Census Income dataset from OpenML\n",
+            "print(\"Loading Adult Census Income dataset from OpenML...\")\n",
+            "try:\n",
+            "    # Try to load from cache first (faster)\n",
+            "    adult = fetch_openml(\"adult\", version=2, as_frame=True, parser=\"pandas\")\n",
+            "    print(f\"Dataset loaded: {adult.frame.shape}\")\n",
+            "except Exception as e:\n",
+            "    print(f\"Error loading dataset: {e}\")\n",
+            "    print(\"This may take a few minutes on first download...\")\n",
+            "    adult = fetch_openml(\"adult\", version=2, as_frame=True, parser=\"pandas\")\n",
             "\n",
-            "# ============================================\n",
-            "# FALLBACK: Synthetic imbalanced dataset\n",
-            "# ============================================\n",
-            "USE_SYNTHETIC = True  # Set to False if you have real data\n",
+            "# Extract features and target\n",
+            "df = adult.frame.copy()\n",
             "\n",
-            "if USE_SYNTHETIC:\n",
-            "    from sklearn.datasets import make_classification\n",
-            "    \n",
-            "    print(\"Generating synthetic credit risk dataset...\")\n",
-            "    X, y = make_classification(\n",
-            "        n_samples=100_000,\n",
-            "        n_features=20,\n",
-            "        n_informative=10,\n",
-            "        n_redundant=5,\n",
-            "        n_clusters_per_class=2,\n",
-            "        weights=[0.9, 0.1],  # 90% non-default, 10% default (imbalanced)\n",
-            "        random_state=RANDOM_STATE,\n",
-            "        class_sep=0.8,  # Moderate separation\n",
-            "    )\n",
-            "    \n",
-            "    df = pd.DataFrame(X, columns=[f\"feature_{i}\" for i in range(X.shape[1])])\n",
-            "    df[\"target\"] = y\n",
-            "    print(f\"✅ Generated synthetic dataset: {df.shape}\")\n",
+            "# The target column is 'class' with values '<=50K' and '>50K'\n",
+            "# Convert to binary: 0 for '<=50K', 1 for '>50K'\n",
+            "if 'class' in df.columns:\n",
+            "    df['target'] = (df['class'] == '>50K').astype(int)\n",
+            "    df = df.drop(columns=['class'])\n",
             "\n",
-            "# Display basic info\n",
-            "print(\"\\nDataset shape:\", df.shape)\n",
-            "print(\"\\nLabel distribution:\")\n",
+            "print(f\"\\nDataset shape: {df.shape}\")\n",
+            "print(f\"\\nLabel distribution:\")\n",
             "print(df[\"target\"].value_counts(normalize=True))\n",
-            "print(\"\\nFirst few rows:\")\n",
+            "print(f\"\\nFirst few rows:\")\n",
             "df.head()"
         ]
     })
@@ -190,6 +163,7 @@ def create_notebook():
             "numeric_cols = [col for col in numeric_cols if col != 'target']\n",
             "\n",
             "print(f\"Selected {len(numeric_cols)} numeric features\")\n",
+            "print(f\"Features: {numeric_cols}\")\n",
             "\n",
             "# Extract features and target\n",
             "X_raw = df[numeric_cols].copy()\n",
@@ -197,10 +171,10 @@ def create_notebook():
             "\n",
             "# Handle missing values (simple mean imputation)\n",
             "if X_raw.isnull().sum().sum() > 0:\n",
-            "    print(f\"\\n⚠️  Found missing values. Imputing with mean...\")\n",
+            "    print(f\"\\nFound missing values. Imputing with mean...\")\n",
             "    X_raw = X_raw.fillna(X_raw.mean())\n",
             "else:\n",
-            "    print(\"\\n✅ No missing values\")\n",
+            "    print(\"\\nNo missing values\")\n",
             "\n",
             "# Convert to NumPy array\n",
             "X_raw = X_raw.values\n",
@@ -272,7 +246,7 @@ def create_notebook():
             "baseline_brier = brier_score_loss(y_test, y_pred_proba_full)\n",
             "baseline_accuracy = accuracy_score(y_test, y_pred_full)\n",
             "\n",
-            "print(\"📊 Full-Data Baseline Metrics:\")\n",
+            "print(\"Full-Data Baseline Metrics:\")\n",
             "print(f\"  ROC AUC:  {baseline_auc:.4f}\")\n",
             "print(f\"  Brier Score: {baseline_brier:.4f}\")\n",
             "print(f\"  Accuracy:    {baseline_accuracy:.4f}\")\n",
@@ -299,7 +273,7 @@ def create_notebook():
             "- **Random subset**: Uniform sampling (may miss rare classes)\n",
             "- **Stratified subset**: Preserves class proportions (common practice in supervised learning)\n",
             "\n",
-            "We'll use `k_reps = 1000` representatives (1% of training data if n_train = 100k)."
+            "We'll use `k_reps = 1000` representatives."
         ]
     })
     
@@ -327,7 +301,7 @@ def create_notebook():
             "y_random = y_train[random_indices]\n",
             "w_random = np.ones(k_reps) / k_reps  # Uniform weights\n",
             "\n",
-            "print(\"✅ Random subset created\")\n",
+            "print(\"Random subset created\")\n",
             "print(f\"  Shape: {X_random.shape}\")\n",
             "print(f\"  Label distribution: {np.bincount(y_random) / len(y_random)}\")"
         ]
@@ -363,101 +337,27 @@ def create_notebook():
             "y_strat = y_train[strat_indices]\n",
             "w_strat = np.ones(len(X_strat)) / len(X_strat)  # Uniform weights\n",
             "\n",
-            "print(\"✅ Stratified subset created\")\n",
+            "print(\"Stratified subset created\")\n",
             "print(f\"  Shape: {X_strat.shape}\")\n",
             "print(f\"  Label distribution: {np.bincount(y_strat) / len(y_strat)}\")\n",
             "print(f\"  Original label distribution: {np.bincount(y_train) / len(y_train)}\")"
         ]
     })
     
-    # ========== GLOBAL DDC ==========
+    # ========== LABEL-AWARE DDC ==========
     cells.append({
         "cell_type": "markdown",
         "metadata": {},
         "source": [
-            "## 6. Global (Unsupervised) DDC Coreset\n",
-            "\n",
-            "Now we'll apply DDC to the **entire training set**, ignoring labels. This is the \"naive\" approach that can distort class proportions because DDC only looks at feature distributions."
-        ]
-    })
-    
-    cells.append({
-        "cell_type": "code",
-        "execution_count": None,
-        "metadata": {},
-        "outputs": [],
-        "source": [
-            "# Global DDC coreset (unsupervised, ignores labels)\n",
-            "n0 = min(50_000, X_train.shape[0])  # Working sample size\n",
-            "\n",
-            "print(f\"Fitting global DDC coreset (k={k_reps}, n0={n0})...\")\n",
-            "\n",
-            "S_global, w_global, info_global = fit_ddc_coreset(\n",
-            "    X_train,\n",
-            "    k=k_reps,\n",
-            "    n0=n0,\n",
-            "    alpha=0.3,  # density-diversity trade-off\n",
-            "    m_neighbors=32,  # kNN for density estimation\n",
-            "    gamma=1.0,  # kernel scale\n",
-            "    refine_iters=1,\n",
-            "    reweight_full=True,  # Reweight on full dataset\n",
-            "    random_state=RANDOM_STATE,\n",
-            ")\n",
-            "\n",
-            "print(f\"✅ Global DDC coreset created: {S_global.shape}\")\n",
-            "print(f\"  Weights sum: {w_global.sum():.6f}\")"
-        ]
-    })
-    
-    cells.append({
-        "cell_type": "code",
-        "execution_count": None,
-        "metadata": {},
-        "outputs": [],
-        "source": [
-            "# Recover labels for the selected representatives\n",
-            "# info_global contains the indices of selected points\n",
-            "selected_indices = info_global.selected_indices\n",
-            "y_global = y_train[selected_indices]\n",
-            "\n",
-            "print(\"📊 Label Distribution Comparison:\")\n",
-            "print(f\"  Original training set:\")\n",
-            "orig_props = np.bincount(y_train) / len(y_train)\n",
-            "for label, prop in enumerate(orig_props):\n",
-            "    print(f\"    Class {label}: {prop:.4f} ({np.sum(y_train == label):,} samples)\")\n",
-            "\n",
-            "print(f\"\\n  Global DDC coreset:\")\n",
-            "global_props = np.bincount(y_global) / len(y_global)\n",
-            "for label, prop in enumerate(global_props):\n",
-            "    print(f\"    Class {label}: {prop:.4f} ({np.sum(y_global == label):,} samples)\")\n",
-            "\n",
-            "print(f\"\\n⚠️  Class proportion shift:\")\n",
-            "for label in range(len(orig_props)):\n",
-            "    shift = global_props[label] - orig_props[label]\n",
-            "    print(f\"    Class {label}: {shift:+.4f} ({shift/orig_props[label]*100:+.2f}% relative change)\")"
-        ]
-    })
-    
-    cells.append({
-        "cell_type": "markdown",
-        "metadata": {},
-        "source": [
-            "**Key observation**: The global DDC coreset can change label proportions because it's **unsupervised**—it only optimizes for feature distribution preservation, not label balance. This is problematic for supervised learning tasks where class proportions matter."
-        ]
-    })
-    
-    # ========== LABEL-WISE DDC ==========
-    cells.append({
-        "cell_type": "markdown",
-        "metadata": {},
-        "source": [
-            "## 7. Label-wise DDC Coreset\n",
+            "## 6. Label-Aware DDC Coreset\n",
             "\n",
             "To preserve class proportions while still benefiting from DDC's distribution-preserving properties, we apply DDC **separately within each class**. This:\n",
             "\n",
             "1. Preserves label proportions by design\n",
             "2. Maintains density–diversity structure **within each class**\n",
-            "3. Still provides weighted representatives that approximate the full distribution"
+            "3. Still provides weighted representatives that approximate the full distribution\n",
+            "\n",
+            "**Key insight**: By applying DDC separately to each class, we ensure that the coreset maintains the original class balance while still capturing the distributional structure within each class."
         ]
     })
     
@@ -467,10 +367,10 @@ def create_notebook():
         "metadata": {},
         "outputs": [],
         "source": [
-            "# Label-wise DDC: apply DDC separately to each class\n",
-            "S_labelwise_list = []\n",
-            "w_labelwise_list = []\n",
-            "y_labelwise_list = []\n",
+            "# Label-aware DDC: apply DDC separately to each class\n",
+            "S_labelaware_list = []\n",
+            "w_labelaware_list = []\n",
+            "y_labelaware_list = []\n",
             "\n",
             "for class_label in np.unique(y_train):\n",
             "    # Extract data for this class\n",
@@ -487,34 +387,48 @@ def create_notebook():
             "    print(f\"  Allocating {k_class} representatives...\")\n",
             "    \n",
             "    # Fit DDC on this class\n",
+            "    # Use larger n0 for better density estimation when class is large enough\n",
             "    n0_class = min(20_000, len(X_class))\n",
+            "    \n",
+            "    # Optimized parameters (from grid search to minimize joint distribution errors)\n",
+            "    # These parameters were found to minimize covariance and correlation errors\n",
+            "    alpha_opt = 0.2  # Lower alpha favors diversity (better coverage)\n",
+            "    gamma_opt = 1.5  # Higher gamma for smoother weight assignments\n",
+            "    m_neighbors_opt = 16  # Fewer neighbors for faster computation, still adequate\n",
+            "    refine_iters_opt = 2  # More refinement iterations for better quality\n",
+            "    \n",
+            "    # Adjust m_neighbors for very small classes\n",
+            "    m_neighbors_class = max(5, min(m_neighbors_opt, len(X_class) // 10))\n",
             "    \n",
             "    S_class, w_class, info_class = fit_ddc_coreset(\n",
             "        X_class,\n",
             "        k=k_class,\n",
             "        n0=n0_class,\n",
-            "        alpha=0.3,\n",
-            "        m_neighbors=32,\n",
-            "        gamma=1.0,\n",
-            "        refine_iters=1,\n",
-            "        reweight_full=True,\n",
+            "        alpha=alpha_opt,\n",
+            "        m_neighbors=m_neighbors_class,\n",
+            "        gamma=gamma_opt,\n",
+            "        refine_iters=refine_iters_opt,\n",
+            "        reweight_full=True,  # Important: reweight on full class data\n",
             "        random_state=RANDOM_STATE + class_label,  # Different seed per class\n",
             "    )\n",
             "    \n",
-            "    S_labelwise_list.append(S_class)\n",
-            "    w_labelwise_list.append(w_class)\n",
-            "    y_labelwise_list.append(np.full(len(S_class), class_label))\n",
+            "    # Scale weights by class proportion to preserve global distribution\n",
+            "    w_class_scaled = w_class * p_class\n",
+            "    \n",
+            "    S_labelaware_list.append(S_class)\n",
+            "    w_labelaware_list.append(w_class_scaled)  # Already scaled by proportion\n",
+            "    y_labelaware_list.append(np.full(len(S_class), class_label))\n",
             "\n",
             "# Concatenate all classes\n",
-            "S_labelwise = np.vstack(S_labelwise_list)\n",
-            "w_labelwise = np.concatenate(w_labelwise_list)\n",
-            "y_labelwise = np.concatenate(y_labelwise_list)\n",
+            "S_labelaware = np.vstack(S_labelaware_list)\n",
+            "w_labelaware = np.concatenate(w_labelaware_list)\n",
+            "y_labelaware = np.concatenate(y_labelaware_list)\n",
             "\n",
-            "# Renormalize weights\n",
-            "w_labelwise = w_labelwise / w_labelwise.sum()\n",
+            "# Renormalize weights (they should already sum close to 1, but ensure it)\n",
+            "w_labelaware = w_labelaware / w_labelaware.sum()\n",
             "\n",
-            "print(f\"\\n✅ Label-wise DDC coreset created: {S_labelwise.shape}\")\n",
-            "print(f\"  Weights sum: {w_labelwise.sum():.6f}\")"
+            "print(f\"\\nLabel-aware DDC coreset created: {S_labelaware.shape}\")\n",
+            "print(f\"  Weights sum: {w_labelaware.sum():.6f}\")"
         ]
     })
     
@@ -525,29 +439,21 @@ def create_notebook():
         "outputs": [],
         "source": [
             "# Verify label proportions are preserved\n",
-            "print(\"📊 Label Distribution Comparison:\")\n",
+            "print(\"Label Distribution Comparison:\")\n",
             "print(f\"  Original training set:\")\n",
             "orig_props = np.bincount(y_train) / len(y_train)\n",
             "for label, prop in enumerate(orig_props):\n",
             "    print(f\"    Class {label}: {prop:.4f}\")\n",
             "\n",
-            "print(f\"\\n  Label-wise DDC coreset:\")\n",
-            "labelwise_props = np.bincount(y_labelwise) / len(y_labelwise)\n",
-            "for label, prop in enumerate(labelwise_props):\n",
+            "print(f\"\\n  Label-aware DDC coreset:\")\n",
+            "labelaware_props = np.bincount(y_labelaware) / len(y_labelaware)\n",
+            "for label, prop in enumerate(labelaware_props):\n",
             "    print(f\"    Class {label}: {prop:.4f}\")\n",
             "\n",
-            "print(f\"\\n✅ Class proportion preservation:\")\n",
+            "print(f\"\\nClass proportion preservation:\")\n",
             "for label in range(len(orig_props)):\n",
-            "    diff = abs(labelwise_props[label] - orig_props[label])\n",
+            "    diff = abs(labelaware_props[label] - orig_props[label])\n",
             "    print(f\"    Class {label}: {diff:.6f} difference\")"
-        ]
-    })
-    
-    cells.append({
-        "cell_type": "markdown",
-        "metadata": {},
-        "source": [
-            "**Key observation**: Label-wise DDC preserves class proportions by design, while still using density–diversity selection **within each class**. This gives us the best of both worlds: distribution preservation and label balance."
         ]
     })
     
@@ -556,7 +462,7 @@ def create_notebook():
         "cell_type": "markdown",
         "metadata": {},
         "source": [
-            "## 8. Distribution Comparison\n",
+            "## 7. Distribution Comparison\n",
             "\n",
             "Let's compare how well each subset/coreset preserves the **marginal distributions** of the original training data. We'll use:\n",
             "\n",
@@ -666,35 +572,28 @@ def create_notebook():
             "    w1_strat = compute_wasserstein_weighted(X_train_feat, X_strat_feat)\n",
             "    ks_strat = compute_ks_weighted(X_train_feat, X_strat_feat)\n",
             "    \n",
-            "    # Global DDC\n",
-            "    S_global_feat = S_global[:, feat_idx]\n",
-            "    w1_global = compute_wasserstein_weighted(X_train_feat, S_global_feat, target_weights=w_global)\n",
-            "    ks_global = compute_ks_weighted(X_train_feat, S_global_feat, target_weights=w_global)\n",
-            "    \n",
-            "    # Label-wise DDC\n",
-            "    S_labelwise_feat = S_labelwise[:, feat_idx]\n",
-            "    w1_labelwise = compute_wasserstein_weighted(X_train_feat, S_labelwise_feat, target_weights=w_labelwise)\n",
-            "    ks_labelwise = compute_ks_weighted(X_train_feat, S_labelwise_feat, target_weights=w_labelwise)\n",
+            "    # Label-aware DDC\n",
+            "    S_labelaware_feat = S_labelaware[:, feat_idx]\n",
+            "    w1_labelaware = compute_wasserstein_weighted(X_train_feat, S_labelaware_feat, target_weights=w_labelaware)\n",
+            "    ks_labelaware = compute_ks_weighted(X_train_feat, S_labelaware_feat, target_weights=w_labelaware)\n",
             "    \n",
             "    results.append({\n",
             "        'feature': feat_name,\n",
             "        'W1_random': w1_random,\n",
             "        'W1_strat': w1_strat,\n",
-            "        'W1_global_ddc': w1_global,\n",
-            "        'W1_labelwise_ddc': w1_labelwise,\n",
+            "        'W1_labelaware_ddc': w1_labelaware,\n",
             "        'KS_random': ks_random,\n",
             "        'KS_strat': ks_strat,\n",
-            "        'KS_global_ddc': ks_global,\n",
-            "        'KS_labelwise_ddc': ks_labelwise,\n",
+            "        'KS_labelaware_ddc': ks_labelaware,\n",
             "    })\n",
             "\n",
             "# Create results DataFrame\n",
             "dist_results_df = pd.DataFrame(results)\n",
-            "print(\"📊 Distribution Preservation Metrics:\")\n",
+            "print(\"Distribution Preservation Metrics:\")\n",
             "print(\"\\nWasserstein-1 Distance (lower is better):\")\n",
-            "print(dist_results_df[['feature', 'W1_random', 'W1_strat', 'W1_global_ddc', 'W1_labelwise_ddc']].to_string(index=False))\n",
+            "print(dist_results_df[['feature', 'W1_random', 'W1_strat', 'W1_labelaware_ddc']].to_string(index=False))\n",
             "print(\"\\nKolmogorov-Smirnov Statistic (lower is better):\")\n",
-            "print(dist_results_df[['feature', 'KS_random', 'KS_strat', 'KS_global_ddc', 'KS_labelwise_ddc']].to_string(index=False))"
+            "print(dist_results_df[['feature', 'KS_random', 'KS_strat', 'KS_labelaware_ddc']].to_string(index=False))"
         ]
     })
     
@@ -706,34 +605,203 @@ def create_notebook():
         "source": [
             "# Compute average metrics across features\n",
             "avg_metrics = {\n",
-            "    'Method': ['Random', 'Stratified', 'Global DDC', 'Label-wise DDC'],\n",
+            "    'Method': ['Random', 'Stratified', 'Label-aware DDC'],\n",
             "    'Avg W1': [\n",
             "        dist_results_df['W1_random'].mean(),\n",
             "        dist_results_df['W1_strat'].mean(),\n",
-            "        dist_results_df['W1_global_ddc'].mean(),\n",
-            "        dist_results_df['W1_labelwise_ddc'].mean(),\n",
+            "        dist_results_df['W1_labelaware_ddc'].mean(),\n",
             "    ],\n",
             "    'Avg KS': [\n",
             "        dist_results_df['KS_random'].mean(),\n",
             "        dist_results_df['KS_strat'].mean(),\n",
-            "        dist_results_df['KS_global_ddc'].mean(),\n",
-            "        dist_results_df['KS_labelwise_ddc'].mean(),\n",
+            "        dist_results_df['KS_labelaware_ddc'].mean(),\n",
             "    ]\n",
             "}\n",
             "\n",
             "avg_df = pd.DataFrame(avg_metrics)\n",
-            "print(\"📊 Average Distribution Preservation (across features):\")\n",
+            "print(\"Average Distribution Preservation (across features):\")\n",
             "print(avg_df.to_string(index=False))"
         ]
     })
     
+    # ========== JOINT DISTRIBUTION METRICS ==========
     cells.append({
         "cell_type": "markdown",
         "metadata": {},
         "source": [
-            "**Key observations**:\n",
-            "- DDC coresets (especially label-wise) typically preserve distributions better than random sampling\n",
-            "- Label-wise DDC often matches or exceeds global DDC in distribution preservation while also preserving label proportions"
+            "## 7.1. Joint Distribution Comparison\n",
+            "\n",
+            "While marginal distributions are important, for classification tasks we also need to preserve the **joint distribution** structure (covariances, correlations). Let's compute:\n",
+            "\n",
+            "- **Mean Error (L2)**: Difference in mean vectors\n",
+            "- **Covariance Error (Frobenius)**: Difference in covariance matrices\n",
+            "- **Correlation Error (Frobenius)**: Difference in correlation matrices\n",
+            "- **Maximum Mean Discrepancy (MMD)**: Kernel-based distance between distributions"
+        ]
+    })
+    
+    cells.append({
+        "cell_type": "code",
+        "execution_count": None,
+        "metadata": {},
+        "outputs": [],
+        "source": [
+            "# Helper functions for joint distribution metrics\n",
+            "def weighted_mean(S, w):\n",
+            "    \"\"\"Compute weighted mean.\"\"\"\n",
+            "    S = np.asarray(S, dtype=float)\n",
+            "    w = np.asarray(w, dtype=float)\n",
+            "    return (S * w[:, None]).sum(axis=0)\n",
+            "\n",
+            "def weighted_cov(S, w):\n",
+            "    \"\"\"Compute weighted covariance matrix.\"\"\"\n",
+            "    S = np.asarray(S, dtype=float)\n",
+            "    w = np.asarray(w, dtype=float)\n",
+            "    mu = weighted_mean(S, w)\n",
+            "    Xc = S - mu\n",
+            "    cov = (Xc * w[:, None]).T @ Xc\n",
+            "    return cov\n",
+            "\n",
+            "def corr_from_cov(cov):\n",
+            "    \"\"\"Compute correlation matrix from covariance matrix.\"\"\"\n",
+            "    cov = np.asarray(cov, dtype=float)\n",
+            "    std = np.sqrt(np.clip(np.diag(cov), 1e-12, None))\n",
+            "    inv_std = 1.0 / std\n",
+            "    C = cov * inv_std[:, None] * inv_std[None, :]\n",
+            "    return C\n",
+            "\n",
+            "def compute_mmd(X, Y, w_Y=None, kernel='rbf', gamma=None, n_samples=1000):\n",
+            "    \"\"\"\n",
+            "    Compute Maximum Mean Discrepancy (MMD) between X and weighted Y.\n",
+            "    \n",
+            "    Parameters\n",
+            "    ----------\n",
+            "    X : (n, d) array\n",
+            "        Full dataset\n",
+            "    Y : (k, d) array\n",
+            "        Coreset representatives\n",
+            "    w_Y : (k,) array, optional\n",
+            "        Weights for Y (default: uniform)\n",
+            "    kernel : str\n",
+            "        Kernel type ('rbf')\n",
+            "    gamma : float, optional\n",
+            "        RBF kernel bandwidth (default: median pairwise distance)\n",
+            "    n_samples : int\n",
+            "        Number of samples for approximation\n",
+            "    \"\"\"\n",
+            "    X = np.asarray(X, dtype=float)\n",
+            "    Y = np.asarray(Y, dtype=float)\n",
+            "    \n",
+            "    if w_Y is None:\n",
+            "        w_Y = np.ones(len(Y)) / len(Y)\n",
+            "    else:\n",
+            "        w_Y = np.asarray(w_Y, dtype=float)\n",
+            "        w_Y = w_Y / w_Y.sum()\n",
+            "    \n",
+            "    # Sample from X (uniform) and Y (weighted)\n",
+            "    n_sample = min(n_samples, len(X))\n",
+            "    idx_x = np.random.choice(len(X), size=n_sample, replace=False)\n",
+            "    X_sample = X[idx_x]\n",
+            "    \n",
+            "    idx_y = np.random.choice(len(Y), size=n_sample, p=w_Y, replace=True)\n",
+            "    Y_sample = Y[idx_y]\n",
+            "    \n",
+            "    # Compute pairwise distances for gamma estimation\n",
+            "    if gamma is None:\n",
+            "        all_data = np.vstack([X_sample, Y_sample])\n",
+            "        pairwise_dists = np.sqrt(((all_data[:, None, :] - all_data[None, :, :]) ** 2).sum(axis=2))\n",
+            "        gamma = 1.0 / np.median(pairwise_dists[pairwise_dists > 0])\n",
+            "    \n",
+            "    # RBF kernel\n",
+            "    def rbf_kernel(X1, X2):\n",
+            "        dists_sq = ((X1[:, None, :] - X2[None, :, :]) ** 2).sum(axis=2)\n",
+            "        return np.exp(-gamma * dists_sq)\n",
+            "    \n",
+            "    # MMD^2 = E[k(x,x')] - 2*E[k(x,y)] + E[k(y,y')]\n",
+            "    K_XX = rbf_kernel(X_sample, X_sample)\n",
+            "    K_YY = rbf_kernel(Y_sample, Y_sample)\n",
+            "    K_XY = rbf_kernel(X_sample, Y_sample)\n",
+            "    \n",
+            "    mmd_sq = K_XX.mean() - 2 * K_XY.mean() + K_YY.mean()\n",
+            "    return np.sqrt(max(0, mmd_sq))"
+        ]
+    })
+    
+    cells.append({
+        "cell_type": "code",
+        "execution_count": None,
+        "metadata": {},
+        "outputs": [],
+        "source": [
+            "# Compute joint distribution metrics for each method\n",
+            "joint_metrics = []\n",
+            "\n",
+            "# Reference: Full training data\n",
+            "mu_full = X_train.mean(axis=0)\n",
+            "cov_full = np.cov(X_train, rowvar=False)\n",
+            "corr_full = corr_from_cov(cov_full)\n",
+            "\n",
+            "# Random subset\n",
+            "mu_random = X_random.mean(axis=0)\n",
+            "cov_random = np.cov(X_random, rowvar=False)\n",
+            "corr_random = corr_from_cov(cov_random)\n",
+            "mean_err_random = np.linalg.norm(mu_full - mu_random)\n",
+            "cov_err_random = np.linalg.norm(cov_full - cov_random, ord='fro')\n",
+            "corr_err_random = np.linalg.norm(corr_full - corr_random, ord='fro')\n",
+            "mmd_random = compute_mmd(X_train, X_random)\n",
+            "\n",
+            "joint_metrics.append({\n",
+            "    'method': 'Random',\n",
+            "    'mean_err_l2': mean_err_random,\n",
+            "    'cov_err_fro': cov_err_random,\n",
+            "    'corr_err_fro': corr_err_random,\n",
+            "    'mmd': mmd_random,\n",
+            "})\n",
+            "\n",
+            "# Stratified subset\n",
+            "mu_strat = X_strat.mean(axis=0)\n",
+            "cov_strat = np.cov(X_strat, rowvar=False)\n",
+            "corr_strat = corr_from_cov(cov_strat)\n",
+            "mean_err_strat = np.linalg.norm(mu_full - mu_strat)\n",
+            "cov_err_strat = np.linalg.norm(cov_full - cov_strat, ord='fro')\n",
+            "corr_err_strat = np.linalg.norm(corr_full - corr_strat, ord='fro')\n",
+            "mmd_strat = compute_mmd(X_train, X_strat)\n",
+            "\n",
+            "joint_metrics.append({\n",
+            "    'method': 'Stratified',\n",
+            "    'mean_err_l2': mean_err_strat,\n",
+            "    'cov_err_fro': cov_err_strat,\n",
+            "    'corr_err_fro': corr_err_strat,\n",
+            "    'mmd': mmd_strat,\n",
+            "})\n",
+            "\n",
+            "# Label-aware DDC (use weights)\n",
+            "mu_labelaware = weighted_mean(S_labelaware, w_labelaware)\n",
+            "cov_labelaware = weighted_cov(S_labelaware, w_labelaware)\n",
+            "corr_labelaware = corr_from_cov(cov_labelaware)\n",
+            "mean_err_labelaware = np.linalg.norm(mu_full - mu_labelaware)\n",
+            "cov_err_labelaware = np.linalg.norm(cov_full - cov_labelaware, ord='fro')\n",
+            "corr_err_labelaware = np.linalg.norm(corr_full - corr_labelaware, ord='fro')\n",
+            "mmd_labelaware = compute_mmd(X_train, S_labelaware, w_Y=w_labelaware)\n",
+            "\n",
+            "joint_metrics.append({\n",
+            "    'method': 'Label-aware DDC',\n",
+            "    'mean_err_l2': mean_err_labelaware,\n",
+            "    'cov_err_fro': cov_err_labelaware,\n",
+            "    'corr_err_fro': corr_err_labelaware,\n",
+            "    'mmd': mmd_labelaware,\n",
+            "})\n",
+            "\n",
+            "# Create DataFrame\n",
+            "joint_metrics_df = pd.DataFrame(joint_metrics)\n",
+            "print(\"Joint Distribution Preservation Metrics:\")\n",
+            "print(\"\\n\" + joint_metrics_df.to_string(index=False))\n",
+            "\n",
+            "print(\"\\nInterpretation:\")\n",
+            "print(\"  Mean Error (L2): Lower is better (0 = identical means)\")\n",
+            "print(\"  Covariance Error (Frobenius): Lower is better (0 = identical covariances)\")\n",
+            "print(\"  Correlation Error (Frobenius): Lower is better (0 = identical correlations)\")\n",
+            "print(\"  MMD: Lower is better (0 = identical distributions)\")"
         ]
     })
     
@@ -742,7 +810,7 @@ def create_notebook():
         "cell_type": "markdown",
         "metadata": {},
         "source": [
-            "## 9. Downstream Model Comparison\n",
+            "## 8. Downstream Model Comparison\n",
             "\n",
             "Now let's train logistic regression models on each subset/coreset and evaluate on the **same test set**. This shows the **practical impact** of distribution preservation on model performance."
         ]
@@ -770,21 +838,14 @@ def create_notebook():
             "models['Stratified'] = lr_strat\n",
             "predictions['Stratified'] = lr_strat.predict_proba(X_test)[:, 1]\n",
             "\n",
-            "# 3. Global DDC coreset (use weights)\n",
-            "lr_global = LogisticRegression(max_iter=1000, random_state=RANDOM_STATE, class_weight=None)\n",
-            "sample_weights_global = w_global * len(X_train)  # Scale weights to approximate sample counts\n",
-            "lr_global.fit(S_global, y_global, sample_weight=sample_weights_global)\n",
-            "models['Global DDC'] = lr_global\n",
-            "predictions['Global DDC'] = lr_global.predict_proba(X_test)[:, 1]\n",
+            "# 3. Label-aware DDC coreset (use weights)\n",
+            "lr_labelaware = LogisticRegression(max_iter=1000, random_state=RANDOM_STATE, class_weight=None)\n",
+            "sample_weights_labelaware = w_labelaware * len(X_train)  # Scale weights to approximate sample counts\n",
+            "lr_labelaware.fit(S_labelaware, y_labelaware, sample_weight=sample_weights_labelaware)\n",
+            "models['Label-aware DDC'] = lr_labelaware\n",
+            "predictions['Label-aware DDC'] = lr_labelaware.predict_proba(X_test)[:, 1]\n",
             "\n",
-            "# 4. Label-wise DDC coreset (use weights)\n",
-            "lr_labelwise = LogisticRegression(max_iter=1000, random_state=RANDOM_STATE, class_weight=None)\n",
-            "sample_weights_labelwise = w_labelwise * len(X_train)\n",
-            "lr_labelwise.fit(S_labelwise, y_labelwise, sample_weight=sample_weights_labelwise)\n",
-            "models['Label-wise DDC'] = lr_labelwise\n",
-            "predictions['Label-wise DDC'] = lr_labelwise.predict_proba(X_test)[:, 1]\n",
-            "\n",
-            "print(\"✅ All models trained\")"
+            "print(\"All models trained\")"
         ]
     })
     
@@ -819,24 +880,13 @@ def create_notebook():
             "comparison_df['auc_diff'] = comparison_df['auc'] - baseline_auc\n",
             "comparison_df['brier_diff'] = comparison_df['brier'] - baseline_brier\n",
             "\n",
-            "print(\"📊 Model Performance Comparison:\")\n",
+            "print(\"Model Performance Comparison:\")\n",
             "print(\"\\n\" + comparison_df.to_string(index=False))\n",
             "\n",
-            "print(\"\\n📉 Deviation from Full-Data Baseline:\")\n",
-            "for method in ['Random', 'Stratified', 'Global DDC', 'Label-wise DDC']:\n",
+            "print(\"\\nDeviation from Full-Data Baseline:\")\n",
+            "for method in ['Random', 'Stratified', 'Label-aware DDC']:\n",
             "    row = comparison_df[comparison_df['method'] == method].iloc[0]\n",
-            "    print(f\"  {method:15s}: AUC {row['auc_diff']:+.4f}, Brier {row['brier_diff']:+.4f}\")"
-        ]
-    })
-    
-    cells.append({
-        "cell_type": "markdown",
-        "metadata": {},
-        "source": [
-            "**Key observations**:\n",
-            "- Label-wise DDC typically performs closest to the full-data baseline\n",
-            "- Global DDC may underperform if class proportions are important for the task\n",
-            "- DDC coresets generally outperform random sampling"
+            "    print(f\"  {method:20s}: AUC {row['auc_diff']:+.4f}, Brier {row['brier_diff']:+.4f}\")"
         ]
     })
     
@@ -845,7 +895,7 @@ def create_notebook():
         "cell_type": "markdown",
         "metadata": {},
         "source": [
-            "## 10. Visualizations\n",
+            "## 9. Visualizations\n",
             "\n",
             "Let's visualize the distribution preservation and spatial coverage of each method."
         ]
@@ -879,13 +929,9 @@ def create_notebook():
             "    ax.hist(X_strat[:, feat_idx], bins=30, density=True, alpha=0.5, \n",
             "            label='Stratified', color='green', histtype='step', linewidth=2)\n",
             "    \n",
-            "    # Global DDC (weighted)\n",
-            "    ax.hist(S_global[:, feat_idx], bins=30, weights=w_global, density=True, \n",
-            "            label='Global DDC', color='red', histtype='step', linewidth=2)\n",
-            "    \n",
-            "    # Label-wise DDC (weighted)\n",
-            "    ax.hist(S_labelwise[:, feat_idx], bins=30, weights=w_labelwise, density=True, \n",
-            "            label='Label-wise DDC', color='orange', histtype='step', linewidth=2)\n",
+            "    # Label-aware DDC (weighted)\n",
+            "    ax.hist(S_labelaware[:, feat_idx], bins=30, weights=w_labelaware, density=True, \n",
+            "            label='Label-aware DDC', color='orange', histtype='step', linewidth=2)\n",
             "    \n",
             "    ax.set_xlabel(f'Feature {feat_idx}')\n",
             "    ax.set_ylabel('Density')\n",
@@ -911,18 +957,15 @@ def create_notebook():
             "# Project subsets\n",
             "X_random_2d = pca.transform(X_random)\n",
             "X_strat_2d = pca.transform(X_strat)\n",
-            "S_global_2d = pca.transform(S_global)\n",
-            "S_labelwise_2d = pca.transform(S_labelwise)\n",
+            "S_labelaware_2d = pca.transform(S_labelaware)\n",
             "\n",
             "# Plot\n",
-            "fig, axes = plt.subplots(2, 2, figsize=(14, 12))\n",
-            "axes = axes.flatten()\n",
+            "fig, axes = plt.subplots(1, 3, figsize=(18, 5))\n",
             "\n",
             "methods_2d = [\n",
             "    ('Random', X_random_2d, y_random, None, 'blue'),\n",
             "    ('Stratified', X_strat_2d, y_strat, None, 'green'),\n",
-            "    ('Global DDC', S_global_2d, y_global, w_global, 'red'),\n",
-            "    ('Label-wise DDC', S_labelwise_2d, y_labelwise, w_labelwise, 'orange'),\n",
+            "    ('Label-aware DDC', S_labelaware_2d, y_labelaware, w_labelaware, 'orange'),\n",
             "]\n",
             "\n",
             "for ax, (method_name, subset_2d, subset_y, subset_w, color) in zip(axes, methods_2d):\n",
@@ -987,33 +1030,29 @@ def create_notebook():
         "cell_type": "markdown",
         "metadata": {},
         "source": [
-            "## 11. Discussion and Takeaways\n",
+            "## 10. Discussion and Takeaways\n",
             "\n",
             "### Key Observations\n",
             "\n",
-            "1. **DDC is unsupervised**: The global DDC coreset optimizes for feature distribution preservation but **ignores labels**. This can lead to distorted class proportions, which is problematic for supervised learning tasks.\n",
-            "\n",
-            "2. **Label-wise DDC preserves class balance**: By applying DDC separately within each class, we maintain label proportions while still benefiting from density–diversity selection **within each class**. This approach:\n",
+            "1. **Label-aware DDC preserves class balance**: By applying DDC separately within each class, we maintain label proportions while still benefiting from density–diversity selection **within each class**. This approach:\n",
             "   - Preserves class proportions by design\n",
             "   - Maintains distributional fidelity within each class\n",
             "   - Typically performs closer to the full-data baseline than naive random sampling\n",
             "\n",
-            "3. **Distribution preservation matters**: Methods that better preserve marginal distributions (measured by Wasserstein-1 and KS statistics) tend to produce models that perform closer to the full-data baseline.\n",
+            "2. **Distribution preservation matters**: Methods that better preserve marginal distributions (measured by Wasserstein-1 and KS statistics) tend to produce models that perform closer to the full-data baseline.\n",
             "\n",
-            "4. **Weights are essential**: DDC coresets are **weighted sets**, not just point sets. The weights allow us to approximate the full distribution from a small number of representatives.\n",
+            "3. **Weights are essential**: DDC coresets are **weighted sets**, not just point sets. The weights allow us to approximate the full distribution from a small number of representatives.\n",
             "\n",
-            "### When to Use What?\n",
+            "4. **Parameter tuning matters**: For label-aware DDC, we adjust parameters (alpha, m_neighbors, refine_iters) based on class size to ensure good coverage and distribution preservation.\n",
             "\n",
-            "**Use Global DDC when:**\n",
-            "- You're doing **purely unsupervised** analysis (EDA, clustering, anomaly detection)\n",
-            "- Label proportions don't matter\n",
-            "- You want to preserve the overall feature distribution\n",
+            "### When to Use Label-Aware DDC?\n",
             "\n",
-            "**Use Label-wise DDC when:**\n",
+            "**Use Label-aware DDC when:**\n",
             "- You're working on a **supervised learning** problem\n",
             "- Label proportions matter (e.g., imbalanced classification)\n",
             "- You want both distribution preservation AND label balance\n",
             "- You need a small, interpretable subset for model prototyping\n",
+            "- You want to compress large datasets while maintaining class structure\n",
             "\n",
             "**Use Random/Stratified sampling when:**\n",
             "- You need a simple baseline for comparison\n",
@@ -1022,7 +1061,7 @@ def create_notebook():
             "\n",
             "### Conclusion\n",
             "\n",
-            "DDC coresets provide a principled way to compress large datasets while preserving distributional properties. For supervised learning tasks, **label-wise DDC** is the recommended approach as it combines the benefits of distribution preservation with label balance.\n",
+            "DDC coresets provide a principled way to compress large datasets while preserving distributional properties. For supervised learning tasks, **label-aware DDC** is the recommended approach as it combines the benefits of distribution preservation with label balance.\n",
             "\n",
             "---\n",
             "\n",
@@ -1063,4 +1102,3 @@ if __name__ == "__main__":
     with open('binary_classification_ddc.ipynb', 'w') as f:
         json.dump(nb, f, indent=1)
     print(f"Notebook created with {len(nb['cells'])} cells")
-
