@@ -19,6 +19,13 @@ import experiments.ddc_advantage.small_k_cases as small_k_cases
 import experiments.ddc_advantage.real_datasets as real_datasets
 import experiments.ddc_advantage.specific_use_cases as specific_use_cases
 
+# Import new advanced experiments
+import experiments.ddc_advantage.nested_clusters as nested_clusters
+import experiments.ddc_advantage.rare_clusters as rare_clusters
+import experiments.ddc_advantage.multi_scale_clusters as multi_scale_clusters
+import experiments.ddc_advantage.cifar10_experiment as cifar10_experiment
+import experiments.ddc_advantage.varying_separability as varying_separability
+
 
 def run_all_experiments():
     """Run all experiment categories."""
@@ -95,6 +102,56 @@ def run_all_experiments():
     except Exception as e:
         print(f"ERROR in specific_use_cases: {e}")
         results_summary['specific_use_cases'] = f'FAILED: {e}'
+    
+    # Category 7: Advanced Cluster Structures
+    print("\n" + "=" * 70)
+    print("CATEGORY 7: ADVANCED CLUSTER STRUCTURES")
+    print("=" * 70)
+    
+    # 7.1 Nested Clusters
+    print("\n--- 7.1: Nested Clusters ---")
+    try:
+        nested_clusters.run_experiment()
+        results_summary['nested_clusters'] = 'SUCCESS'
+    except Exception as e:
+        print(f"ERROR in nested_clusters: {e}")
+        results_summary['nested_clusters'] = f'FAILED: {e}'
+    
+    # 7.2 Rare Clusters
+    print("\n--- 7.2: Rare Clusters ---")
+    try:
+        rare_clusters.run_experiment()
+        results_summary['rare_clusters'] = 'SUCCESS'
+    except Exception as e:
+        print(f"ERROR in rare_clusters: {e}")
+        results_summary['rare_clusters'] = f'FAILED: {e}'
+    
+    # 7.3 Multi-Scale Clusters
+    print("\n--- 7.3: Multi-Scale Clusters ---")
+    try:
+        multi_scale_clusters.run_experiment()
+        results_summary['multi_scale_clusters'] = 'SUCCESS'
+    except Exception as e:
+        print(f"ERROR in multi_scale_clusters: {e}")
+        results_summary['multi_scale_clusters'] = f'FAILED: {e}'
+    
+    # 7.4 CIFAR-10
+    print("\n--- 7.4: CIFAR-10 ---")
+    try:
+        cifar10_experiment.run_experiment()
+        results_summary['cifar10'] = 'SUCCESS'
+    except Exception as e:
+        print(f"ERROR in cifar10_experiment: {e}")
+        results_summary['cifar10'] = f'FAILED: {e}'
+    
+    # 7.5 Varying Separability
+    print("\n--- 7.5: Varying Separability ---")
+    try:
+        varying_separability.run_experiment()
+        results_summary['varying_separability'] = 'SUCCESS'
+    except Exception as e:
+        print(f"ERROR in varying_separability: {e}")
+        results_summary['varying_separability'] = f'FAILED: {e}'
     
     # Final summary
     print("\n" + "=" * 70)
