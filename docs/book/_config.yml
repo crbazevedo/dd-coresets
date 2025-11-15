@@ -1,8 +1,8 @@
 # Jupyter Book configuration
+# https://jupyterbook.org/en/stable/customize/config.html
 
 title: dd-coresets Documentation
 author: Carlos R. B. Azevedo
-logo: logo.png
 
 # Book settings
 html:
