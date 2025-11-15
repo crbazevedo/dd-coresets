@@ -1,0 +1,695 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Notebook Runner &#8212; dd-coresets Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'README_RUNNER';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">dd-coresets Documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/basic_tabular.html">Basic Tabular Data: DDC vs Random vs Stratified</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/multimodal_clusters.html">Multimodal Clusters: DDC Spatial Coverage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/adaptive_distances.html">Adaptive Distances &amp; Presets: Advanced DDC Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/label_aware_classification.html">Label-Aware DDC for Classification Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/high_dimensional.html">High-Dimensional Data: Automatic PCA Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts/density_estimation.html">Density Estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts/algorithm.html">The DDC Algorithm: Why It Works</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts/metrics.html">Understanding DDC Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts/adaptive_distances.html">Adaptive Distances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts/weighting.html">Weight Assignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guides/choosing_parameters.html">Choosing Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guides/understanding_metrics.html">Understanding Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guides/troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guides/best_practices.html">Best Practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_cases/eda.html">Exploratory Data Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_cases/classification.html">Classification Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_cases/high_dim.html">High-Dimensional Data</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/README_RUNNER.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Notebook Runner</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#features">Features</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-line">Command Line</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#python-api">Python API</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#architecture">Architecture</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#classes">Classes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-methods">Key Methods</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration">Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-handling">Error Handling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-tracking">Figure Tracking</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reports">Reports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-usage">Basic Usage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-usage">Advanced Usage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#programmatic-usage">Programmatic Usage</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integration">Integration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notes">Notes</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="notebook-runner">
+<h1>Notebook Runner<a class="headerlink" href="#notebook-runner" title="Link to this heading">#</a></h1>
+<p>Structured and reusable framework for executing Jupyter notebooks programmatically.</p>
+<section id="features">
+<h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Sequential Execution</strong>: Executes all cells in order, preserving state</p></li>
+<li><p><strong>Dependency Management</strong>: Maintains shared namespace across cells</p></li>
+<li><p><strong>Error Handling</strong>: Comprehensive error tracking and reporting</p></li>
+<li><p><strong>Figure Generation</strong>: Automatically tracks and reports generated figures</p></li>
+<li><p><strong>Statistics</strong>: Detailed execution statistics and timing</p></li>
+<li><p><strong>CLI Interface</strong>: Easy-to-use command-line interface</p></li>
+<li><p><strong>Reusable API</strong>: Can be imported and used programmatically</p></li>
+</ul>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
+<section id="command-line">
+<h3>Command Line<a class="headerlink" href="#command-line" title="Link to this heading">#</a></h3>
+<p>Execute all tutorial notebooks:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>notebook_runner.py<span class="w"> </span>--all
+</pre></div>
+</div>
+<p>Execute specific notebooks:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>notebook_runner.py<span class="w"> </span>tutorials/basic_tabular.ipynb<span class="w"> </span>tutorials/multimodal_clusters.ipynb
+</pre></div>
+</div>
+<p>Generate execution report:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>notebook_runner.py<span class="w"> </span>--all<span class="w"> </span>--report<span class="w"> </span>execution_report.txt
+</pre></div>
+</div>
+<p>Stop on first error:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>notebook_runner.py<span class="w"> </span>--all<span class="w"> </span>--stop-on-error
+</pre></div>
+</div>
+</section>
+<section id="python-api">
+<h3>Python API<a class="headerlink" href="#python-api" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">notebook_runner</span><span class="w"> </span><span class="kn">import</span> <span class="n">NotebookRunner</span>
+
+<span class="c1"># Create runner</span>
+<span class="n">runner</span> <span class="o">=</span> <span class="n">NotebookRunner</span><span class="p">()</span>
+
+<span class="c1"># Execute single notebook</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">run_notebook</span><span class="p">(</span><span class="s1">&#39;tutorials/basic_tabular.ipynb&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generated </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">figures_generated</span><span class="p">)</span><span class="si">}</span><span class="s2"> figures&quot;</span><span class="p">)</span>
+
+<span class="c1"># Execute multiple notebooks</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">run_multiple_notebooks</span><span class="p">([</span>
+    <span class="s1">&#39;tutorials/basic_tabular.ipynb&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;tutorials/multimodal_clusters.ipynb&#39;</span><span class="p">,</span>
+<span class="p">])</span>
+
+<span class="c1"># Generate report</span>
+<span class="n">report</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">generate_report</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="s1">&#39;report.txt&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="architecture">
+<h2>Architecture<a class="headerlink" href="#architecture" title="Link to this heading">#</a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">NotebookRunner</span></code></strong>: Main execution framework</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">NotebookExecutionResult</span></code></strong>: Results for a complete notebook</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">CellExecutionResult</span></code></strong>: Results for a single cell</p></li>
+</ul>
+</section>
+<section id="key-methods">
+<h3>Key Methods<a class="headerlink" href="#key-methods" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">run_notebook()</span></code>: Execute a single notebook</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_multiple_notebooks()</span></code>: Execute multiple notebooks</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">generate_report()</span></code>: Generate execution report</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_execute_cell()</span></code>: Execute a single cell (internal)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_setup_standard_imports()</span></code>: Setup execution environment</p></li>
+</ul>
+</section>
+</section>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">#</a></h2>
+<p>The runner automatically sets up:</p>
+<ul class="simple">
+<li><p>NumPy, Pandas, Matplotlib</p></li>
+<li><p>scikit-learn (datasets, preprocessing, models, metrics)</p></li>
+<li><p>UMAP (if available)</p></li>
+<li><p>dd-coresets library</p></li>
+</ul>
+<p>All imports are available in the execution namespace.</p>
+</section>
+<section id="error-handling">
+<h2>Error Handling<a class="headerlink" href="#error-handling" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Errors are caught and logged per cell</p></li>
+<li><p>Execution continues by default (use <code class="docutils literal notranslate"><span class="pre">--stop-on-error</span></code> to stop)</p></li>
+<li><p>Error types are tracked and summarized in reports</p></li>
+<li><p>Failed cells are marked but don’t prevent other cells from running</p></li>
+</ul>
+</section>
+<section id="figure-tracking">
+<h2>Figure Tracking<a class="headerlink" href="#figure-tracking" title="Link to this heading">#</a></h2>
+<p>The runner automatically:</p>
+<ul class="simple">
+<li><p>Detects <code class="docutils literal notranslate"><span class="pre">plt.savefig()</span></code> calls in cells</p></li>
+<li><p>Verifies figures were actually created</p></li>
+<li><p>Tracks figure paths and sizes</p></li>
+<li><p>Reports all generated figures in execution report</p></li>
+</ul>
+</section>
+<section id="reports">
+<h2>Reports<a class="headerlink" href="#reports" title="Link to this heading">#</a></h2>
+<p>Execution reports include:</p>
+<ul class="simple">
+<li><p>Summary statistics (notebooks, cells, errors, figures, time)</p></li>
+<li><p>Per-notebook details</p></li>
+<li><p>Generated figures list with sizes</p></li>
+<li><p>Error summary by type</p></li>
+<li><p>Overall statistics</p></li>
+</ul>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
+<section id="basic-usage">
+<h3>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Execute all notebooks</span>
+python<span class="w"> </span>notebook_runner.py<span class="w"> </span>--all
+
+<span class="c1"># Execute specific notebook</span>
+python<span class="w"> </span>notebook_runner.py<span class="w"> </span>tutorials/basic_tabular.ipynb
+</pre></div>
+</div>
+</section>
+<section id="advanced-usage">
+<h3>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate detailed report</span>
+python<span class="w"> </span>notebook_runner.py<span class="w"> </span>--all<span class="w"> </span>--report<span class="w"> </span>detailed_report.txt
+
+<span class="c1"># Stop on first error (useful for debugging)</span>
+python<span class="w"> </span>notebook_runner.py<span class="w"> </span>--all<span class="w"> </span>--stop-on-error
+
+<span class="c1"># Reset namespace between notebooks</span>
+python<span class="w"> </span>notebook_runner.py<span class="w"> </span>--all<span class="w"> </span>--reset-namespace
+</pre></div>
+</div>
+</section>
+<section id="programmatic-usage">
+<h3>Programmatic Usage<a class="headerlink" href="#programmatic-usage" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">notebook_runner</span><span class="w"> </span><span class="kn">import</span> <span class="n">NotebookRunner</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">NotebookRunner</span><span class="p">(</span><span class="n">stop_on_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Execute with custom configuration</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">run_notebook</span><span class="p">(</span>
+    <span class="s1">&#39;tutorials/basic_tabular.ipynb&#39;</span><span class="p">,</span>
+    <span class="n">reset_namespace</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+
+<span class="c1"># Check results</span>
+<span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ Generated </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">figures_generated</span><span class="p">)</span><span class="si">}</span><span class="s2"> figures&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ </span><span class="si">{</span><span class="n">results</span><span class="o">.</span><span class="n">errors</span><span class="si">}</span><span class="s2"> errors occurred&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="integration">
+<h2>Integration<a class="headerlink" href="#integration" title="Link to this heading">#</a></h2>
+<p>The runner can be integrated into:</p>
+<ul class="simple">
+<li><p>CI/CD pipelines</p></li>
+<li><p>Documentation build processes</p></li>
+<li><p>Testing frameworks</p></li>
+<li><p>Development workflows</p></li>
+</ul>
+</section>
+<section id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Python 3.8+</p></li>
+<li><p>Jupyter notebook format (JSON)</p></li>
+<li><p>Standard data science libraries (auto-imported)</p></li>
+<li><p>dd-coresets library</p></li>
+</ul>
+</section>
+<section id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>The runner uses a shared namespace across all cells</p></li>
+<li><p>Cells are executed sequentially in order</p></li>
+<li><p>State is preserved between cells (variables, imports, etc.)</p></li>
+<li><p>Figures are saved to paths specified in <code class="docutils literal notranslate"><span class="pre">plt.savefig()</span></code> calls</p></li>
+<li><p>Execution time is tracked per cell and per notebook</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#features">Features</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-line">Command Line</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#python-api">Python API</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#architecture">Architecture</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#classes">Classes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-methods">Key Methods</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration">Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-handling">Error Handling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-tracking">Figure Tracking</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reports">Reports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-usage">Basic Usage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-usage">Advanced Usage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#programmatic-usage">Programmatic Usage</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integration">Integration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notes">Notes</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Carlos R. B. Azevedo
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025, Carlos R. B. Azevedo.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

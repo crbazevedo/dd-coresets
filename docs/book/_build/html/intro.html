@@ -1,0 +1,634 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Welcome to dd-coresets &#8212; dd-coresets Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'intro';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="#">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">dd-coresets Documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/basic_tabular.html">Basic Tabular Data: DDC vs Random vs Stratified</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/multimodal_clusters.html">Multimodal Clusters: DDC Spatial Coverage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/adaptive_distances.html">Adaptive Distances &amp; Presets: Advanced DDC Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/label_aware_classification.html">Label-Aware DDC for Classification Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/high_dimensional.html">High-Dimensional Data: Automatic PCA Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts/density_estimation.html">Density Estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts/algorithm.html">The DDC Algorithm: Why It Works</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts/metrics.html">Understanding DDC Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts/adaptive_distances.html">Adaptive Distances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts/weighting.html">Weight Assignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guides/choosing_parameters.html">Choosing Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guides/understanding_metrics.html">Understanding Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guides/troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guides/best_practices.html">Best Practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_cases/eda.html">Exploratory Data Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_cases/classification.html">Classification Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_cases/high_dim.html">High-Dimensional Data</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/intro.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Welcome to dd-coresets</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-problem-we-solve">The Problem We Solve</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-ddc">What is DDC?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-use-ddc">Why Use DDC?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-example">Quick Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documentation-structure">Documentation Structure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-started">Getting Started</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-concepts">Key Concepts</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#densitydiversity-trade-off">Density–Diversity Trade-off</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-weights-matter">Why Weights Matter</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-ddc-excels">When DDC Excels</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theoretical-foundations">Theoretical Foundations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learn-more">Learn More</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="welcome-to-dd-coresets">
+<h1>Welcome to dd-coresets<a class="headerlink" href="#welcome-to-dd-coresets" title="Link to this heading">#</a></h1>
+<p><strong>Density–Diversity Coresets (DDC)</strong>: a small weighted set of <em>real</em> data points that approximates the empirical distribution of a large dataset.</p>
+<section id="the-problem-we-solve">
+<h2>The Problem We Solve<a class="headerlink" href="#the-problem-we-solve" title="Link to this heading">#</a></h2>
+<p>Imagine you have a dataset with millions of rows—perhaps customer transactions, sensor readings, or scientific measurements. You need to:</p>
+<ul class="simple">
+<li><p>Create exploratory visualizations, but plotting millions of points is slow and cluttered</p></li>
+<li><p>Run scenario analyses, but you need representative scenarios, not just random samples</p></li>
+<li><p>Prototype machine learning models, but training on the full dataset takes hours</p></li>
+<li><p>Perform distributional stress tests, but you need a faithful approximation of the data distribution</p></li>
+</ul>
+<p><strong>Random sampling</strong> is simple, but it can miss important clusters, under-sample rare modes, and fail to preserve the distribution’s shape. <strong>Stratified sampling</strong> works well when you know the right strata, but requires domain knowledge and may not align with your analysis goals.</p>
+<p>DDC solves this by automatically selecting a small set of real data points with weights that preserve the distributional properties of your data—no domain knowledge required.</p>
+</section>
+<section id="what-is-ddc">
+<h2>What is DDC?<a class="headerlink" href="#what-is-ddc" title="Link to this heading">#</a></h2>
+<p>DDC selects real data points from your dataset and assigns weights to them, creating a small “summary” that preserves the distributional properties of the original data. The algorithm balances two objectives:</p>
+<ul class="simple">
+<li><p><strong>Density</strong>: Select points from important regions (modes, clusters) to preserve the distribution</p></li>
+<li><p><strong>Diversity</strong>: Ensure spatial coverage so we don’t select all points from one cluster</p></li>
+</ul>
+<p>Unlike random sampling, DDC:</p>
+<ul class="simple">
+<li><p><strong>Guarantees spatial coverage</strong> of all clusters and modes, even small ones</p></li>
+<li><p><strong>Preserves marginal distributions</strong> better than random sampling (typically 20-30% improvement in Wasserstein-1 distance)</p></li>
+<li><p><strong>Selects real data points</strong> (not synthetic centroids like k-means) for interpretability</p></li>
+<li><p><strong>Works unsupervised</strong> (no domain knowledge required)</p></li>
+</ul>
+</section>
+<section id="why-use-ddc">
+<h2>Why Use DDC?<a class="headerlink" href="#why-use-ddc" title="Link to this heading">#</a></h2>
+<p>Large datasets are ubiquitous in data science, but many workflows require small, interpretable subsets. Here are common scenarios where DDC helps:</p>
+<p><strong>Scenario 1: Exploratory Data Analysis</strong>
+You have 10 million customer records and want to create interactive dashboards. Plotting all points is impossible, and random sampling might miss important customer segments. DDC ensures all segments are represented.</p>
+<p><strong>Scenario 2: Scenario Analysis</strong>
+You need to run “what-if” simulations on a financial dataset. Instead of using random samples (which may not represent important edge cases), DDC provides weighted scenarios that preserve the distribution.</p>
+<p><strong>Scenario 3: Model Prototyping</strong>
+You’re developing a machine learning model on a 50GB dataset. Training on the full data takes 8 hours per iteration. DDC creates a 1GB coreset that preserves the distribution, allowing you to prototype in minutes instead of hours.</p>
+<p><strong>Scenario 4: Distributional Stress Testing</strong>
+You need to test how your system behaves under different data distributions. DDC provides a small, weighted coreset that accurately represents the original distribution, enabling efficient stress testing.</p>
+</section>
+<section id="quick-example">
+<h2>Quick Example<a class="headerlink" href="#quick-example" title="Link to this heading">#</a></h2>
+<p>Let’s see DDC in action. We’ll create a coreset from a large dataset and verify it preserves the distribution:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dd_coresets</span><span class="w"> </span><span class="kn">import</span> <span class="n">fit_ddc_coreset</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Your large dataset (100k points, 10 features)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100000</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># Create a coreset of 500 weighted points</span>
+<span class="n">S</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">fit_ddc_coreset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="s2">&quot;balanced&quot;</span><span class="p">)</span>
+
+<span class="c1"># S: 500 representatives (real data points from X)</span>
+<span class="c1"># w: weights (sum to 1)</span>
+<span class="c1"># info: metadata about the coreset</span>
+
+<span class="c1"># Verify distribution preservation</span>
+<span class="n">weighted_mean</span> <span class="o">=</span> <span class="p">(</span><span class="n">S</span> <span class="o">*</span> <span class="n">w</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">original_mean</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">mean_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">weighted_mean</span> <span class="o">-</span> <span class="n">original_mean</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mean error: </span><span class="si">{</span><span class="n">mean_error</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># Typically &lt; 0.01</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coreset size: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">S</span><span class="p">)</span><span class="si">}</span><span class="s2"> points (0.5% of original)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this example, we compressed 100,000 points into 500 weighted representatives while preserving the mean with error typically less than 0.01. The coreset is 200× smaller but maintains distributional fidelity.</p>
+</section>
+<section id="documentation-structure">
+<h2>Documentation Structure<a class="headerlink" href="#documentation-structure" title="Link to this heading">#</a></h2>
+<p>This documentation is organized into:</p>
+<ul class="simple">
+<li><p><strong>Tutorials</strong>: Step-by-step guides with examples</p></li>
+<li><p><strong>Concepts</strong>: Explanations of algorithms, metrics, and theory</p></li>
+<li><p><strong>Guides</strong>: Practical advice on parameters, metrics, troubleshooting</p></li>
+<li><p><strong>API Reference</strong>: Complete function documentation</p></li>
+<li><p><strong>Use Cases</strong>: Real-world applications</p></li>
+</ul>
+</section>
+<section id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong><a class="reference internal" href="installation.html"><span class="std std-doc">Installation</span></a></strong> - Install dd-coresets</p></li>
+<li><p><strong><a class="reference internal" href="quickstart.html"><span class="std std-doc">Quick Start</span></a></strong> - Your first coreset in 5 minutes</p></li>
+<li><p><strong><a class="reference internal" href="#tutorials/basic_tabular.md"><span class="xref myst">Tutorials</span></a></strong> - Learn with examples</p></li>
+</ol>
+</section>
+<section id="key-concepts">
+<h2>Key Concepts<a class="headerlink" href="#key-concepts" title="Link to this heading">#</a></h2>
+<section id="densitydiversity-trade-off">
+<h3>Density–Diversity Trade-off<a class="headerlink" href="#densitydiversity-trade-off" title="Link to this heading">#</a></h3>
+<p>DDC balances two objectives:</p>
+<ul class="simple">
+<li><p><strong>Density</strong>: Select points from important regions (modes, clusters)</p></li>
+<li><p><strong>Diversity</strong>: Ensure spatial coverage (don’t select all from one cluster)</p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">alpha</span></code> parameter controls this trade-off: higher <code class="docutils literal notranslate"><span class="pre">alpha</span></code> favors density, lower <code class="docutils literal notranslate"><span class="pre">alpha</span></code> favors diversity.</p>
+</section>
+<section id="why-weights-matter">
+<h3>Why Weights Matter<a class="headerlink" href="#why-weights-matter" title="Link to this heading">#</a></h3>
+<p>Unlike simple sampling, DDC assigns weights to selected points. A point with weight 0.1 “stands for” 10% of the original data in that region. This allows a small coreset to accurately represent the full distribution.</p>
+</section>
+<section id="when-ddc-excels">
+<h3>When DDC Excels<a class="headerlink" href="#when-ddc-excels" title="Link to this heading">#</a></h3>
+<p>DDC is superior to random sampling when:</p>
+<ul class="simple">
+<li><p>Your data has <strong>well-defined clusters</strong> or modes</p></li>
+<li><p>You need <strong>spatial coverage</strong> of all regions</p></li>
+<li><p>You have <strong>small k</strong> (limited representatives)</p></li>
+<li><p>Your data has <strong>complex marginal distributions</strong></p></li>
+</ul>
+<p>See <span class="xref myst">When to Use DDC</span> for detailed analysis.</p>
+</section>
+</section>
+<section id="theoretical-foundations">
+<h2>Theoretical Foundations<a class="headerlink" href="#theoretical-foundations" title="Link to this heading">#</a></h2>
+<p>DDC builds on several well-established concepts in computer science and statistics:</p>
+<p><strong>Coresets</strong>: The theoretical foundation of coresets was established by Feldman &amp; Langberg (2011) in their unified framework for coreset construction. A coreset is a small weighted subset that approximates a function on the full dataset. DDC applies this concept to distributional approximation.</p>
+<p><strong>Facility Location and k-Medoids</strong>: The greedy selection strategy in DDC is related to facility location problems and k-medoids clustering (Kaufman &amp; Rousseeuw, 1990). Like k-medoids, DDC selects real data points (medoids) rather than synthetic centroids, ensuring interpretability.</p>
+<p><strong>Diversity Sampling</strong>: The diversity component of DDC is inspired by determinantal point processes (DPPs) and diversity sampling methods (Kulesza &amp; Taskar, 2012). DPPs provide a principled way to sample diverse subsets, and DDC adapts this intuition to balance diversity with density.</p>
+<p><strong>Optimal Transport and Wasserstein Distance</strong>: The evaluation of DDC coresets using Wasserstein distance connects to optimal transport theory (Villani, 2009). Wasserstein distance measures the “cost” of transforming one distribution into another, providing a natural metric for distributional approximation.</p>
+<p><strong>Kernel Methods</strong>: The weight assignment in DDC uses kernel-based soft assignments, a technique common in kernel methods and non-parametric statistics (Schölkopf &amp; Smola, 2002). Kernels allow smooth, continuous approximations of discrete distributions.</p>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Feldman, D., &amp; Langberg, M. (2011). A unified framework for approximating and clustering data. <em>Proceedings of the 43rd annual ACM symposium on Theory of computing</em>.</p></li>
+<li><p>Kaufman, L., &amp; Rousseeuw, P. J. (1990). <em>Finding groups in data: an introduction to cluster analysis</em>. John Wiley &amp; Sons.</p></li>
+<li><p>Kulesza, A., &amp; Taskar, B. (2012). Determinantal point processes for machine learning. <em>Foundations and Trends in Machine Learning</em>, 5(2-3), 123-286.</p></li>
+<li><p>Villani, C. (2009). <em>Optimal transport: old and new</em> (Vol. 338). Springer.</p></li>
+<li><p>Schölkopf, B., &amp; Smola, A. J. (2002). <em>Learning with kernels: support vector machines, regularization, optimization, and beyond</em>. MIT press.</p></li>
+</ul>
+</section>
+<section id="learn-more">
+<h2>Learn More<a class="headerlink" href="#learn-more" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>GitHub</strong>: <a class="reference external" href="https://github.com/crbazevedo/dd-coresets">crbazevedo/dd-coresets</a></p></li>
+<li><p><strong>PyPI</strong>: <a class="reference external" href="https://pypi.org/project/dd-coresets/">dd-coresets</a></p></li>
+<li><p><strong>Issues</strong>: <a class="reference external" href="https://github.com/crbazevedo/dd-coresets/issues">Report bugs or request features</a></p></li>
+</ul>
+</section>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="right-next"
+       href="installation.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Installation</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-problem-we-solve">The Problem We Solve</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-ddc">What is DDC?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-use-ddc">Why Use DDC?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-example">Quick Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documentation-structure">Documentation Structure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-started">Getting Started</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-concepts">Key Concepts</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#densitydiversity-trade-off">Density–Diversity Trade-off</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-weights-matter">Why Weights Matter</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-ddc-excels">When DDC Excels</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theoretical-foundations">Theoretical Foundations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learn-more">Learn More</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Carlos R. B. Azevedo
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025, Carlos R. B. Azevedo.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

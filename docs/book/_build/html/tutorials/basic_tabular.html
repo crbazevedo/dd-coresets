@@ -1,0 +1,1101 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Basic Tabular Data: DDC vs Random vs Stratified &#8212; dd-coresets Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'tutorials/basic_tabular';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Multimodal Clusters: DDC Spatial Coverage" href="multimodal_clusters.html" />
+    <link rel="prev" title="Quick Start" href="../quickstart.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">dd-coresets Documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Basic Tabular Data: DDC vs Random vs Stratified</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multimodal_clusters.html">Multimodal Clusters: DDC Spatial Coverage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive_distances.html">Adaptive Distances &amp; Presets: Advanced DDC Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="label_aware_classification.html">Label-Aware DDC for Classification Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="high_dimensional.html">High-Dimensional Data: Automatic PCA Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts/density_estimation.html">Density Estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts/algorithm.html">The DDC Algorithm: Why It Works</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts/metrics.html">Understanding DDC Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts/adaptive_distances.html">Adaptive Distances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts/weighting.html">Weight Assignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/choosing_parameters.html">Choosing Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/understanding_metrics.html">Understanding Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/best_practices.html">Best Practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../use_cases/eda.html">Exploratory Data Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../use_cases/classification.html">Classification Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../use_cases/high_dim.html">High-Dimensional Data</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/tutorials/basic_tabular.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Basic Tabular Data: DDC vs Random vs Stratified</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-you-ll-learn">What You’ll Learn</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-dataset">The Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">1. Setup</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-gaussian-mixtures">Why Gaussian Mixtures?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-happens-during-ddc-fitting">What Happens During DDC Fitting?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Why Gaussian Mixtures?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">What Happens During DDC Fitting?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">What Happens During DDC Fitting?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-dataset">2. Generate Dataset</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Why Gaussian Mixtures?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Why Gaussian Mixtures?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-original-data">3. Visualize Original Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fit-coresets">4. Fit Coresets</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">What Happens During DDC Fitting?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">What Happens During DDC Fitting?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">What Happens During DDC Fitting?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-metrics">5. Compute Metrics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizations">6. Visualizations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">7. Key Takeaways</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-ddc-is-better">When DDC is Better</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-random-might-be-better">When Random Might Be Better</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="basic-tabular-data-ddc-vs-random-vs-stratified">
+<h1>Basic Tabular Data: DDC vs Random vs Stratified<a class="headerlink" href="#basic-tabular-data-ddc-vs-random-vs-stratified" title="Link to this heading">#</a></h1>
+<p>This notebook demonstrates the basic usage of <code class="docutils literal notranslate"><span class="pre">dd-coresets</span></code> on simple tabular data. We’ll compare <strong>Density-Diversity Coresets (DDC)</strong> with <strong>Random</strong> and <strong>Stratified</strong> sampling.</p>
+<section id="what-you-ll-learn">
+<h2>What You’ll Learn<a class="headerlink" href="#what-you-ll-learn" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>How to install and use <code class="docutils literal notranslate"><span class="pre">dd-coresets</span></code></p></li>
+<li><p>Basic API: <code class="docutils literal notranslate"><span class="pre">fit_ddc_coreset</span></code>, <code class="docutils literal notranslate"><span class="pre">fit_random_coreset</span></code>, <code class="docutils literal notranslate"><span class="pre">fit_stratified_coreset</span></code></p></li>
+<li><p>Understanding distributional metrics (Mean, Covariance, Wasserstein-1)</p></li>
+<li><p>When DDC is better than Random (clustered data)</p></li>
+</ul>
+</section>
+<section id="the-dataset">
+<h2>The Dataset<a class="headerlink" href="#the-dataset" title="Link to this heading">#</a></h2>
+<p>We’ll use a simple <strong>Gaussian mixture</strong> with 3 clusters and 8 features. This structure is common in real-world data and demonstrates DDC’s advantage.</p>
+</section>
+<section id="setup">
+<h2>1. Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install dd-coresets (uncomment if needed)</span>
+<span class="c1"># !pip install dd-coresets</span>
+
+<span class="c1"># For Kaggle/Colab, you may need:</span>
+<span class="c1"># !pip install dd-coresets --quiet</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_blobs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.decomposition</span><span class="w"> </span><span class="kn">import</span> <span class="n">PCA</span>
+
+<span class="c1"># Try importing UMAP, fallback to PCA if not available</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">umap</span>
+    <span class="n">HAS_UMAP</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">HAS_UMAP</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UMAP not available, using PCA for visualization&quot;</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dd_coresets</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">fit_ddc_coreset</span><span class="p">,</span>
+    <span class="n">fit_random_coreset</span><span class="p">,</span>
+    <span class="n">fit_stratified_coreset</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Set random seed for reproducibility</span>
+<span class="n">RANDOM_STATE</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">RANDOM_STATE</span><span class="p">)</span>
+
+<span class="c1"># Set plotting style</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn-v0_8&#39;</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_palette</span><span class="p">(</span><span class="s2">&quot;husl&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>UMAP not available, using PCA for visualization
+</pre></div>
+</div>
+</div>
+</div>
+<section id="why-gaussian-mixtures">
+<h3>Why Gaussian Mixtures?<a class="headerlink" href="#why-gaussian-mixtures" title="Link to this heading">#</a></h3>
+<p>Gaussian mixtures with well-separated clusters are ideal for demonstrating DDC because:</p>
+<ul class="simple">
+<li><p><strong>Clustered structure</strong>: DDC excels when data has clear modes (clusters)</p></li>
+<li><p><strong>Spatial coverage</strong>: DDC guarantees all clusters are represented, even small ones</p></li>
+<li><p><strong>Distribution preservation</strong>: The weighted coreset preserves both the location (mean) and shape (covariance) of each cluster</p></li>
+</ul>
+<p><strong>Conceptual note</strong>: In high dimensions, k-NN density estimation works well when clusters are separated. Points in dense regions (clusters) have many close neighbors, leading to high density estimates. DDC uses these estimates to prioritize important regions while ensuring diversity (spatial coverage).</p>
+</section>
+<section id="what-happens-during-ddc-fitting">
+<h3>What Happens During DDC Fitting?<a class="headerlink" href="#what-happens-during-ddc-fitting" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">fit_ddc_coreset</span></code> function performs three main steps:</p>
+<ol class="arabic simple">
+<li><p><strong>Density Estimation</strong>: Estimates local density for each point using k-nearest neighbors. Points in dense regions (clusters) get high density scores.</p></li>
+<li><p><strong>Greedy Selection</strong>: Iteratively selects points that balance high density (important regions) with diversity (spatial coverage). The <code class="docutils literal notranslate"><span class="pre">alpha</span></code> parameter (default 0.3) controls this trade-off.</p></li>
+<li><p><strong>Weight Assignment</strong>: Assigns weights to selected points using soft assignments. A point with weight 0.1 “stands for” 10% of the original data in that region.</p></li>
+</ol>
+<p><strong>Why weights matter</strong>: Unlike simple sampling where each point represents 1/n of the data, weights allow a small coreset to accurately represent the full distribution. This is similar to how a histogram uses bin counts, but DDC uses actual data points with weights.</p>
+<p>See <a class="reference internal" href="../concepts/algorithm.html"><span class="std std-doc">Algorithm Overview</span></a> for more details.</p>
+</section>
+<section id="id1">
+<h3>Why Gaussian Mixtures?<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<p>Gaussian mixtures with well-separated clusters are ideal for demonstrating DDC because:</p>
+<ul class="simple">
+<li><p><strong>Clustered structure</strong>: DDC excels when data has clear modes (clusters)</p></li>
+<li><p><strong>Spatial coverage</strong>: DDC guarantees all clusters are represented, even small ones</p></li>
+<li><p><strong>Distribution preservation</strong>: The weighted coreset preserves both the location (mean) and shape (covariance) of each cluster</p></li>
+</ul>
+<p><strong>Conceptual note</strong>: In high dimensions, k-NN density estimation works well when clusters are separated. Points in dense regions (clusters) have many close neighbors, leading to high density estimates. DDC uses these estimates to prioritize important regions while ensuring diversity (spatial coverage).</p>
+</section>
+<section id="id2">
+<h3>What Happens During DDC Fitting?<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">fit_ddc_coreset</span></code> function performs three main steps:</p>
+<ol class="arabic simple">
+<li><p><strong>Density Estimation</strong>: Estimates local density for each point using k-nearest neighbors. Points in dense regions (clusters) get high density scores.</p></li>
+<li><p><strong>Greedy Selection</strong>: Iteratively selects points that balance high density (important regions) with diversity (spatial coverage). The <code class="docutils literal notranslate"><span class="pre">alpha</span></code> parameter (default 0.3) controls this trade-off.</p></li>
+<li><p><strong>Weight Assignment</strong>: Assigns weights to selected points using soft assignments. A point with weight 0.1 “stands for” 10% of the original data in that region.</p></li>
+</ol>
+<p><strong>Why weights matter</strong>: Unlike simple sampling where each point represents 1/n of the data, weights allow a small coreset to accurately represent the full distribution. This is similar to how a histogram uses bin counts, but DDC uses actual data points with weights.</p>
+<p>See <a class="reference internal" href="../concepts/algorithm.html"><span class="std std-doc">Algorithm Overview</span></a> for more details.</p>
+</section>
+<section id="id3">
+<h3>What Happens During DDC Fitting?<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">fit_ddc_coreset</span></code> function performs three main steps:</p>
+<ol class="arabic simple">
+<li><p><strong>Density Estimation</strong>: Estimates local density for each point using k-nearest neighbors. Points in dense regions (clusters) get high density scores.</p></li>
+<li><p><strong>Greedy Selection</strong>: Iteratively selects points that balance high density (important regions) with diversity (spatial coverage). The <code class="docutils literal notranslate"><span class="pre">alpha</span></code> parameter (default 0.3) controls this trade-off.</p></li>
+<li><p><strong>Weight Assignment</strong>: Assigns weights to selected points using soft assignments. A point with weight 0.1 “stands for” 10% of the original data in that region.</p></li>
+</ol>
+<p><strong>Why weights matter</strong>: Unlike simple sampling where each point represents 1/n of the data, weights allow a small coreset to accurately represent the full distribution. This is similar to how a histogram uses bin counts, but DDC uses actual data points with weights.</p>
+<p>See <a class="reference internal" href="../concepts/algorithm.html"><span class="std std-doc">Algorithm Overview</span></a> for more details.</p>
+</section>
+</section>
+<section id="generate-dataset">
+<h2>2. Generate Dataset<a class="headerlink" href="#generate-dataset" title="Link to this heading">#</a></h2>
+<p>We’ll create a Gaussian mixture with <strong>3 clusters</strong> and <strong>8 features</strong>. The clusters are well-separated, which is where DDC typically excels.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate Gaussian mixture</span>
+<span class="n">n_samples</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">n_features</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">n_clusters</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">cluster_labels</span> <span class="o">=</span> <span class="n">make_blobs</span><span class="p">(</span>
+    <span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="n">n_features</span><span class="p">,</span>
+    <span class="n">centers</span><span class="o">=</span><span class="n">n_clusters</span><span class="p">,</span>
+    <span class="n">cluster_std</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">center_box</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Standardize features</span>
+<span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dataset shape: </span><span class="si">{</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of clusters: </span><span class="si">{</span><span class="n">n_clusters</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cluster sizes: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">cluster_labels</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dataset shape: (10000, 8)
+Number of clusters: 3
+Cluster sizes: [3334 3333 3333]
+</pre></div>
+</div>
+</div>
+</div>
+<section id="id4">
+<h3>Why Gaussian Mixtures?<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<p>Gaussian mixtures with well-separated clusters are ideal for demonstrating DDC because:</p>
+<ul class="simple">
+<li><p><strong>Clustered structure</strong>: DDC excels when data has clear modes (clusters)</p></li>
+<li><p><strong>Spatial coverage</strong>: DDC guarantees all clusters are represented, even small ones</p></li>
+<li><p><strong>Distribution preservation</strong>: The weighted coreset preserves both the location (mean) and shape (covariance) of each cluster</p></li>
+</ul>
+<p><strong>Conceptual note</strong>: In high dimensions, k-NN density estimation works well when clusters are separated. Points in dense regions (clusters) have many close neighbors, leading to high density estimates. DDC uses these estimates to prioritize important regions while ensuring diversity (spatial coverage).</p>
+</section>
+<section id="id5">
+<h3>Why Gaussian Mixtures?<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<p>Gaussian mixtures with well-separated clusters are ideal for demonstrating DDC because:</p>
+<ul class="simple">
+<li><p><strong>Clustered structure</strong>: DDC excels when data has clear modes (clusters)</p></li>
+<li><p><strong>Spatial coverage</strong>: DDC guarantees all clusters are represented, even small ones</p></li>
+<li><p><strong>Distribution preservation</strong>: The weighted coreset preserves both the location (mean) and shape (covariance) of each cluster</p></li>
+</ul>
+<p><strong>Conceptual note</strong>: In high dimensions, k-NN density estimation works well when clusters are separated. Points in dense regions (clusters) have many close neighbors, leading to high density estimates. DDC uses these estimates to prioritize important regions while ensuring diversity (spatial coverage).</p>
+</section>
+</section>
+<section id="visualize-original-data">
+<h2>3. Visualize Original Data<a class="headerlink" href="#visualize-original-data" title="Link to this heading">#</a></h2>
+<p>Let’s visualize the data in 2D using UMAP (or PCA if UMAP is not available).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Project to 2D for visualizationif HAS_UMAP:    reducer = umap.UMAP(n_components=2, random_state=RANDOM_STATE)    X_2d = reducer.fit_transform(X)else:    reducer = PCA(n_components=2, random_state=RANDOM_STATE)    X_2d = reducer.fit_transform(X)plt.figure(figsize=(10, 6))scatter = plt.scatter(X_2d[:, 0], X_2d[:, 1], c=cluster_labels,                       cmap=&#39;viridis&#39;, alpha=0.5, s=10)plt.colorbar(scatter, label=&#39;Cluster&#39;)plt.title(&#39;Original Data (2D Projection)&#39;, fontsize=14, fontweight=&#39;bold&#39;)plt.xlabel(&#39;Component 1&#39;)plt.ylabel(&#39;Component 2&#39;)plt.tight_layout()# Save figureimport osos.makedirs(&#39;images/tutorials/basic_tabular&#39;, exist_ok=True)plt.savefig(&#39;images/tutorials/basic_tabular/original_data_2d.png&#39;, dpi=150, bbox_inches=&#39;tight&#39;)plt.show()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><img alt="2D projection of original Gaussian mixture data with 3 clusters" src="tutorials/images/tutorials/basic_tabular/original_data_2d.png" /></p>
+<p><em>Original dataset projected to 2D using UMAP (or PCA). Colors represent different clusters.</em></p>
+</section>
+<section id="fit-coresets">
+<h2>4. Fit Coresets<a class="headerlink" href="#fit-coresets" title="Link to this heading">#</a></h2>
+<p>Now we’ll create coresets using three methods:</p>
+<ol class="arabic simple">
+<li><p><strong>DDC</strong>: Density-Diversity Coreset (unsupervised)</p></li>
+<li><p><strong>Random</strong>: Uniform random sampling</p></li>
+<li><p><strong>Stratified</strong>: Stratified sampling by cluster</p></li>
+</ol>
+<p>We’ll use <code class="docutils literal notranslate"><span class="pre">k=200</span></code> representatives (2% of the data).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mi">200</span>  <span class="c1"># Number of representatives</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fitting coresets...&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+
+<span class="c1"># DDC (using default simplest preset)</span>
+<span class="n">S_ddc</span><span class="p">,</span> <span class="n">w_ddc</span><span class="p">,</span> <span class="n">info_ddc</span> <span class="o">=</span> <span class="n">fit_ddc_coreset</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✓ DDC: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">S_ddc</span><span class="p">)</span><span class="si">}</span><span class="s2"> representatives&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Pipeline: </span><span class="si">{</span><span class="n">info_ddc</span><span class="p">[</span><span class="s1">&#39;pipeline&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Random</span>
+<span class="n">S_random</span><span class="p">,</span> <span class="n">w_random</span><span class="p">,</span> <span class="n">info_random</span> <span class="o">=</span> <span class="n">fit_random_coreset</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✓ Random: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">S_random</span><span class="p">)</span><span class="si">}</span><span class="s2"> representatives&quot;</span><span class="p">)</span>
+
+<span class="c1"># Stratified (by cluster)</span>
+<span class="n">S_strat</span><span class="p">,</span> <span class="n">w_strat</span><span class="p">,</span> <span class="n">info_strat</span> <span class="o">=</span> <span class="n">fit_stratified_coreset</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">strata</span><span class="o">=</span><span class="n">cluster_labels</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span> <span class="o">+</span> <span class="mi">2</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✓ Stratified: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">S_strat</span><span class="p">)</span><span class="si">}</span><span class="s2"> representatives&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Fitting coresets...
+============================================================
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✓ DDC: 200 representatives
+  Pipeline: {&#39;mode&#39;: &#39;euclidean&#39;, &#39;preset&#39;: &#39;balanced&#39;, &#39;adaptive&#39;: False, &#39;pca_used&#39;: False, &#39;d_original&#39;: 8, &#39;d_effective&#39;: 8, &#39;fallbacks&#39;: []}
+✓ Random: 200 representatives
+✓ Stratified: 200 representatives
+============================================================
+</pre></div>
+</div>
+</div>
+</div>
+<section id="id6">
+<h3>What Happens During DDC Fitting?<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">fit_ddc_coreset</span></code> function performs three main steps:</p>
+<ol class="arabic simple">
+<li><p><strong>Density Estimation</strong>: Estimates local density for each point using k-nearest neighbors. Points in dense regions (clusters) get high density scores.</p></li>
+<li><p><strong>Greedy Selection</strong>: Iteratively selects points that balance high density (important regions) with diversity (spatial coverage). The <code class="docutils literal notranslate"><span class="pre">alpha</span></code> parameter (default 0.3) controls this trade-off.</p></li>
+<li><p><strong>Weight Assignment</strong>: Assigns weights to selected points using soft assignments. A point with weight 0.1 “stands for” 10% of the original data in that region.</p></li>
+</ol>
+<p><strong>Why weights matter</strong>: Unlike simple sampling where each point represents 1/n of the data, weights allow a small coreset to accurately represent the full distribution. This is similar to how a histogram uses bin counts, but DDC uses actual data points with weights.</p>
+<p>See <a class="reference internal" href="../concepts/algorithm.html"><span class="std std-doc">Algorithm Overview</span></a> for more details.</p>
+</section>
+<section id="id7">
+<h3>What Happens During DDC Fitting?<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">fit_ddc_coreset</span></code> function performs three main steps:</p>
+<ol class="arabic simple">
+<li><p><strong>Density Estimation</strong>: Estimates local density for each point using k-nearest neighbors. Points in dense regions (clusters) get high density scores.</p></li>
+<li><p><strong>Greedy Selection</strong>: Iteratively selects points that balance high density (important regions) with diversity (spatial coverage). The <code class="docutils literal notranslate"><span class="pre">alpha</span></code> parameter (default 0.3) controls this trade-off.</p></li>
+<li><p><strong>Weight Assignment</strong>: Assigns weights to selected points using soft assignments. A point with weight 0.1 “stands for” 10% of the original data in that region.</p></li>
+</ol>
+<p><strong>Why weights matter</strong>: Unlike simple sampling where each point represents 1/n of the data, weights allow a small coreset to accurately represent the full distribution. This is similar to how a histogram uses bin counts, but DDC uses actual data points with weights.</p>
+<p>See <a class="reference internal" href="../concepts/algorithm.html"><span class="std std-doc">Algorithm Overview</span></a> for more details.</p>
+</section>
+<section id="id8">
+<h3>What Happens During DDC Fitting?<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">fit_ddc_coreset</span></code> function performs three main steps:</p>
+<ol class="arabic simple">
+<li><p><strong>Density Estimation</strong>: Estimates local density for each point using k-nearest neighbors. Points in dense regions (clusters) get high density scores.</p></li>
+<li><p><strong>Greedy Selection</strong>: Iteratively selects points that balance high density (important regions) with diversity (spatial coverage). The <code class="docutils literal notranslate"><span class="pre">alpha</span></code> parameter (default 0.3) controls this trade-off.</p></li>
+<li><p><strong>Weight Assignment</strong>: Assigns weights to selected points using soft assignments. A point with weight 0.1 “stands for” 10% of the original data in that region.</p></li>
+</ol>
+<p><strong>Why weights matter</strong>: Unlike simple sampling where each point represents 1/n of the data, weights allow a small coreset to accurately represent the full distribution. This is similar to how a histogram uses bin counts, but DDC uses actual data points with weights.</p>
+<p>See <a class="reference internal" href="../concepts/algorithm.html"><span class="std std-doc">Algorithm Overview</span></a> for more details.</p>
+</section>
+</section>
+<section id="compute-metrics">
+<h2>5. Compute Metrics<a class="headerlink" href="#compute-metrics" title="Link to this heading">#</a></h2>
+<p>We’ll compute distributional metrics to compare how well each coreset preserves the original distribution.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">wasserstein_1d_approx</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">w2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Approximate Wasserstein-1 distance for 1D distributions.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">w2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">w2</span> <span class="o">/</span> <span class="n">w2</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x2</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">probs</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">x2_sampled</span> <span class="o">=</span> <span class="n">x2</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x2_sampled</span> <span class="o">=</span> <span class="n">x2</span>
+    
+    <span class="n">x1_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span>
+    <span class="n">x2_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">x2_sampled</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x1_sorted</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">x2_sorted</span><span class="p">))</span>
+    <span class="n">quantiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="n">q1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">x1_sorted</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">)</span>
+    <span class="n">q2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">x2_sorted</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q1</span> <span class="o">-</span> <span class="n">q2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ks_1d_approx</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">w2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_grid</span><span class="o">=</span><span class="mi">512</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Approximate KS statistic for 1D distributions.&quot;&quot;&quot;</span>
+    <span class="n">x_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">x1</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">x2</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+    <span class="n">x_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">x1</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">x2</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">n_grid</span><span class="p">)</span>
+    
+    <span class="n">F_X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x1</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">grid</span><span class="p">])</span>
+    
+    <span class="k">if</span> <span class="n">w2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">F_S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w2</span><span class="p">[</span><span class="n">x2</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">grid</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">F_S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x2</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">grid</span><span class="p">])</span>
+    
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">F_X</span> <span class="o">-</span> <span class="n">F_S</span><span class="p">)))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">weighted_mean</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute weighted mean.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">S</span> <span class="o">*</span> <span class="n">w</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">weighted_cov</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute weighted covariance matrix.&quot;&quot;&quot;</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">weighted_mean</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+    <span class="n">Xc</span> <span class="o">=</span> <span class="n">S</span> <span class="o">-</span> <span class="n">mu</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">Xc</span> <span class="o">*</span> <span class="n">w</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">Xc</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_metrics</span><span class="p">(</span><span class="n">X_full</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">method_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute all metrics comparing coreset to full data.&quot;&quot;&quot;</span>
+    <span class="c1"># Joint distribution metrics</span>
+    <span class="n">mu_full</span> <span class="o">=</span> <span class="n">X_full</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">cov_full</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">X_full</span><span class="p">,</span> <span class="n">rowvar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    
+    <span class="n">mu_coreset</span> <span class="o">=</span> <span class="n">weighted_mean</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+    <span class="n">cov_coreset</span> <span class="o">=</span> <span class="n">weighted_cov</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+    
+    <span class="n">mean_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">mu_full</span> <span class="o">-</span> <span class="n">mu_coreset</span><span class="p">)</span>
+    <span class="n">cov_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">cov_full</span> <span class="o">-</span> <span class="n">cov_coreset</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="s1">&#39;fro&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Correlation matrices</span>
+    <span class="n">std_full</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">cov_full</span><span class="p">))</span>
+    <span class="n">std_core</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">cov_coreset</span><span class="p">))</span>
+    <span class="n">corr_full</span> <span class="o">=</span> <span class="n">cov_full</span> <span class="o">/</span> <span class="p">(</span><span class="n">std_full</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">std_full</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="mf">1e-12</span><span class="p">)</span>
+    <span class="n">corr_core</span> <span class="o">=</span> <span class="n">cov_coreset</span> <span class="o">/</span> <span class="p">(</span><span class="n">std_core</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">std_core</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="mf">1e-12</span><span class="p">)</span>
+    <span class="n">corr_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">corr_full</span> <span class="o">-</span> <span class="n">corr_core</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="s1">&#39;fro&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Marginal distribution metrics</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">X_full</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">W1_dims</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">KS_dims</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+        <span class="n">W1</span> <span class="o">=</span> <span class="n">wasserstein_1d_approx</span><span class="p">(</span><span class="n">X_full</span><span class="p">[:,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">S</span><span class="p">[:,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">w</span><span class="p">)</span>
+        <span class="n">KS</span> <span class="o">=</span> <span class="n">ks_1d_approx</span><span class="p">(</span><span class="n">X_full</span><span class="p">[:,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">S</span><span class="p">[:,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">w</span><span class="p">)</span>
+        <span class="n">W1_dims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">W1</span><span class="p">)</span>
+        <span class="n">KS_dims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">KS</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="n">method_name</span><span class="p">,</span>
+        <span class="s1">&#39;mean_err_l2&#39;</span><span class="p">:</span> <span class="n">mean_err</span><span class="p">,</span>
+        <span class="s1">&#39;cov_err_fro&#39;</span><span class="p">:</span> <span class="n">cov_err</span><span class="p">,</span>
+        <span class="s1">&#39;corr_err_fro&#39;</span><span class="p">:</span> <span class="n">corr_err</span><span class="p">,</span>
+        <span class="s1">&#39;W1_mean&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">W1_dims</span><span class="p">),</span>
+        <span class="s1">&#39;W1_max&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">W1_dims</span><span class="p">),</span>
+        <span class="s1">&#39;KS_mean&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">KS_dims</span><span class="p">),</span>
+        <span class="s1">&#39;KS_max&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">KS_dims</span><span class="p">),</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute metrics for all methods</span>
+<span class="n">metrics_ddc</span> <span class="o">=</span> <span class="n">compute_metrics</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">S_ddc</span><span class="p">,</span> <span class="n">w_ddc</span><span class="p">,</span> <span class="s1">&#39;DDC&#39;</span><span class="p">)</span>
+<span class="n">metrics_random</span> <span class="o">=</span> <span class="n">compute_metrics</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">S_random</span><span class="p">,</span> <span class="n">w_random</span><span class="p">,</span> <span class="s1">&#39;Random&#39;</span><span class="p">)</span>
+<span class="n">metrics_strat</span> <span class="o">=</span> <span class="n">compute_metrics</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">S_strat</span><span class="p">,</span> <span class="n">w_strat</span><span class="p">,</span> <span class="s1">&#39;Stratified&#39;</span><span class="p">)</span>
+
+<span class="c1"># Create comparison table</span>
+<span class="n">results_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">metrics_ddc</span><span class="p">,</span> <span class="n">metrics_random</span><span class="p">,</span> <span class="n">metrics_strat</span><span class="p">])</span>
+<span class="n">results_df</span> <span class="o">=</span> <span class="n">results_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;method&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Distributional Metrics Comparison:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results_df</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+
+<span class="c1"># Compute relative improvement</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">DDC Improvement over Random:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;mean_err_l2&#39;</span><span class="p">,</span> <span class="s1">&#39;cov_err_fro&#39;</span><span class="p">,</span> <span class="s1">&#39;corr_err_fro&#39;</span><span class="p">,</span> <span class="s1">&#39;W1_mean&#39;</span><span class="p">,</span> <span class="s1">&#39;KS_mean&#39;</span><span class="p">]:</span>
+    <span class="n">random_val</span> <span class="o">=</span> <span class="n">metrics_random</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span>
+    <span class="n">ddc_val</span> <span class="o">=</span> <span class="n">metrics_ddc</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span>
+    <span class="n">improvement</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ddc_val</span> <span class="o">/</span> <span class="n">random_val</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">metric</span><span class="si">:</span><span class="s2">20s</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">improvement</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">% better&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Distributional Metrics Comparison:
+============================================================
+            mean_err_l2  cov_err_fro  corr_err_fro  W1_mean  W1_max  KS_mean  \
+method                                                                         
+DDC              0.0723       0.6079        0.5399   0.1092  0.1997   0.0665   
+Random           0.1689       0.4534        0.3104   0.0784  0.1138   0.0589   
+Stratified       0.0966       0.4166        0.3023   0.0569  0.0895   0.0498   
+
+            KS_max  
+method              
+DDC         0.0947  
+Random      0.0703  
+Stratified  0.0723  
+
+DDC Improvement over Random:
+============================================================
+mean_err_l2         :   57.2% better
+cov_err_fro         :  -34.1% better
+corr_err_fro        :  -73.9% better
+W1_mean             :  -39.2% better
+KS_mean             :  -13.0% better
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="visualizations">
+<h2>6. Visualizations<a class="headerlink" href="#visualizations" title="Link to this heading">#</a></h2>
+<p>Let’s visualize the coresets and compare their distributional fidelity.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Project coresets to 2D using same reducerS_ddc_2d = reducer.transform(S_ddc)S_random_2d = reducer.transform(S_random)S_strat_2d = reducer.transform(S_strat)# Get cluster labels for coreset pointsfrom sklearn.neighbors import NearestNeighborsnn = NearestNeighbors(n_neighbors=1)nn.fit(X)_, idx_ddc = nn.kneighbors(S_ddc)_, idx_random = nn.kneighbors(S_random)_, idx_strat = nn.kneighbors(S_strat)labels_ddc = cluster_labels[idx_ddc.flatten()]labels_random = cluster_labels[idx_random.flatten()]labels_strat = cluster_labels[idx_strat.flatten()]# Plot spatial coveragefig, axes = plt.subplots(1, 3, figsize=(18, 5))for ax, S_2d, labels, title, w in zip(    axes, [S_ddc_2d, S_random_2d, S_strat_2d],    [labels_ddc, labels_random, labels_strat],    [&#39;DDC&#39;, &#39;Random&#39;, &#39;Stratified&#39;],    [w_ddc, w_random, w_strat]):    scatter = ax.scatter(S_2d[:, 0], S_2d[:, 1], c=labels,                          cmap=&#39;viridis&#39;, s=w*1000, alpha=0.7, edgecolors=&#39;black&#39;, linewidths=0.5)    ax.set_title(f&#39;{title} Coreset (k={len(S_2d)})&#39;, fontsize=12, fontweight=&#39;bold&#39;)    ax.set_xlabel(&#39;Component 1&#39;)    ax.set_ylabel(&#39;Component 2&#39;)    ax.grid(True, alpha=0.3)plt.tight_layout()# Save figureimport osos.makedirs(&#39;images/tutorials/basic_tabular&#39;, exist_ok=True)plt.savefig(&#39;images/tutorials/basic_tabular/spatial_coverage_comparison.png&#39;, dpi=150, bbox_inches=&#39;tight&#39;)plt.show()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot marginal distributions for first 4 features</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span>
+    
+    <span class="c1"># Full data histogram</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Full Data&#39;</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="c1"># Weighted histograms for coresets</span>
+    <span class="k">for</span> <span class="n">S</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">S_ddc</span><span class="p">,</span> <span class="n">w_ddc</span><span class="p">,</span> <span class="s1">&#39;DDC&#39;</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">S_random</span><span class="p">,</span> <span class="n">w_random</span><span class="p">,</span> <span class="s1">&#39;Random&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">S_strat</span><span class="p">,</span> <span class="n">w_strat</span><span class="p">,</span> <span class="s1">&#39;Stratified&#39;</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">)</span>
+    <span class="p">]:</span>
+        <span class="c1"># Sample from weighted distribution</span>
+        <span class="n">n_samples</span> <span class="o">=</span> <span class="mi">5000</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">w</span> <span class="o">/</span> <span class="n">w</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">S</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">probs</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">S</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> 
+                <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Feature </span><span class="si">{</span><span class="n">dim</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1"> Marginal Distribution&#39;</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Value&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Density&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="c1"># Save figure</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s1">&#39;images/tutorials/basic_tabular&#39;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;images/tutorials/basic_tabular/spatial_coverage_comparison.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/87c427911d4ae7a31e68712e88419294f37cd794fe53b04dbb812a3d7918dc0a.png" src="../_images/87c427911d4ae7a31e68712e88419294f37cd794fe53b04dbb812a3d7918dc0a.png" />
+</div>
+</div>
+<p><img alt="2D projection comparing spatial coverage of DDC, Random, and Stratified coresets" src="../_images/spatial_coverage_comparison.png" /></p>
+<p><em>Spatial coverage comparison: DDC (left), Random (center), and Stratified (right) coresets. Point sizes are proportional to weights. DDC ensures all clusters are represented, even small ones.</em></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Bar chart comparing metrics</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="n">metrics_to_plot</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mean_err_l2&#39;</span><span class="p">,</span> <span class="s1">&#39;cov_err_fro&#39;</span><span class="p">,</span> <span class="s1">&#39;W1_mean&#39;</span><span class="p">,</span> <span class="s1">&#39;KS_mean&#39;</span><span class="p">]</span>
+<span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;DDC&#39;</span><span class="p">,</span> <span class="s1">&#39;Random&#39;</span><span class="p">,</span> <span class="s1">&#39;Stratified&#39;</span><span class="p">]</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">]</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">metrics_to_plot</span><span class="p">))</span>
+<span class="n">width</span> <span class="o">=</span> <span class="mf">0.25</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">method</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">methods</span><span class="p">):</span>
+    <span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="n">results_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">method</span><span class="p">,</span> <span class="n">m</span><span class="p">]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">metrics_to_plot</span><span class="p">]</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">i</span><span class="o">*</span><span class="n">width</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Metric&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Error (lower is better)&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Distributional Metrics Comparison&#39;</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">width</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">metrics_to_plot</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+
+<span class="c1"># Improvement percentages</span>
+<span class="n">improvements</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">metrics_to_plot</span><span class="p">:</span>
+    <span class="n">random_val</span> <span class="o">=</span> <span class="n">results_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;Random&#39;</span><span class="p">,</span> <span class="n">metric</span><span class="p">]</span>
+    <span class="n">ddc_val</span> <span class="o">=</span> <span class="n">results_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;DDC&#39;</span><span class="p">,</span> <span class="n">metric</span><span class="p">]</span>
+    <span class="n">improvement</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ddc_val</span> <span class="o">/</span> <span class="n">random_val</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="n">improvements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">improvement</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">metrics_to_plot</span><span class="p">)),</span> <span class="n">improvements</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Metric&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Improvement (%)&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;DDC Improvement over Random&#39;</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">metrics_to_plot</span><span class="p">)))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">metrics_to_plot</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="c1"># Save figure</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s1">&#39;images/tutorials/basic_tabular&#39;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;images/tutorials/basic_tabular/metrics_comparison.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/182ac293a3583e0c86abf50f4e3262921a4043e34ca6281cf2f6dd36cc13b5dd.png" src="../_images/182ac293a3583e0c86abf50f4e3262921a4043e34ca6281cf2f6dd36cc13b5dd.png" />
+</div>
+</div>
+</section>
+<section id="key-takeaways">
+<h2>7. Key Takeaways<a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
+<section id="when-ddc-is-better">
+<h3>When DDC is Better<a class="headerlink" href="#when-ddc-is-better" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Clustered data</strong>: DDC preserves cluster structure better than Random</p></li>
+<li><p><strong>Spatial coverage</strong>: DDC ensures all clusters are represented</p></li>
+<li><p><strong>Distributional fidelity</strong>: DDC better preserves marginal distributions</p></li>
+</ul>
+</section>
+<section id="when-random-might-be-better">
+<h3>When Random Might Be Better<a class="headerlink" href="#when-random-might-be-better" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Very large datasets</strong> (n &gt;&gt; k) with complex non-Gaussian structure</p></li>
+<li><p><strong>Preserving exact global covariance</strong> is critical</p></li>
+<li><p><strong>High-dimensional sparse data</strong></p></li>
+</ul>
+</section>
+<section id="next-steps">
+<h3>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Try <code class="docutils literal notranslate"><span class="pre">multimodal_clusters.ipynb</span></code> for more complex cluster structures</p></li>
+<li><p>Try <code class="docutils literal notranslate"><span class="pre">adaptive_distances.ipynb</span></code> for advanced features (presets, adaptive distances)</p></li>
+<li><p>See <code class="docutils literal notranslate"><span class="pre">docs/DDC_ADVANTAGE_CASES.md</span></code> for comprehensive analysis</p></li>
+</ul>
+<p><img alt="Histogram comparison of marginal distributions for DDC, Random, and Stratified coresets" src="tutorials/images/tutorials/basic_tabular/marginal_distributions.png" /></p>
+<p><em>Marginal distribution comparison for the first 4 features. Gray histogram shows full data; colored lines show weighted coreset distributions. DDC better preserves the shape of marginal distributions.</em></p>
+<p><img alt="Bar charts comparing distributional metrics across methods" src="../_images/metrics_comparison.png" /></p>
+<p><em>Distributional metrics comparison (left) and DDC improvement over Random (right). DDC excels at mean preservation but may trade off some covariance accuracy for better cluster coverage.</em></p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./tutorials"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../quickstart.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Quick Start</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="multimodal_clusters.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Multimodal Clusters: DDC Spatial Coverage</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-you-ll-learn">What You’ll Learn</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-dataset">The Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">1. Setup</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-gaussian-mixtures">Why Gaussian Mixtures?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-happens-during-ddc-fitting">What Happens During DDC Fitting?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Why Gaussian Mixtures?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">What Happens During DDC Fitting?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">What Happens During DDC Fitting?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-dataset">2. Generate Dataset</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Why Gaussian Mixtures?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Why Gaussian Mixtures?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-original-data">3. Visualize Original Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fit-coresets">4. Fit Coresets</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">What Happens During DDC Fitting?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">What Happens During DDC Fitting?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">What Happens During DDC Fitting?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-metrics">5. Compute Metrics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizations">6. Visualizations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">7. Key Takeaways</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-ddc-is-better">When DDC is Better</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-random-might-be-better">When Random Might Be Better</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Carlos R. B. Azevedo
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025, Carlos R. B. Azevedo.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

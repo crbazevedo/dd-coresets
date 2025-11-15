@@ -1,0 +1,607 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Adding Figures to Notebooks - Implementation Guide &#8212; dd-coresets Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ADD_FIGURES_TO_NOTEBOOKS';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">dd-coresets Documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/basic_tabular.html">Basic Tabular Data: DDC vs Random vs Stratified</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/multimodal_clusters.html">Multimodal Clusters: DDC Spatial Coverage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/adaptive_distances.html">Adaptive Distances &amp; Presets: Advanced DDC Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/label_aware_classification.html">Label-Aware DDC for Classification Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/high_dimensional.html">High-Dimensional Data: Automatic PCA Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts/density_estimation.html">Density Estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts/algorithm.html">The DDC Algorithm: Why It Works</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts/metrics.html">Understanding DDC Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts/adaptive_distances.html">Adaptive Distances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts/weighting.html">Weight Assignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guides/choosing_parameters.html">Choosing Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guides/understanding_metrics.html">Understanding Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guides/troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guides/best_practices.html">Best Practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_cases/eda.html">Exploratory Data Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_cases/classification.html">Classification Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_cases/high_dim.html">High-Dimensional Data</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/ADD_FIGURES_TO_NOTEBOOKS.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Adding Figures to Notebooks - Implementation Guide</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#directory-structure">Directory Structure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-steps">Implementation Steps</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-modify-notebook-cells">Step 1: Modify Notebook Cells</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-add-markdown-references">Step 2: Add Markdown References</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-figure-naming-convention">Step 3: Figure Naming Convention</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-figure-types-by-notebook">Step 4: Figure Types by Notebook</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-tabular-ipynb">basic_tabular.ipynb</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#multimodal-clusters-ipynb">multimodal_clusters.ipynb</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#adaptive-distances-ipynb">adaptive_distances.ipynb</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#label-aware-classification-ipynb">label_aware_classification.ipynb</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#high-dimensional-ipynb">high_dimensional.ipynb</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#best-practices">Best Practices</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#automation-script">Automation Script</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="adding-figures-to-notebooks-implementation-guide">
+<h1>Adding Figures to Notebooks - Implementation Guide<a class="headerlink" href="#adding-figures-to-notebooks-implementation-guide" title="Link to this heading">#</a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>This guide explains how to modify tutorial notebooks to save figures and reference them in the documentation.</p>
+</section>
+<section id="directory-structure">
+<h2>Directory Structure<a class="headerlink" href="#directory-structure" title="Link to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>docs/book/
+├── images/
+│   ├── tutorials/
+│   │   ├── basic_tabular/
+│   │   ├── multimodal_clusters/
+│   │   ├── adaptive_distances/
+│   │   ├── label_aware_classification/
+│   │   └── high_dimensional/
+│   ├── concepts/
+│   └── pipelines/
+└── tutorials/
+    ├── basic_tabular.ipynb
+    └── ...
+</pre></div>
+</div>
+</section>
+<section id="implementation-steps">
+<h2>Implementation Steps<a class="headerlink" href="#implementation-steps" title="Link to this heading">#</a></h2>
+<section id="step-1-modify-notebook-cells">
+<h3>Step 1: Modify Notebook Cells<a class="headerlink" href="#step-1-modify-notebook-cells" title="Link to this heading">#</a></h3>
+<p>For each visualization cell, add:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Before plt.show()</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s1">&#39;images/tutorials/basic_tabular&#39;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;images/tutorials/basic_tabular/spatial_coverage.png&#39;</span><span class="p">,</span> 
+            <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="step-2-add-markdown-references">
+<h3>Step 2: Add Markdown References<a class="headerlink" href="#step-2-add-markdown-references" title="Link to this heading">#</a></h3>
+<p>After each visualization, add:</p>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>![<span class="nt">Spatial Coverage Comparison</span>](<span class="na">images/tutorials/basic_tabular/spatial_coverage.png</span>)
+
+<span class="ge">*Figure 1: 2D projection showing spatial coverage of DDC (left), Random (center), and Stratified (right) coresets. DDC ensures all clusters are represented, even small ones.*</span>
+</pre></div>
+</div>
+</section>
+<section id="step-3-figure-naming-convention">
+<h3>Step 3: Figure Naming Convention<a class="headerlink" href="#step-3-figure-naming-convention" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Format</strong>: <code class="docutils literal notranslate"><span class="pre">{notebook_name}_{figure_type}_{description}.png</span></code></p></li>
+<li><p><strong>Examples</strong>:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">basic_tabular_spatial_coverage.png</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">basic_tabular_marginal_distributions.png</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">basic_tabular_metrics_comparison.png</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">adaptive_distances_euclidean_vs_adaptive.png</span></code></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="step-4-figure-types-by-notebook">
+<h3>Step 4: Figure Types by Notebook<a class="headerlink" href="#step-4-figure-types-by-notebook" title="Link to this heading">#</a></h3>
+<section id="basic-tabular-ipynb">
+<h4>basic_tabular.ipynb<a class="headerlink" href="#basic-tabular-ipynb" title="Link to this heading">#</a></h4>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">spatial_coverage_2d.png</span></code> - 2D projection with all methods</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">marginal_distributions.png</span></code> - Histogram comparison (4 features)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">metrics_comparison.png</span></code> - Bar charts of metrics</p></li>
+</ol>
+</section>
+<section id="multimodal-clusters-ipynb">
+<h4>multimodal_clusters.ipynb<a class="headerlink" href="#multimodal-clusters-ipynb" title="Link to this heading">#</a></h4>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cluster_coverage.png</span></code> - Cluster representation comparison</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">spatial_coverage_metrics.png</span></code> - Coverage statistics</p></li>
+</ol>
+</section>
+<section id="adaptive-distances-ipynb">
+<h4>adaptive_distances.ipynb<a class="headerlink" href="#adaptive-distances-ipynb" title="Link to this heading">#</a></h4>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">euclidean_vs_adaptive.png</span></code> - Side-by-side comparison</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">elliptical_cluster_demo.png</span></code> - Adaptive distance advantage</p></li>
+</ol>
+</section>
+<section id="label-aware-classification-ipynb">
+<h4>label_aware_classification.ipynb<a class="headerlink" href="#label-aware-classification-ipynb" title="Link to this heading">#</a></h4>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pca_projection.png</span></code> - 2D PCA with class labels</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">roc_curves.png</span></code> - Model performance comparison</p></li>
+</ol>
+</section>
+<section id="high-dimensional-ipynb">
+<h4>high_dimensional.ipynb<a class="headerlink" href="#high-dimensional-ipynb" title="Link to this heading">#</a></h4>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pca_explained_variance.png</span></code> - Variance retention</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">projection_comparison.png</span></code> - Euclidean vs Auto mode</p></li>
+</ol>
+</section>
+</section>
+</section>
+<section id="best-practices">
+<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Alt Text</strong>: Always include descriptive alt text</p></li>
+<li><p><strong>Captions</strong>: Add contextual captions explaining what the figure shows</p></li>
+<li><p><strong>Resolution</strong>: Use 150 DPI for PNG, SVG for diagrams</p></li>
+<li><p><strong>Size</strong>: Keep file sizes reasonable (&lt; 500KB per image)</p></li>
+<li><p><strong>Context</strong>: Reference figures where they add value, not just decoration</p></li>
+</ol>
+</section>
+<section id="automation-script">
+<h2>Automation Script<a class="headerlink" href="#automation-script" title="Link to this heading">#</a></h2>
+<p>A script can be created to:</p>
+<ol class="arabic simple">
+<li><p>Execute notebooks</p></li>
+<li><p>Extract figures automatically</p></li>
+<li><p>Generate markdown references</p></li>
+<li><p>Validate image paths</p></li>
+</ol>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#directory-structure">Directory Structure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-steps">Implementation Steps</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-modify-notebook-cells">Step 1: Modify Notebook Cells</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-add-markdown-references">Step 2: Add Markdown References</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-figure-naming-convention">Step 3: Figure Naming Convention</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-figure-types-by-notebook">Step 4: Figure Types by Notebook</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-tabular-ipynb">basic_tabular.ipynb</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#multimodal-clusters-ipynb">multimodal_clusters.ipynb</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#adaptive-distances-ipynb">adaptive_distances.ipynb</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#label-aware-classification-ipynb">label_aware_classification.ipynb</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#high-dimensional-ipynb">high_dimensional.ipynb</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#best-practices">Best Practices</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#automation-script">Automation Script</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Carlos R. B. Azevedo
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025, Carlos R. B. Azevedo.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

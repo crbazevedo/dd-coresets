@@ -1,0 +1,623 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Understanding DDC Metrics &#8212; dd-coresets Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'concepts/metrics';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Adaptive Distances" href="adaptive_distances.html" />
+    <link rel="prev" title="The DDC Algorithm: Why It Works" href="algorithm.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">dd-coresets Documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/basic_tabular.html">Basic Tabular Data: DDC vs Random vs Stratified</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/multimodal_clusters.html">Multimodal Clusters: DDC Spatial Coverage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/adaptive_distances.html">Adaptive Distances &amp; Presets: Advanced DDC Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/label_aware_classification.html">Label-Aware DDC for Classification Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/high_dimensional.html">High-Dimensional Data: Automatic PCA Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="density_estimation.html">Density Estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithm.html">The DDC Algorithm: Why It Works</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Understanding DDC Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive_distances.html">Adaptive Distances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="weighting.html">Weight Assignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/choosing_parameters.html">Choosing Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/understanding_metrics.html">Understanding Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/best_practices.html">Best Practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../use_cases/eda.html">Exploratory Data Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../use_cases/classification.html">Classification Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../use_cases/high_dim.html">High-Dimensional Data</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/concepts/metrics.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Understanding DDC Metrics</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#distributional-metrics">Distributional Metrics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mean-error-l2">Mean Error (L2)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#covariance-error-frobenius">Covariance Error (Frobenius)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#correlation-error-frobenius">Correlation Error (Frobenius)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wasserstein-1-distance">Wasserstein-1 Distance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#kolmogorov-smirnov-ks-statistic">Kolmogorov-Smirnov (KS) Statistic</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#maximum-mean-discrepancy-mmd">Maximum Mean Discrepancy (MMD)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spatial-metrics">Spatial Metrics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#coverage-per-cluster">Coverage per Cluster</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#minimum-distance-to-full-data">Minimum Distance to Full Data</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpreting-results">Interpreting Results</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ddc-vs-random-what-to-expect">DDC vs Random: What to Expect</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-guidelines">Practical Guidelines</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theoretical-background">Theoretical Background</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#further-reading">Further Reading</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="understanding-ddc-metrics">
+<h1>Understanding DDC Metrics<a class="headerlink" href="#understanding-ddc-metrics" title="Link to this heading">#</a></h1>
+<p>This page explains the metrics used to evaluate DDC coresets and what they measure.</p>
+<section id="distributional-metrics">
+<h2>Distributional Metrics<a class="headerlink" href="#distributional-metrics" title="Link to this heading">#</a></h2>
+<section id="mean-error-l2">
+<h3>Mean Error (L2)<a class="headerlink" href="#mean-error-l2" title="Link to this heading">#</a></h3>
+<p><strong>What it measures</strong>: How well the coreset preserves the mean (center) of the distribution.</p>
+<p><strong>Definition</strong>: <code class="docutils literal notranslate"><span class="pre">||μ_original</span> <span class="pre">-</span> <span class="pre">μ_coreset||₂</span></code></p>
+<p>Where <code class="docutils literal notranslate"><span class="pre">μ_coreset</span> <span class="pre">=</span> <span class="pre">Σ</span> <span class="pre">w_i</span> <span class="pre">×</span> <span class="pre">s_i</span></code> (weighted mean).</p>
+<p><strong>Intuition</strong>: Lower is better. A small mean error means the coreset is centered similarly to the original data.</p>
+<p><strong>When it matters</strong>: Important for preserving the “location” of the distribution. DDC typically achieves 50-70% better mean preservation than Random.</p>
+</section>
+<section id="covariance-error-frobenius">
+<h3>Covariance Error (Frobenius)<a class="headerlink" href="#covariance-error-frobenius" title="Link to this heading">#</a></h3>
+<p><strong>What it measures</strong>: How well the coreset preserves the covariance matrix (shape and scale).</p>
+<p><strong>Definition</strong>: <code class="docutils literal notranslate"><span class="pre">||Σ_original</span> <span class="pre">-</span> <span class="pre">Σ_coreset||_F</span></code></p>
+<p>Where <code class="docutils literal notranslate"><span class="pre">Σ_coreset</span></code> is the weighted covariance matrix.</p>
+<p><strong>Intuition</strong>: Lower is better. Covariance captures correlations and variance. Random sampling sometimes preserves global covariance better than DDC (which focuses on local density).</p>
+<p><strong>When Random might win</strong>: If the original distribution has strong global correlations, Random can preserve the covariance structure better. DDC may sacrifice some global covariance for better local structure preservation.</p>
+</section>
+<section id="correlation-error-frobenius">
+<h3>Correlation Error (Frobenius)<a class="headerlink" href="#correlation-error-frobenius" title="Link to this heading">#</a></h3>
+<p><strong>What it measures</strong>: How well the coreset preserves pairwise correlations (normalized covariance).</p>
+<p><strong>Definition</strong>: <code class="docutils literal notranslate"><span class="pre">||R_original</span> <span class="pre">-</span> <span class="pre">R_coreset||_F</span></code></p>
+<p>Where <code class="docutils literal notranslate"><span class="pre">R</span></code> is the correlation matrix (normalized covariance).</p>
+<p><strong>Intuition</strong>: Lower is better. Correlation captures relationships between features. DDC often preserves correlations better than Random, especially in clustered data.</p>
+</section>
+<section id="wasserstein-1-distance">
+<h3>Wasserstein-1 Distance<a class="headerlink" href="#wasserstein-1-distance" title="Link to this heading">#</a></h3>
+<p><strong>What it measures</strong>: The “cost” of transforming one distribution into another.</p>
+<p><strong>Intuition</strong>: Imagine you have piles of dirt (distribution 1) and need to move them to match another shape (distribution 2). W1 is the minimum “work” (distance × mass) needed.</p>
+<p><strong>Mathematical definition</strong>: For 1D distributions, W₁(P, Q) = ∫ |F_P(x) - F_Q(x)| dx, where F is the cumulative distribution function. This connects to optimal transport theory (Villani, 2009), where Wasserstein distance measures the minimum “cost” of transforming one distribution into another.</p>
+<p><strong>Why it matters for DDC</strong>: Lower W1 means the coreset distribution is closer to the original. This is especially important for <strong>marginal distributions</strong> (per-feature). DDC typically achieves 20-30% better W1 than Random.</p>
+<p><strong>When Random might win</strong>: If the original distribution is uniform or has strong global structure, Random can sometimes preserve it better.</p>
+</section>
+<section id="kolmogorov-smirnov-ks-statistic">
+<h3>Kolmogorov-Smirnov (KS) Statistic<a class="headerlink" href="#kolmogorov-smirnov-ks-statistic" title="Link to this heading">#</a></h3>
+<p><strong>What it measures</strong>: Maximum difference between cumulative distribution functions.</p>
+<p><strong>Definition</strong>: <code class="docutils literal notranslate"><span class="pre">KS</span> <span class="pre">=</span> <span class="pre">max_x</span> <span class="pre">|F_original(x)</span> <span class="pre">-</span> <span class="pre">F_coreset(x)|</span></code></p>
+<p><strong>Intuition</strong>: Lower is better. KS captures the worst-case deviation in the distribution. Useful for detecting systematic biases.</p>
+<p><strong>Why it matters</strong>: A high KS means there’s a region where the coreset distribution deviates significantly from the original.</p>
+</section>
+<section id="maximum-mean-discrepancy-mmd">
+<h3>Maximum Mean Discrepancy (MMD)<a class="headerlink" href="#maximum-mean-discrepancy-mmd" title="Link to this heading">#</a></h3>
+<p><strong>What it measures</strong>: Distance between distributions in a reproducing kernel Hilbert space (RKHS).</p>
+<p><strong>Intuition</strong>: MMD measures how different two distributions are using a kernel function. It captures both mean and higher-order moments.</p>
+<p><strong>Why it matters</strong>: MMD is a comprehensive measure of distributional similarity. Lower MMD means better distributional preservation.</p>
+</section>
+</section>
+<section id="spatial-metrics">
+<h2>Spatial Metrics<a class="headerlink" href="#spatial-metrics" title="Link to this heading">#</a></h2>
+<section id="coverage-per-cluster">
+<h3>Coverage per Cluster<a class="headerlink" href="#coverage-per-cluster" title="Link to this heading">#</a></h3>
+<p><strong>What it measures</strong>: How many coreset points fall in each cluster/region.</p>
+<p><strong>Intuition</strong>: Higher coverage means better representation of that cluster. DDC guarantees coverage of all clusters, even small ones.</p>
+<p><strong>When it matters</strong>: Important for ensuring all modes/regions are represented. Random may miss small clusters entirely.</p>
+</section>
+<section id="minimum-distance-to-full-data">
+<h3>Minimum Distance to Full Data<a class="headerlink" href="#minimum-distance-to-full-data" title="Link to this heading">#</a></h3>
+<p><strong>What it measures</strong>: For each point in the full dataset, the distance to the nearest coreset point.</p>
+<p><strong>Intuition</strong>: Lower minimum distance means better spatial coverage. DDC typically achieves better coverage than Random.</p>
+</section>
+</section>
+<section id="interpreting-results">
+<h2>Interpreting Results<a class="headerlink" href="#interpreting-results" title="Link to this heading">#</a></h2>
+<section id="ddc-vs-random-what-to-expect">
+<h3>DDC vs Random: What to Expect<a class="headerlink" href="#ddc-vs-random-what-to-expect" title="Link to this heading">#</a></h3>
+<p><strong>DDC typically wins in</strong>:</p>
+<ul class="simple">
+<li><p>Mean error (50-70% better)</p></li>
+<li><p>Wasserstein-1 (20-30% better)</p></li>
+<li><p>Spatial coverage (guarantees all clusters)</p></li>
+<li><p>Correlation error (in clustered data)</p></li>
+</ul>
+<p><strong>Random may win in</strong>:</p>
+<ul class="simple">
+<li><p>Covariance error (in high-dimensional sparse data)</p></li>
+<li><p>Global structure preservation (in uniform distributions)</p></li>
+</ul>
+<p><strong>Trade-off</strong>: DDC preserves <strong>local structure</strong> (clusters, modes) better, while Random may preserve <strong>global structure</strong> (covariance) better.</p>
+</section>
+<section id="practical-guidelines">
+<h3>Practical Guidelines<a class="headerlink" href="#practical-guidelines" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Use DDC when</strong>: You have clustered data, need spatial coverage, or have small k</p></li>
+<li><p><strong>Use Random when</strong>: Preserving exact global covariance is critical, or data is high-dimensional and sparse</p></li>
+</ul>
+</section>
+</section>
+<section id="theoretical-background">
+<h2>Theoretical Background<a class="headerlink" href="#theoretical-background" title="Link to this heading">#</a></h2>
+<p><strong>Wasserstein Distance</strong>: Named after Leonid Wasserstein, this distance metric comes from optimal transport theory (Villani, 2009). It measures the minimum “work” needed to transform one distribution into another, making it a natural metric for distributional approximation.</p>
+<p><strong>Kolmogorov-Smirnov Test</strong>: The KS statistic is a classical non-parametric test for comparing distributions (Kolmogorov, 1933; Smirnov, 1948). It measures the maximum deviation between cumulative distribution functions, making it sensitive to systematic biases.</p>
+<p><strong>Maximum Mean Discrepancy</strong>: MMD was introduced by Gretton et al. (2012) as a kernel-based method for comparing distributions. It measures the distance between distributions in a reproducing kernel Hilbert space (RKHS), capturing both mean and higher-order moments.</p>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Villani, C. (2009). <em>Optimal transport: old and new</em> (Vol. 338). Springer.</p></li>
+<li><p>Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf, B., &amp; Smola, A. (2012). A kernel two-sample test. <em>Journal of Machine Learning Research</em>, 13(Mar), 723-773.</p></li>
+</ul>
+</section>
+<section id="further-reading">
+<h2>Further Reading<a class="headerlink" href="#further-reading" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="../guides/understanding_metrics.html"><span class="std std-doc">Understanding Metrics Guide</span></a> - Practical guide to interpreting metrics</p></li>
+<li><p><a class="reference internal" href="algorithm.html"><span class="std std-doc">Algorithm Overview</span></a> - How DDC achieves these metrics</p></li>
+<li><p><span class="xref myst">When to Use DDC</span> - Detailed analysis of DDC advantages</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./concepts"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="algorithm.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">The DDC Algorithm: Why It Works</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="adaptive_distances.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Adaptive Distances</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#distributional-metrics">Distributional Metrics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mean-error-l2">Mean Error (L2)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#covariance-error-frobenius">Covariance Error (Frobenius)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#correlation-error-frobenius">Correlation Error (Frobenius)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wasserstein-1-distance">Wasserstein-1 Distance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#kolmogorov-smirnov-ks-statistic">Kolmogorov-Smirnov (KS) Statistic</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#maximum-mean-discrepancy-mmd">Maximum Mean Discrepancy (MMD)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spatial-metrics">Spatial Metrics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#coverage-per-cluster">Coverage per Cluster</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#minimum-distance-to-full-data">Minimum Distance to Full Data</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpreting-results">Interpreting Results</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ddc-vs-random-what-to-expect">DDC vs Random: What to Expect</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-guidelines">Practical Guidelines</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theoretical-background">Theoretical Background</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#further-reading">Further Reading</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Carlos R. B. Azevedo
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025, Carlos R. B. Azevedo.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
