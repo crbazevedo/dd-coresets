@@ -210,6 +210,44 @@ S_strat, w_strat, info_strat = fit_stratified_coreset(
 
 Use these baselines to benchmark DDC on your data (moment errors, Wasserstein distances, etc.).
 
+### 3. Adaptive distances & presets (new in v0.2.0)
+
+```python
+from dd_coresets import fit_ddc_coreset
+
+# Simple: use auto mode with balanced preset
+S, w, info = fit_ddc_coreset(X, k=500, mode="auto", preset="balanced")
+
+# Check what pipeline was used
+print(info["pipeline"])
+# {"mode": "auto", "preset": "balanced", "adaptive": True, "pca_used": False, ...}
+```
+
+**When to use adaptive distances:**
+
+- **d < 20**: Euclidean (default, fastest)
+- **20 ≤ d < 50**: Adaptive if `m_neighbors > d`, else PCA → Adaptive
+- **d ≥ 50**: PCA (20–50 dims) → Adaptive/Euclidean
+
+**Presets:**
+- `"fast"`: Quick runs (fewer neighbors, 1 iteration)
+- `"balanced"`: Default (good trade-off)
+- `"robust"`: More neighbors, 2 iterations (better quality)
+
+**Label-wise wrapper** (preserve class proportions):
+
+```python
+from dd_coresets import fit_ddc_coreset_by_label
+
+# X: features, y: class labels
+S, w, info = fit_ddc_coreset_by_label(
+    X, y, k_total=500, mode="auto", preset="balanced"
+)
+
+# Class proportions preserved
+print(info["k_per_class"])  # [150, 200, 150] for 3 classes
+```
+
 ---
 
 ## Examples / Notebooks
@@ -240,31 +278,43 @@ All functions assume `X` is a NumPy array of shape `(n, d)` with **preprocessed*
 S, w, info = fit_ddc_coreset(
     X,
     k,
-    n0=20000,
-    m_neighbors=32,
+    *,
+    n0=None,              # default: 20000 (backward compatible)
     alpha=0.3,
     gamma=1.0,
     refine_iters=1,
     reweight_full=True,
     random_state=None,
+    # New parameters (v0.2.0):
+    mode="euclidean",     # "euclidean" | "adaptive" | "auto"
+    preset="balanced",    # "fast" | "balanced" | "robust" | "manual"
+    distance_cfg=None,    # override distance config (if preset="manual")
+    pipeline_cfg=None,    # override pipeline config (if preset="manual")
 )
 ```
 
 - **Parameters**
   - `X`: `(n, d)` array-like, preprocessed data.
   - `k`: number of representatives.
-  - `n0`: working sample size. If `None` or `>= n`, uses all data.
-  - `m_neighbors`: kNN parameter for local density.
+  - `n0`: working sample size. If `None` (default), uses 20000. If `>= n`, uses all data.
   - `alpha`: density–diversity trade-off (`0 ≈ diversity`, `1 ≈ density`).
   - `gamma`: kernel scale multiplier (used in soft assignment).
   - `refine_iters`: medoid refinement iterations (usually 1 is enough).
   - `reweight_full`: if `True`, reweights using the full dataset; else uses only the working sample.
   - `random_state`: RNG seed.
+  - `mode`: Distance mode. `"euclidean"` (default, backward compatible), `"adaptive"` (Mahalanobis), or `"auto"` (choose based on d).
+  - `preset`: Configuration preset. `"fast"`, `"balanced"` (default), `"robust"`, or `"manual"` (use `*_cfg` dicts).
+  - `distance_cfg`: Dict to override distance config (e.g., `{"m_neighbors": 64, "iterations": 2}`).
+  - `pipeline_cfg`: Dict to override pipeline config (e.g., `{"dim_threshold_adaptive": 40}`).
 
 - **Returns**
-  - `S`: `(k, d)` representatives (real data points).
+  - `S`: `(k, d)` representatives (always in original feature space).
   - `w`: `(k,)` weights (`w >= 0`, `sum(w) = 1`).
-  - `info`: `CoresetInfo` with metadata (method name, n, n0, indices, params).
+  - `info`: Dict with metadata including:
+    - `"pipeline"`: `{"mode", "preset", "adaptive", "pca_used", "d_original", "d_effective", "fallbacks"}`
+    - `"config"`: Resolved distance and pipeline configs
+    - `"pca"`: PCA info if used
+    - Standard fields: `"method", "k", "n", "n0", "working_indices", "selected_indices", ...`
 
 **Recommended use:**  
 Default choice when you **do not yet know** which strata or labels matter. Good for EDA, exploratory simulation, and early-stage modelling.
@@ -318,6 +368,41 @@ S, w, info = fit_stratified_coreset(
 
 **Use case:**  
 When you **know** the relevant strata and must preserve their proportions (regulatory reporting, risk/actuarial slices, business segments).
+
+---
+
+### `fit_ddc_coreset_by_label` (new in v0.2.0)
+
+```python
+from dd_coresets import fit_ddc_coreset_by_label
+
+S, w, info = fit_ddc_coreset_by_label(
+    X,
+    y,
+    k_total,
+    **ddc_kwargs,  # same as fit_ddc_coreset (mode, preset, etc.)
+)
+```
+
+- **Parameters**
+  - `X`: `(n, d)` data.
+  - `y`: `(n,)` class labels (integers).
+  - `k_total`: Total number of representatives.
+  - `**ddc_kwargs`: All parameters from `fit_ddc_coreset` (mode, preset, alpha, etc.).
+
+- Internally:
+  - Computes class proportions from `y`.
+  - Allocates `k_c` reps per class ∝ proportion.
+  - Runs `fit_ddc_coreset` separately per class.
+  - Concatenates and renormalizes weights.
+
+- **Returns**
+  - `S`: `(k_total, d)` representatives.
+  - `w`: `(k_total,)` weights (sum to 1).
+  - `info`: Dict with `{"classes", "k_per_class", "n_per_class", "info_per_class", ...}`.
+
+**Use case:**  
+When you have **class labels** and want to preserve class proportions while still benefiting from density–diversity within each class. Better than stratified for preserving distributional structure within classes.
 
 ---
 
