@@ -46,3 +46,14 @@ Thumbs.db
 .coverage
 htmlcov/
 
+# Experiments output
+experiments/**/results/**
+!experiments/**/results/.keep
+
+# Figures (keep only hero SVGs)
+docs/images/**
+!docs/images/hero_*.svg
+
+# Notebooks checkpoints
+**/.ipynb_checkpoints/
+
