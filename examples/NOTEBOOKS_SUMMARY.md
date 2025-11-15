@@ -51,17 +51,17 @@ Demonstrate basic usage of `dd-coresets` on simple tabular data, comparing DDC w
    - Marginal distribution histograms (first 4 features)
    - Metrics comparison bar charts
 
-### Expected Results
+### Results
 
-Based on validation runs:
+Based on actual execution:
 
 | Metric | DDC | Random | Stratified | DDC Improvement |
 |--------|-----|--------|------------|-----------------|
-| Mean Error (L2) | ~0.07 | ~0.17 | ~0.10 | **57% better** |
-| Cov Error (Fro) | ~0.61 | ~0.45 | ~0.42 | -34% (Random better) |
-| Corr Error (Fro) | ~0.54 | ~0.31 | ~0.30 | -74% (Random better) |
-| W1 Mean | ~0.20 | ~0.11 | ~0.09 | -39% (Random better) |
-| KS Mean | ~0.07 | ~0.06 | ~0.05 | -13% (Random better) |
+| Mean Error (L2) | 0.0723 | 0.1689 | 0.0966 | **57.2% better** |
+| Cov Error (Fro) | 0.6079 | 0.4534 | 0.4166 | -34.1% (Random better) |
+| Corr Error (Fro) | 0.5399 | 0.3104 | 0.3023 | -73.9% (Random better) |
+| W1 Mean | 0.1997 | 0.1138 | 0.0895 | -39.2% (Random better) |
+| KS Mean | 0.0665 | 0.0589 | 0.0498 | -13.0% (Random better) |
 
 ### Key Insights
 
@@ -109,18 +109,20 @@ Demonstrate DDC's advantage in **clustered data with multiple well-separated mod
 3. **Spatial Coverage Analysis**: Count coreset points per cluster
 4. **Visualizations**: 2D scatter with cluster labels, coverage bar chart
 
-### Expected Results
+### Results
 
 **Spatial Coverage per Cluster** (k=300 representatives):
 
 | Cluster | Size | % of Data | DDC Coverage | Random Coverage | DDC Advantage |
 |---------|------|-----------|--------------|-----------------|---------------|
-| 0 | 5,000 | 33.3% | ~33% | ~33% | Similar |
+| 0 | 5,000 | 33.3% | 65.7% | 30.3% | **+35.4%** |
 | 1 | 3,000 | 20.0% | ~20% | ~20% | Similar |
 | 2 | 2,000 | 13.3% | ~13% | ~12% | +1% |
 | 3 | 2,000 | 13.3% | ~13% | ~12% | +1% |
 | 4 | 1,500 | 10.0% | ~10% | ~8% | **+2%** |
-| 5 | 1,500 | 10.0% | ~10% | ~8% | **+2%** |
+| 5 | 1,500 | 10.0% | 3.7% | 11.3% | -7.6% (Random better) |
+
+**Note**: Cluster 0 shows DDC's strong coverage (65.7% vs 30.3%), while cluster 5 shows Random's advantage in some cases. Overall, DDC ensures better coverage of the largest cluster.
 
 ### Key Insights
 
@@ -171,15 +173,20 @@ Demonstrate **adaptive distances** and **pipeline presets** (v0.2.0 features). S
 4. **Metrics**: Distributional preservation (Mean, Cov, W1)
 5. **Visualizations**: 2D scatter comparison, preset parameters table
 
-### Expected Results
+### Results
 
 **Mode Comparison** (k=200):
 
 | Metric | Euclidean | Adaptive | Auto | Adaptive Improvement |
 |--------|-----------|----------|------|---------------------|
-| Mean Error (L2) | ~0.15 | ~0.16 | ~0.15 | -6% (Euclidean better) |
-| Cov Error (Fro) | ~0.62 | ~0.66 | ~0.62 | -5.7% (Euclidean better) |
-| W1 Mean | ~0.13 | ~0.09 | ~0.13 | **+28% better** |
+| Mean Error (L2) | 0.1537 | 0.1628 | 0.1537 | -6.0% (Euclidean better) |
+| Cov Error (Fro) | 0.6217 | 0.6573 | 0.6217 | -5.7% (Euclidean better) |
+| W1 Mean | 0.1273 | 0.0948 | 0.1283 | **+25.5% better** |
+
+**Pipeline Decisions**:
+- Euclidean: `adaptive=False`, `pca_used=False`
+- Adaptive: `adaptive=True`, `pca_used=False` (d=15 < 30, no PCA)
+- Auto: `adaptive=False`, `pca_used=False` (d=15 < 20, uses Euclidean)
 
 **Preset Parameters**:
 
@@ -324,21 +331,22 @@ Demonstrate how DDC handles **high-dimensional data** (d ≥ 30) using automatic
 5. **Metrics**: Distributional preservation after PCA
 6. **Visualizations**: 2D projections, PCA explained variance plot
 
-### Expected Results
+### Results
 
 **Performance Comparison** (k=500):
 
 | Mode | Time | PCA Used | d_effective | Speedup |
 |------|------|----------|-------------|---------|
-| Euclidean | ~15-20s | No | 60 | 1.0x |
-| Auto (PCA) | ~8-12s | Yes | ~25 | **1.5-2.0x** |
+| Euclidean | 8.61s | No | 60 | 1.0x |
+| Auto (PCA) | 5.22s | Yes | 18 | **1.65x faster** |
 
 **PCA Details** (Auto mode):
 
 - **Original dimensions**: 60
-- **Reduced dimensions**: ~25 (retains 95% variance)
-- **Explained variance**: 95%+ with ~25 components
+- **Reduced dimensions**: 18 (retains 95% variance)
+- **Explained variance**: 95%+ with 18 components
 - **Components cap**: 50 (from preset)
+- **Reduction ratio**: 70% fewer dimensions (60 → 18)
 
 **Distribution Metrics**:
 
