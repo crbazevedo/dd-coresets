@@ -427,6 +427,11 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Imports successful
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="data-loading">
@@ -463,6 +468,150 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading Adult Census Income dataset from OpenML...
+Dataset loaded: (48842, 15)
+
+Dataset shape: (48842, 15)
+
+Label distribution:
+target
+0    0.760718
+1    0.239282
+Name: proportion, dtype: float64
+
+First few rows:
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>age</th>
+      <th>workclass</th>
+      <th>fnlwgt</th>
+      <th>education</th>
+      <th>education-num</th>
+      <th>marital-status</th>
+      <th>occupation</th>
+      <th>relationship</th>
+      <th>race</th>
+      <th>sex</th>
+      <th>capital-gain</th>
+      <th>capital-loss</th>
+      <th>hours-per-week</th>
+      <th>native-country</th>
+      <th>target</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>25</td>
+      <td>Private</td>
+      <td>226802</td>
+      <td>11th</td>
+      <td>7</td>
+      <td>Never-married</td>
+      <td>Machine-op-inspct</td>
+      <td>Own-child</td>
+      <td>Black</td>
+      <td>Male</td>
+      <td>0</td>
+      <td>0</td>
+      <td>40</td>
+      <td>United-States</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>38</td>
+      <td>Private</td>
+      <td>89814</td>
+      <td>HS-grad</td>
+      <td>9</td>
+      <td>Married-civ-spouse</td>
+      <td>Farming-fishing</td>
+      <td>Husband</td>
+      <td>White</td>
+      <td>Male</td>
+      <td>0</td>
+      <td>0</td>
+      <td>50</td>
+      <td>United-States</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>28</td>
+      <td>Local-gov</td>
+      <td>336951</td>
+      <td>Assoc-acdm</td>
+      <td>12</td>
+      <td>Married-civ-spouse</td>
+      <td>Protective-serv</td>
+      <td>Husband</td>
+      <td>White</td>
+      <td>Male</td>
+      <td>0</td>
+      <td>0</td>
+      <td>40</td>
+      <td>United-States</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>44</td>
+      <td>Private</td>
+      <td>160323</td>
+      <td>Some-college</td>
+      <td>10</td>
+      <td>Married-civ-spouse</td>
+      <td>Machine-op-inspct</td>
+      <td>Husband</td>
+      <td>Black</td>
+      <td>Male</td>
+      <td>7688</td>
+      <td>0</td>
+      <td>40</td>
+      <td>United-States</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>18</td>
+      <td>NaN</td>
+      <td>103497</td>
+      <td>Some-college</td>
+      <td>10</td>
+      <td>Never-married</td>
+      <td>NaN</td>
+      <td>Own-child</td>
+      <td>White</td>
+      <td>Female</td>
+      <td>0</td>
+      <td>0</td>
+      <td>30</td>
+      <td>United-States</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
 </section>
 <section id="preprocessing">
@@ -496,6 +645,17 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Selected 6 numeric features
+Features: [&#39;age&#39;, &#39;fnlwgt&#39;, &#39;education-num&#39;, &#39;capital-gain&#39;, &#39;capital-loss&#39;, &#39;hours-per-week&#39;]
+
+No missing values
+
+Feature matrix shape: (48842, 6)
+Target vector shape: (48842,)
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -517,6 +677,16 @@ document.write(`
 <span class="n">unique</span><span class="p">,</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">unique</span><span class="p">,</span> <span class="n">counts</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Class </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">count</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">count</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Training set: 34,189 samples
+Test set: 14,653 samples
+
+Training label distribution:
+  Class 0: 26,008 (76.07%)
+  Class 1: 8,181 (23.93%)
 </pre></div>
 </div>
 </div>
@@ -560,6 +730,14 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Full-Data Baseline Metrics:
+  ROC AUC:  0.8316
+  Brier Score: 0.1291
+  Accuracy:    0.8181
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="baseline-subsets-random-and-stratified">
@@ -577,6 +755,11 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Target coreset size: 1000 representatives (2.92% of training data)
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -590,6 +773,13 @@ document.write(`
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Random subset created&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Shape: </span><span class="si">{</span><span class="n">X_random</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Label distribution: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">y_random</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">y_random</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Random subset created
+  Shape: (1000, 6)
+  Label distribution: [0.736 0.264]
 </pre></div>
 </div>
 </div>
@@ -624,6 +814,14 @@ document.write(`
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Shape: </span><span class="si">{</span><span class="n">X_strat</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Label distribution: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">y_strat</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">y_strat</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Original label distribution: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Stratified subset created
+  Shape: (1000, 6)
+  Label distribution: [0.761 0.239]
+  Original label distribution: [0.76071251 0.23928749]
 </pre></div>
 </div>
 </div>
@@ -705,6 +903,20 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Class 0: 26,008 samples (76.07%)
+  Allocating 761 representatives...
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Class 1: 8,181 samples (23.93%)
+  Allocating 239 representatives...
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Label-aware DDC coreset created: (1000, 6)
+  Weights sum: 1.000000
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -727,6 +939,22 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Label Distribution Comparison:
+  Original training set:
+    Class 0: 0.7607
+    Class 1: 0.2393
+
+  Label-aware DDC coreset:
+    Class 0: 0.7610
+    Class 1: 0.2390
+
+Class proportion preservation:
+    Class 0: 0.000287 difference
+    Class 1: 0.000287 difference
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="distribution-comparison">
@@ -745,6 +973,12 @@ document.write(`
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Comparing distributions for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">feature_indices</span><span class="p">)</span><span class="si">}</span><span class="s2"> features:&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">feature_names</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Comparing distributions for 5 features:
+[&#39;Feature 0&#39;, &#39;Feature 1&#39;, &#39;Feature 2&#39;, &#39;Feature 3&#39;, &#39;Feature 4&#39;]
 </pre></div>
 </div>
 </div>
@@ -853,6 +1087,31 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/var/folders/cg/mqv8qvn17hx0typ7nf1q0x2jjykzd2/T/ipykernel_14151/4218522511.py:30: DeprecationWarning: `trapz` is deprecated. Use `trapezoid` instead, or one of the numerical integration functions in `scipy.integrate`.
+  w1 = np.trapz(np.abs(source_cdf_interp - target_cdf_interp), all_values)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Distribution Preservation Metrics:
+
+Wasserstein-1 Distance (lower is better):
+  feature  W1_random  W1_strat  W1_labelaware_ddc
+Feature 0   0.033661  0.054296           0.124703
+Feature 1   0.041817  0.021306           0.116416
+Feature 2   0.059132  0.024248           0.176812
+Feature 3   0.016087  0.017039           0.043560
+Feature 4   0.040242  0.024242           0.162267
+
+Kolmogorov-Smirnov Statistic (lower is better):
+  feature  KS_random  KS_strat  KS_labelaware_ddc
+Feature 0     0.0270    0.0379             0.0513
+Feature 1     0.0289    0.0173             0.0452
+Feature 2     0.0331    0.0135             0.0637
+Feature 3     0.0092    0.0174             0.0535
+Feature 4     0.0105    0.0090             0.0335
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -874,6 +1133,15 @@ document.write(`
 <span class="n">avg_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">avg_metrics</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Average Distribution Preservation (across features):&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">avg_df</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Average Distribution Preservation (across features):
+         Method   Avg W1  Avg KS
+         Random 0.038188 0.02174
+     Stratified 0.028226 0.01902
+Label-aware DDC 0.124752 0.04944
 </pre></div>
 </div>
 </div>
@@ -1048,6 +1316,22 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Joint Distribution Preservation Metrics:
+
+         method  mean_err_l2  cov_err_fro  corr_err_fro      mmd
+         Random     0.079164     0.329202      0.208333 0.052330
+     Stratified     0.061604     0.273401      0.188907 0.041218
+Label-aware DDC     0.213975     1.055893      0.202161 0.119635
+
+Interpretation:
+  Mean Error (L2): Lower is better (0 = identical means)
+  Covariance Error (Frobenius): Lower is better (0 = identical covariances)
+  Correlation Error (Frobenius): Lower is better (0 = identical correlations)
+  MMD: Lower is better (0 = identical distributions)
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="downstream-model-comparison">
@@ -1079,6 +1363,11 @@ document.write(`
 <span class="n">predictions</span><span class="p">[</span><span class="s1">&#39;Label-aware DDC&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr_labelaware</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;All models trained&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>All models trained
 </pre></div>
 </div>
 </div>
@@ -1117,6 +1406,22 @@ document.write(`
 <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Random&#39;</span><span class="p">,</span> <span class="s1">&#39;Stratified&#39;</span><span class="p">,</span> <span class="s1">&#39;Label-aware DDC&#39;</span><span class="p">]:</span>
     <span class="n">row</span> <span class="o">=</span> <span class="n">comparison_df</span><span class="p">[</span><span class="n">comparison_df</span><span class="p">[</span><span class="s1">&#39;method&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">method</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">method</span><span class="si">:</span><span class="s2">20s</span><span class="si">}</span><span class="s2">: AUC </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;auc_diff&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">+.4f</span><span class="si">}</span><span class="s2">, Brier </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;brier_diff&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">+.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model Performance Comparison:
+
+         method      auc    brier  accuracy  auc_diff  brier_diff
+      Full Data 0.831588 0.129149  0.818058  0.000000    0.000000
+         Random 0.831193 0.129861  0.817512 -0.000395    0.000711
+     Stratified 0.832052 0.129565  0.817648  0.000464    0.000416
+Label-aware DDC 0.831125 0.141011  0.798608 -0.000464    0.011861
+
+Deviation from Full-Data Baseline:
+  Random              : AUC -0.0004, Brier +0.0007
+  Stratified          : AUC +0.0005, Brier +0.0004
+  Label-aware DDC     : AUC -0.0005, Brier +0.0119
 </pre></div>
 </div>
 </div>
@@ -1163,6 +1468,9 @@ document.write(`
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/0e80bc458d4cd8ce07163346121d60301e7580f4066b8ee82fe36c599aed4710.png" src="../_images/0e80bc458d4cd8ce07163346121d60301e7580f4066b8ee82fe36c599aed4710.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1211,6 +1519,9 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<img alt="../_images/1db9878d0cadb6927d81d89de2cb013764e80dd49b160376c9b56e4fab9b9c81.png" src="../_images/1db9878d0cadb6927d81d89de2cb013764e80dd49b160376c9b56e4fab9b9c81.png" />
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1238,6 +1549,9 @@ document.write(`
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/6dca91e9e0b71be0310f19d52f42b46733b107b56690520340fc7a922fa25827.png" src="../_images/6dca91e9e0b71be0310f19d52f42b46733b107b56690520340fc7a922fa25827.png" />
 </div>
 </div>
 </section>

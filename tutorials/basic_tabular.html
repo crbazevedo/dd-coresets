@@ -395,7 +395,7 @@ document.write(`
 <h2>1. Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install dd-coresets (uncomment if needed)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install dd-coresets (uncomment if needed)</span>
 <span class="c1"># !pip install dd-coresets</span>
 
 <span class="c1"># For Kaggle/Colab, you may need:</span>
@@ -406,7 +406,7 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
@@ -436,6 +436,11 @@ document.write(`
 <span class="c1"># Set plotting style</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn-v0_8&#39;</span><span class="p">)</span>
 <span class="n">sns</span><span class="o">.</span><span class="n">set_palette</span><span class="p">(</span><span class="s2">&quot;husl&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>UMAP not available, using PCA for visualization
 </pre></div>
 </div>
 </div>
@@ -499,7 +504,7 @@ document.write(`
 <p>We’ll create a Gaussian mixture with <strong>3 clusters</strong> and <strong>8 features</strong>. The clusters are well-separated, which is where DDC typically excels.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate Gaussian mixture</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate Gaussian mixture</span>
 <span class="n">n_samples</span> <span class="o">=</span> <span class="mi">10000</span>
 <span class="n">n_features</span> <span class="o">=</span> <span class="mi">8</span>
 <span class="n">n_clusters</span> <span class="o">=</span> <span class="mi">3</span>
@@ -520,6 +525,13 @@ document.write(`
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dataset shape: </span><span class="si">{</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of clusters: </span><span class="si">{</span><span class="n">n_clusters</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cluster sizes: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">cluster_labels</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dataset shape: (10000, 8)
+Number of clusters: 3
+Cluster sizes: [3334 3333 3333]
 </pre></div>
 </div>
 </div>
@@ -550,7 +562,7 @@ document.write(`
 <p>Let’s visualize the data in 2D using UMAP (or PCA if UMAP is not available).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Project to 2D for visualizationif HAS_UMAP:    reducer = umap.UMAP(n_components=2, random_state=RANDOM_STATE)    X_2d = reducer.fit_transform(X)else:    reducer = PCA(n_components=2, random_state=RANDOM_STATE)    X_2d = reducer.fit_transform(X)plt.figure(figsize=(10, 6))scatter = plt.scatter(X_2d[:, 0], X_2d[:, 1], c=cluster_labels,                       cmap=&#39;viridis&#39;, alpha=0.5, s=10)plt.colorbar(scatter, label=&#39;Cluster&#39;)plt.title(&#39;Original Data (2D Projection)&#39;, fontsize=14, fontweight=&#39;bold&#39;)plt.xlabel(&#39;Component 1&#39;)plt.ylabel(&#39;Component 2&#39;)plt.tight_layout()# Save figureimport osos.makedirs(&#39;images/tutorials/basic_tabular&#39;, exist_ok=True)plt.savefig(&#39;images/tutorials/basic_tabular/original_data_2d.png&#39;, dpi=150, bbox_inches=&#39;tight&#39;)plt.show()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Project to 2D for visualizationif HAS_UMAP:    reducer = umap.UMAP(n_components=2, random_state=RANDOM_STATE)    X_2d = reducer.fit_transform(X)else:    reducer = PCA(n_components=2, random_state=RANDOM_STATE)    X_2d = reducer.fit_transform(X)plt.figure(figsize=(10, 6))scatter = plt.scatter(X_2d[:, 0], X_2d[:, 1], c=cluster_labels,                       cmap=&#39;viridis&#39;, alpha=0.5, s=10)plt.colorbar(scatter, label=&#39;Cluster&#39;)plt.title(&#39;Original Data (2D Projection)&#39;, fontsize=14, fontweight=&#39;bold&#39;)plt.xlabel(&#39;Component 1&#39;)plt.ylabel(&#39;Component 2&#39;)plt.tight_layout()# Save figureimport osos.makedirs(&#39;images/tutorials/basic_tabular&#39;, exist_ok=True)plt.savefig(&#39;images/tutorials/basic_tabular/original_data_2d.png&#39;, dpi=150, bbox_inches=&#39;tight&#39;)plt.show()</span>
 </pre></div>
 </div>
 </div>
@@ -569,12 +581,12 @@ document.write(`
 <p>We’ll use <code class="docutils literal notranslate"><span class="pre">k=200</span></code> representatives (2% of the data).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mi">200</span>  <span class="c1"># Number of representatives</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mi">200</span>  <span class="c1"># Number of representatives</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fitting coresets...&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
 
-<span class="c1"># DDC (using default mode=&#39;euclidean&#39;, simplest preset)</span>
+<span class="c1"># DDC (using default simplest preset)</span>
 <span class="n">S_ddc</span><span class="p">,</span> <span class="n">w_ddc</span><span class="p">,</span> <span class="n">info_ddc</span> <span class="o">=</span> <span class="n">fit_ddc_coreset</span><span class="p">(</span>
     <span class="n">X</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span>
 <span class="p">)</span>
@@ -583,7 +595,7 @@ document.write(`
 
 <span class="c1"># Random</span>
 <span class="n">S_random</span><span class="p">,</span> <span class="n">w_random</span><span class="p">,</span> <span class="n">info_random</span> <span class="o">=</span> <span class="n">fit_random_coreset</span><span class="p">(</span>
-    <span class="n">X</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span> <span class="o">+</span> <span class="mi">1</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✓ Random: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">S_random</span><span class="p">)</span><span class="si">}</span><span class="s2"> representatives&quot;</span><span class="p">)</span>
 
@@ -593,6 +605,30 @@ document.write(`
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✓ Stratified: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">S_strat</span><span class="p">)</span><span class="si">}</span><span class="s2"> representatives&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Fitting coresets...
+============================================================
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✓ DDC: 200 representatives
+  Pipeline: {&#39;mode&#39;: &#39;euclidean&#39;, &#39;preset&#39;: &#39;balanced&#39;, &#39;adaptive&#39;: False, &#39;pca_used&#39;: False, &#39;d_original&#39;: 8, &#39;d_effective&#39;: 8, &#39;fallbacks&#39;: []}
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">TypeError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">14</span>
+<span class="g g-Whitespace">     </span><span class="mi">11</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Pipeline: </span><span class="si">{</span><span class="n">info_ddc</span><span class="p">[</span><span class="s1">&#39;pipeline&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">13</span> <span class="c1"># Random</span>
+<span class="ne">---&gt; </span><span class="mi">14</span> <span class="n">S_random</span><span class="p">,</span> <span class="n">w_random</span><span class="p">,</span> <span class="n">info_random</span> <span class="o">=</span> <span class="n">fit_random_coreset</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">15</span>     <span class="n">X</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="g g-Whitespace">     </span><span class="mi">16</span> <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">17</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✓ Random: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">S_random</span><span class="p">)</span><span class="si">}</span><span class="s2"> representatives&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">19</span> <span class="c1"># Stratified (by cluster)</span>
+
+<span class="ne">TypeError</span>: fit_random_coreset() got an unexpected keyword argument &#39;mode&#39;
 </pre></div>
 </div>
 </div>
@@ -636,7 +672,7 @@ document.write(`
 <p>We’ll compute distributional metrics to compare how well each coreset preserves the original distribution.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">wasserstein_1d_approx</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">w2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">wasserstein_1d_approx</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">w2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Approximate Wasserstein-1 distance for 1D distributions.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">w2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">probs</span> <span class="o">=</span> <span class="n">w2</span> <span class="o">/</span> <span class="n">w2</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
@@ -728,7 +764,7 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute metrics for all methods</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute metrics for all methods</span>
 <span class="n">metrics_ddc</span> <span class="o">=</span> <span class="n">compute_metrics</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">S_ddc</span><span class="p">,</span> <span class="n">w_ddc</span><span class="p">,</span> <span class="s1">&#39;DDC&#39;</span><span class="p">)</span>
 <span class="n">metrics_random</span> <span class="o">=</span> <span class="n">compute_metrics</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">S_random</span><span class="p">,</span> <span class="n">w_random</span><span class="p">,</span> <span class="s1">&#39;Random&#39;</span><span class="p">)</span>
 <span class="n">metrics_strat</span> <span class="o">=</span> <span class="n">compute_metrics</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">S_strat</span><span class="p">,</span> <span class="n">w_strat</span><span class="p">,</span> <span class="s1">&#39;Stratified&#39;</span><span class="p">)</span>
@@ -752,6 +788,20 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">line</span> <span class="mi">3</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="c1"># Compute metrics for all methods</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">metrics_ddc</span> <span class="o">=</span> <span class="n">compute_metrics</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">S_ddc</span><span class="p">,</span> <span class="n">w_ddc</span><span class="p">,</span> <span class="s1">&#39;DDC&#39;</span><span class="p">)</span>
+<span class="ne">----&gt; </span><span class="mi">3</span> <span class="n">metrics_random</span> <span class="o">=</span> <span class="n">compute_metrics</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">S_random</span><span class="p">,</span> <span class="n">w_random</span><span class="p">,</span> <span class="s1">&#39;Random&#39;</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">metrics_strat</span> <span class="o">=</span> <span class="n">compute_metrics</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">S_strat</span><span class="p">,</span> <span class="n">w_strat</span><span class="p">,</span> <span class="s1">&#39;Stratified&#39;</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="c1"># Create comparison table</span>
+
+<span class="ne">NameError</span>: name &#39;S_random&#39; is not defined
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="visualizations">
@@ -759,14 +809,14 @@ document.write(`
 <p>Let’s visualize the coresets and compare their distributional fidelity.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Project coresets to 2D using same reducerS_ddc_2d = reducer.transform(S_ddc)S_random_2d = reducer.transform(S_random)S_strat_2d = reducer.transform(S_strat)# Get cluster labels for coreset pointsfrom sklearn.neighbors import NearestNeighborsnn = NearestNeighbors(n_neighbors=1)nn.fit(X)_, idx_ddc = nn.kneighbors(S_ddc)_, idx_random = nn.kneighbors(S_random)_, idx_strat = nn.kneighbors(S_strat)labels_ddc = cluster_labels[idx_ddc.flatten()]labels_random = cluster_labels[idx_random.flatten()]labels_strat = cluster_labels[idx_strat.flatten()]# Plot spatial coveragefig, axes = plt.subplots(1, 3, figsize=(18, 5))for ax, S_2d, labels, title, w in zip(    axes, [S_ddc_2d, S_random_2d, S_strat_2d],    [labels_ddc, labels_random, labels_strat],    [&#39;DDC&#39;, &#39;Random&#39;, &#39;Stratified&#39;],    [w_ddc, w_random, w_strat]):    scatter = ax.scatter(S_2d[:, 0], S_2d[:, 1], c=labels,                          cmap=&#39;viridis&#39;, s=w*1000, alpha=0.7, edgecolors=&#39;black&#39;, linewidths=0.5)    ax.set_title(f&#39;{title} Coreset (k={len(S_2d)})&#39;, fontsize=12, fontweight=&#39;bold&#39;)    ax.set_xlabel(&#39;Component 1&#39;)    ax.set_ylabel(&#39;Component 2&#39;)    ax.grid(True, alpha=0.3)plt.tight_layout()# Save figureimport osos.makedirs(&#39;images/tutorials/basic_tabular&#39;, exist_ok=True)plt.savefig(&#39;images/tutorials/basic_tabular/spatial_coverage_comparison.png&#39;, dpi=150, bbox_inches=&#39;tight&#39;)plt.show()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Project coresets to 2D using same reducerS_ddc_2d = reducer.transform(S_ddc)S_random_2d = reducer.transform(S_random)S_strat_2d = reducer.transform(S_strat)# Get cluster labels for coreset pointsfrom sklearn.neighbors import NearestNeighborsnn = NearestNeighbors(n_neighbors=1)nn.fit(X)_, idx_ddc = nn.kneighbors(S_ddc)_, idx_random = nn.kneighbors(S_random)_, idx_strat = nn.kneighbors(S_strat)labels_ddc = cluster_labels[idx_ddc.flatten()]labels_random = cluster_labels[idx_random.flatten()]labels_strat = cluster_labels[idx_strat.flatten()]# Plot spatial coveragefig, axes = plt.subplots(1, 3, figsize=(18, 5))for ax, S_2d, labels, title, w in zip(    axes, [S_ddc_2d, S_random_2d, S_strat_2d],    [labels_ddc, labels_random, labels_strat],    [&#39;DDC&#39;, &#39;Random&#39;, &#39;Stratified&#39;],    [w_ddc, w_random, w_strat]):    scatter = ax.scatter(S_2d[:, 0], S_2d[:, 1], c=labels,                          cmap=&#39;viridis&#39;, s=w*1000, alpha=0.7, edgecolors=&#39;black&#39;, linewidths=0.5)    ax.set_title(f&#39;{title} Coreset (k={len(S_2d)})&#39;, fontsize=12, fontweight=&#39;bold&#39;)    ax.set_xlabel(&#39;Component 1&#39;)    ax.set_ylabel(&#39;Component 2&#39;)    ax.grid(True, alpha=0.3)plt.tight_layout()# Save figureimport osos.makedirs(&#39;images/tutorials/basic_tabular&#39;, exist_ok=True)plt.savefig(&#39;images/tutorials/basic_tabular/spatial_coverage_comparison.png&#39;, dpi=150, bbox_inches=&#39;tight&#39;)plt.show()</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot marginal distributions for first 4 features</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot marginal distributions for first 4 features</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
 <span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 
@@ -805,12 +855,32 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span> <span class="n">line</span> <span class="mi">14</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Full Data&#39;</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">11</span> <span class="c1"># Weighted histograms for coresets</span>
+<span class="g g-Whitespace">     </span><span class="mi">12</span> <span class="k">for</span> <span class="n">S</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="p">[</span>
+<span class="g g-Whitespace">     </span><span class="mi">13</span>     <span class="p">(</span><span class="n">S_ddc</span><span class="p">,</span> <span class="n">w_ddc</span><span class="p">,</span> <span class="s1">&#39;DDC&#39;</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">),</span>
+<span class="ne">---&gt; </span><span class="mi">14</span>     <span class="p">(</span><span class="n">S_random</span><span class="p">,</span> <span class="n">w_random</span><span class="p">,</span> <span class="s1">&#39;Random&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">),</span>
+<span class="g g-Whitespace">     </span><span class="mi">15</span>     <span class="p">(</span><span class="n">S_strat</span><span class="p">,</span> <span class="n">w_strat</span><span class="p">,</span> <span class="s1">&#39;Stratified&#39;</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">16</span> <span class="p">]:</span>
+<span class="g g-Whitespace">     </span><span class="mi">17</span>     <span class="c1"># Sample from weighted distribution</span>
+<span class="g g-Whitespace">     </span><span class="mi">18</span>     <span class="n">n_samples</span> <span class="o">=</span> <span class="mi">5000</span>
+<span class="g g-Whitespace">     </span><span class="mi">19</span>     <span class="n">probs</span> <span class="o">=</span> <span class="n">w</span> <span class="o">/</span> <span class="n">w</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="ne">NameError</span>: name &#39;S_random&#39; is not defined
+</pre></div>
+</div>
+<img alt="../_images/03daf7ad44f5f2b44a748dd517d8ab799905762fefda5843eef60579449b30da.png" src="../_images/03daf7ad44f5f2b44a748dd517d8ab799905762fefda5843eef60579449b30da.png" />
+</div>
 </div>
 <p><img alt="2D projection comparing spatial coverage of DDC, Random, and Stratified coresets" src="tutorials/images/tutorials/basic_tabular/spatial_coverage_comparison.png" /></p>
 <p><em>Spatial coverage comparison: DDC (left), Random (center), and Stratified (right) coresets. Point sizes are proportional to weights. DDC ensures all clusters are represented, even small ones.</em></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Bar chart comparing metrics</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Bar chart comparing metrics</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 
 <span class="n">metrics_to_plot</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mean_err_l2&#39;</span><span class="p">,</span> <span class="s1">&#39;cov_err_fro&#39;</span><span class="p">,</span> <span class="s1">&#39;W1_mean&#39;</span><span class="p">,</span> <span class="s1">&#39;KS_mean&#39;</span><span class="p">]</span>
@@ -858,6 +928,21 @@ document.write(`
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span> <span class="n">line</span> <span class="mi">12</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="n">width</span> <span class="o">=</span> <span class="mf">0.25</span>
+<span class="g g-Whitespace">     </span><span class="mi">11</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">method</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">methods</span><span class="p">):</span>
+<span class="ne">---&gt; </span><span class="mi">12</span>     <span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="n">results_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">method</span><span class="p">,</span> <span class="n">m</span><span class="p">]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">metrics_to_plot</span><span class="p">]</span>
+<span class="g g-Whitespace">     </span><span class="mi">13</span>     <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">i</span><span class="o">*</span><span class="n">width</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">15</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Metric&#39;</span><span class="p">)</span>
+
+<span class="ne">NameError</span>: name &#39;results_df&#39; is not defined
+</pre></div>
+</div>
+<img alt="../_images/1d4251bc4c335cc802f65a3c4e3fdb41add03437ba1a71cc6485c9bacade10e5.png" src="../_images/1d4251bc4c335cc802f65a3c4e3fdb41add03437ba1a71cc6485c9bacade10e5.png" />
 </div>
 </div>
 </section>
