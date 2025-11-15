@@ -1,0 +1,1424 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Label-Aware DDC for Classification Problems &#8212; dd-coresets Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'tutorials/label_aware_classification';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="High-Dimensional Data: Automatic PCA Reduction" href="high_dimensional.html" />
+    <link rel="prev" title="Adaptive Distances &amp; Presets: Advanced DDC Features" href="adaptive_distances.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">dd-coresets Documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic_tabular.html">Basic Tabular Data: DDC vs Random vs Stratified</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multimodal_clusters.html">Multimodal Clusters: DDC Spatial Coverage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive_distances.html">Adaptive Distances &amp; Presets: Advanced DDC Features</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Label-Aware DDC for Classification Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="high_dimensional.html">High-Dimensional Data: Automatic PCA Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts/density_estimation.html">Density Estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts/algorithm.html">The DDC Algorithm: Why It Works</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts/metrics.html">Understanding DDC Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts/adaptive_distances.html">Adaptive Distances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts/weighting.html">Weight Assignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/choosing_parameters.html">Choosing Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/understanding_metrics.html">Understanding Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/best_practices.html">Best Practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../use_cases/eda.html">Exploratory Data Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../use_cases/classification.html">Classification Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../use_cases/high_dim.html">High-Dimensional Data</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/tutorials/label_aware_classification.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Label-Aware DDC for Classification Problems</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-you-ll-learn">What You’ll Learn</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-dataset">The Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">1. Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-loading">2. Data Loading</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preprocessing">3. Preprocessing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#full-data-baseline-model">4. Full-Data Baseline Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#baseline-subsets-random-and-stratified">5. Baseline Subsets: Random and Stratified</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#label-aware-ddc-coreset">6. Label-Aware DDC Coreset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#distribution-comparison">7. Distribution Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#joint-distribution-comparison">7.1. Joint Distribution Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#downstream-model-comparison">8. Downstream Model Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizations">9. Visualizations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#discussion-and-takeaways">10. Discussion and Takeaways</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-observations">Key Observations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-label-aware-ddc">When to Use Label-Aware DDC?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="label-aware-ddc-for-classification-problems">
+<h1>Label-Aware DDC for Classification Problems<a class="headerlink" href="#label-aware-ddc-for-classification-problems" title="Link to this heading">#</a></h1>
+<p>This notebook demonstrates <strong>label-aware DDC</strong> for supervised learning problems. We’ll show how <code class="docutils literal notranslate"><span class="pre">fit_ddc_coreset_by_label</span></code> preserves class proportions while maintaining distributional fidelity.</p>
+<section id="what-you-ll-learn">
+<h2>What You’ll Learn<a class="headerlink" href="#what-you-ll-learn" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>When to use label-aware DDC (supervised problems)</p></li>
+<li><p>Preserving class proportions matters for classification</p></li>
+<li><p>Impact on downstream model performance</p></li>
+</ul>
+</section>
+<section id="the-dataset">
+<h2>The Dataset<a class="headerlink" href="#the-dataset" title="Link to this heading">#</a></h2>
+<p>We’ll use a <strong>binary classification dataset</strong> (Adult Census Income or synthetic) to demonstrate label-aware DDC’s advantage over global DDC.</p>
+</section>
+<section id="setup">
+<h2>1. Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install dd-coresets</span>
+<span class="c1"># For Google Colab: uncomment the line below</span>
+<span class="c1"># !pip install dd-coresets</span>
+
+<span class="c1"># For Kaggle: usually already available or use:</span>
+<span class="c1"># !pip install dd-coresets --quiet</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">roc_auc_score</span><span class="p">,</span> <span class="n">roc_curve</span><span class="p">,</span> <span class="n">brier_score_loss</span><span class="p">,</span> <span class="n">accuracy_score</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.decomposition</span><span class="w"> </span><span class="kn">import</span> <span class="n">PCA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">fetch_openml</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">wasserstein_distance</span><span class="p">,</span> <span class="n">ks_2samp</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dd_coresets</span><span class="w"> </span><span class="kn">import</span> <span class="n">fit_ddc_coreset</span>
+
+<span class="c1"># Set random seed for reproducibility</span>
+<span class="n">RANDOM_STATE</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">RANDOM_STATE</span><span class="p">)</span>
+
+<span class="c1"># Set plotting style</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn-v0_8&#39;</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn&#39;</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_palette</span><span class="p">(</span><span class="s2">&quot;husl&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Imports successful&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="data-loading">
+<h2>2. Data Loading<a class="headerlink" href="#data-loading" title="Link to this heading">#</a></h2>
+<p>We’ll use the <strong>Adult Census Income</strong> dataset, a well-known binary classification dataset from the UCI Machine Learning Repository. This dataset contains demographic and employment information, with the goal of predicting whether income exceeds $50K/year.</p>
+<p>The dataset is publicly available and can be downloaded via <code class="docutils literal notranslate"><span class="pre">sklearn.datasets.fetch_openml</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load Adult Census Income dataset from OpenML</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading Adult Census Income dataset from OpenML...&quot;</span><span class="p">)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># Try to load from cache first (faster)</span>
+    <span class="n">adult</span> <span class="o">=</span> <span class="n">fetch_openml</span><span class="p">(</span><span class="s2">&quot;adult&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">as_frame</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parser</span><span class="o">=</span><span class="s2">&quot;pandas&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dataset loaded: </span><span class="si">{</span><span class="n">adult</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error loading dataset: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This may take a few minutes on first download...&quot;</span><span class="p">)</span>
+    <span class="n">adult</span> <span class="o">=</span> <span class="n">fetch_openml</span><span class="p">(</span><span class="s2">&quot;adult&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">as_frame</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parser</span><span class="o">=</span><span class="s2">&quot;pandas&quot;</span><span class="p">)</span>
+
+<span class="c1"># Extract features and target</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">adult</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="c1"># The target column is &#39;class&#39; with values &#39;&lt;=50K&#39; and &#39;&gt;50K&#39;</span>
+<span class="c1"># Convert to binary: 0 for &#39;&lt;=50K&#39;, 1 for &#39;&gt;50K&#39;</span>
+<span class="k">if</span> <span class="s1">&#39;class&#39;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&gt;50K&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Dataset shape: </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Label distribution:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">First few rows:&quot;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="preprocessing">
+<h2>3. Preprocessing<a class="headerlink" href="#preprocessing" title="Link to this heading">#</a></h2>
+<p>We’ll select numeric features, handle missing values, and scale the data. DDC requires <strong>preprocessed numerical features</strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Select numeric features (exclude target)</span>
+<span class="n">numeric_cols</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">])</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="n">numeric_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">numeric_cols</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s1">&#39;target&#39;</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selected </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">numeric_cols</span><span class="p">)</span><span class="si">}</span><span class="s2"> numeric features&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Features: </span><span class="si">{</span><span class="n">numeric_cols</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Extract features and target</span>
+<span class="n">X_raw</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">numeric_cols</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">y_raw</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+<span class="c1"># Handle missing values (simple mean imputation)</span>
+<span class="k">if</span> <span class="n">X_raw</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Found missing values. Imputing with mean...&quot;</span><span class="p">)</span>
+    <span class="n">X_raw</span> <span class="o">=</span> <span class="n">X_raw</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">X_raw</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">No missing values&quot;</span><span class="p">)</span>
+
+<span class="c1"># Convert to NumPy array</span>
+<span class="n">X_raw</span> <span class="o">=</span> <span class="n">X_raw</span><span class="o">.</span><span class="n">values</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Feature matrix shape: </span><span class="si">{</span><span class="n">X_raw</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target vector shape: </span><span class="si">{</span><span class="n">y_raw</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Scale features (important for DDC, which uses Euclidean distances)</span>
+<span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+<span class="n">X_scaled</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_raw</span><span class="p">)</span>
+
+<span class="c1"># Split into train/test (stratified to preserve label proportions)</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+    <span class="n">X_scaled</span><span class="p">,</span> <span class="n">y_raw</span><span class="p">,</span> 
+    <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> 
+    <span class="n">stratify</span><span class="o">=</span><span class="n">y_raw</span><span class="p">,</span> 
+    <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Training set: </span><span class="si">{</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> samples&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test set: </span><span class="si">{</span><span class="n">X_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> samples&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Training label distribution:&quot;</span><span class="p">)</span>
+<span class="n">unique</span><span class="p">,</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">unique</span><span class="p">,</span> <span class="n">counts</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Class </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">count</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">count</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="full-data-baseline-model">
+<h2>4. Full-Data Baseline Model<a class="headerlink" href="#full-data-baseline-model" title="Link to this heading">#</a></h2>
+<p>We’ll train a logistic regression model on the <strong>full training set</strong> to establish a gold standard. This will be our baseline for comparison.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Train on full training data</span>
+<span class="n">lr_full</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span>
+    <span class="n">max_iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span><span class="p">,</span>
+    <span class="n">class_weight</span><span class="o">=</span><span class="kc">None</span>  <span class="c1"># No class balancing</span>
+<span class="p">)</span>
+
+<span class="n">lr_full</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Predict on test set</span>
+<span class="n">y_pred_proba_full</span> <span class="o">=</span> <span class="n">lr_full</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">y_pred_full</span> <span class="o">=</span> <span class="n">lr_full</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="c1"># Evaluate</span>
+<span class="n">baseline_auc</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred_proba_full</span><span class="p">)</span>
+<span class="n">baseline_brier</span> <span class="o">=</span> <span class="n">brier_score_loss</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred_proba_full</span><span class="p">)</span>
+<span class="n">baseline_accuracy</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred_full</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Full-Data Baseline Metrics:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ROC AUC:  </span><span class="si">{</span><span class="n">baseline_auc</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Brier Score: </span><span class="si">{</span><span class="n">baseline_brier</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Accuracy:    </span><span class="si">{</span><span class="n">baseline_accuracy</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Store for later comparison</span>
+<span class="n">baseline_metrics</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;Full Data&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;auc&#39;</span><span class="p">:</span> <span class="n">baseline_auc</span><span class="p">,</span>
+    <span class="s1">&#39;brier&#39;</span><span class="p">:</span> <span class="n">baseline_brier</span><span class="p">,</span>
+    <span class="s1">&#39;accuracy&#39;</span><span class="p">:</span> <span class="n">baseline_accuracy</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="baseline-subsets-random-and-stratified">
+<h2>5. Baseline Subsets: Random and Stratified<a class="headerlink" href="#baseline-subsets-random-and-stratified" title="Link to this heading">#</a></h2>
+<p>Before using DDC, let’s establish simple baselines:</p>
+<ul class="simple">
+<li><p><strong>Random subset</strong>: Uniform sampling (may miss rare classes)</p></li>
+<li><p><strong>Stratified subset</strong>: Preserves class proportions (common practice in supervised learning)</p></li>
+</ul>
+<p>We’ll use <code class="docutils literal notranslate"><span class="pre">k_reps</span> <span class="pre">=</span> <span class="pre">1000</span></code> representatives.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">k_reps</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># Number of representatives</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target coreset size: </span><span class="si">{</span><span class="n">k_reps</span><span class="si">}</span><span class="s2"> representatives (</span><span class="si">{</span><span class="n">k_reps</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">% of training data)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Random subset</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">RANDOM_STATE</span><span class="p">)</span>
+<span class="n">random_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_train</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="n">k_reps</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">X_random</span> <span class="o">=</span> <span class="n">X_train</span><span class="p">[</span><span class="n">random_indices</span><span class="p">]</span>
+<span class="n">y_random</span> <span class="o">=</span> <span class="n">y_train</span><span class="p">[</span><span class="n">random_indices</span><span class="p">]</span>
+<span class="n">w_random</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">k_reps</span><span class="p">)</span> <span class="o">/</span> <span class="n">k_reps</span>  <span class="c1"># Uniform weights</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Random subset created&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Shape: </span><span class="si">{</span><span class="n">X_random</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Label distribution: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">y_random</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">y_random</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Stratified subset (preserves class proportions)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="c1"># Manual stratified sampling to get exactly k_reps</span>
+<span class="n">strat_indices</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">class_label</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">y_train</span><span class="p">):</span>
+    <span class="n">class_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_train</span> <span class="o">==</span> <span class="n">class_label</span><span class="p">)</span>
+    <span class="n">class_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">class_mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">n_class</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">k_reps</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">class_mask</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_train</span><span class="p">))</span>
+    <span class="n">selected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">class_indices</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_class</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">strat_indices</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span>
+
+<span class="c1"># If we don&#39;t have exactly k_reps, adjust</span>
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">strat_indices</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">k_reps</span><span class="p">:</span>
+    <span class="n">remaining</span> <span class="o">=</span> <span class="n">k_reps</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">strat_indices</span><span class="p">)</span>
+    <span class="n">remaining_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">setdiff1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_train</span><span class="p">)),</span> <span class="n">strat_indices</span><span class="p">)</span>
+    <span class="n">strat_indices</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">remaining_indices</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">remaining</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">strat_indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">k_reps</span><span class="p">:</span>
+    <span class="n">strat_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">strat_indices</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">k_reps</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">X_strat</span> <span class="o">=</span> <span class="n">X_train</span><span class="p">[</span><span class="n">strat_indices</span><span class="p">]</span>
+<span class="n">y_strat</span> <span class="o">=</span> <span class="n">y_train</span><span class="p">[</span><span class="n">strat_indices</span><span class="p">]</span>
+<span class="n">w_strat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_strat</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_strat</span><span class="p">)</span>  <span class="c1"># Uniform weights</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Stratified subset created&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Shape: </span><span class="si">{</span><span class="n">X_strat</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Label distribution: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">y_strat</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">y_strat</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Original label distribution: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="label-aware-ddc-coreset">
+<h2>6. Label-Aware DDC Coreset<a class="headerlink" href="#label-aware-ddc-coreset" title="Link to this heading">#</a></h2>
+<p>To preserve class proportions while still benefiting from DDC’s distribution-preserving properties, we apply DDC <strong>separately within each class</strong>. This:</p>
+<ol class="arabic simple">
+<li><p>Preserves label proportions by design</p></li>
+<li><p>Maintains density–diversity structure <strong>within each class</strong></p></li>
+<li><p>Still provides weighted representatives that approximate the full distribution</p></li>
+</ol>
+<p><strong>Key insight</strong>: By applying DDC separately to each class, we ensure that the coreset maintains the original class balance while still capturing the distributional structure within each class.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Label-aware DDC: apply DDC separately to each class</span>
+<span class="n">S_labelaware_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">w_labelaware_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">y_labelaware_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">class_label</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">y_train</span><span class="p">):</span>
+    <span class="c1"># Extract data for this class</span>
+    <span class="n">class_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_train</span> <span class="o">==</span> <span class="n">class_label</span><span class="p">)</span>
+    <span class="n">X_class</span> <span class="o">=</span> <span class="n">X_train</span><span class="p">[</span><span class="n">class_mask</span><span class="p">]</span>
+    
+    <span class="c1"># Compute class proportion</span>
+    <span class="n">p_class</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">class_mask</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span>
+    
+    <span class="c1"># Allocate representatives proportionally</span>
+    <span class="n">k_class</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">k_reps</span> <span class="o">*</span> <span class="n">p_class</span><span class="p">)))</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Class </span><span class="si">{</span><span class="n">class_label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">class_mask</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> samples (</span><span class="si">{</span><span class="n">p_class</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Allocating </span><span class="si">{</span><span class="n">k_class</span><span class="si">}</span><span class="s2"> representatives...&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Fit DDC on this class</span>
+    <span class="c1"># Use larger n0 for better density estimation when class is large enough</span>
+    <span class="n">n0_class</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">20_000</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_class</span><span class="p">))</span>
+    
+    <span class="c1"># Optimized parameters (from grid search to minimize joint distribution errors)</span>
+    <span class="c1"># These parameters were found to minimize covariance and correlation errors</span>
+    <span class="n">alpha_opt</span> <span class="o">=</span> <span class="mf">0.2</span>  <span class="c1"># Lower alpha favors diversity (better coverage)</span>
+    <span class="n">gamma_opt</span> <span class="o">=</span> <span class="mf">1.5</span>  <span class="c1"># Higher gamma for smoother weight assignments</span>
+    <span class="n">m_neighbors_opt</span> <span class="o">=</span> <span class="mi">16</span>  <span class="c1"># Fewer neighbors for faster computation, still adequate</span>
+    <span class="n">refine_iters_opt</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># More refinement iterations for better quality</span>
+    
+    <span class="c1"># Adjust m_neighbors for very small classes</span>
+    <span class="n">m_neighbors_class</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">m_neighbors_opt</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_class</span><span class="p">)</span> <span class="o">//</span> <span class="mi">10</span><span class="p">))</span>
+    
+    <span class="n">S_class</span><span class="p">,</span> <span class="n">w_class</span><span class="p">,</span> <span class="n">info_class</span> <span class="o">=</span> <span class="n">fit_ddc_coreset</span><span class="p">(</span>
+        <span class="n">X_class</span><span class="p">,</span>
+        <span class="n">k</span><span class="o">=</span><span class="n">k_class</span><span class="p">,</span>
+        <span class="n">n0</span><span class="o">=</span><span class="n">n0_class</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="n">alpha_opt</span><span class="p">,</span>
+        <span class="n">m_neighbors</span><span class="o">=</span><span class="n">m_neighbors_class</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="o">=</span><span class="n">gamma_opt</span><span class="p">,</span>
+        <span class="n">refine_iters</span><span class="o">=</span><span class="n">refine_iters_opt</span><span class="p">,</span>
+        <span class="n">reweight_full</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Important: reweight on full class data</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span> <span class="o">+</span> <span class="n">class_label</span><span class="p">,</span>  <span class="c1"># Different seed per class</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># Scale weights by class proportion to preserve global distribution</span>
+    <span class="n">w_class_scaled</span> <span class="o">=</span> <span class="n">w_class</span> <span class="o">*</span> <span class="n">p_class</span>
+    
+    <span class="n">S_labelaware_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">S_class</span><span class="p">)</span>
+    <span class="n">w_labelaware_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w_class_scaled</span><span class="p">)</span>  <span class="c1"># Already scaled by proportion</span>
+    <span class="n">y_labelaware_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">S_class</span><span class="p">),</span> <span class="n">class_label</span><span class="p">))</span>
+
+<span class="c1"># Concatenate all classes</span>
+<span class="n">S_labelaware</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">S_labelaware_list</span><span class="p">)</span>
+<span class="n">w_labelaware</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">w_labelaware_list</span><span class="p">)</span>
+<span class="n">y_labelaware</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">y_labelaware_list</span><span class="p">)</span>
+
+<span class="c1"># Renormalize weights (they should already sum close to 1, but ensure it)</span>
+<span class="n">w_labelaware</span> <span class="o">=</span> <span class="n">w_labelaware</span> <span class="o">/</span> <span class="n">w_labelaware</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Label-aware DDC coreset created: </span><span class="si">{</span><span class="n">S_labelaware</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Weights sum: </span><span class="si">{</span><span class="n">w_labelaware</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Verify label proportions are preserved</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Label Distribution Comparison:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Original training set:&quot;</span><span class="p">)</span>
+<span class="n">orig_props</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">prop</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">orig_props</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    Class </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">prop</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  Label-aware DDC coreset:&quot;</span><span class="p">)</span>
+<span class="n">labelaware_props</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">y_labelaware</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_labelaware</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">prop</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">labelaware_props</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    Class </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">prop</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Class proportion preservation:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">orig_props</span><span class="p">)):</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">labelaware_props</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">-</span> <span class="n">orig_props</span><span class="p">[</span><span class="n">label</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    Class </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">diff</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> difference&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="distribution-comparison">
+<h2>7. Distribution Comparison<a class="headerlink" href="#distribution-comparison" title="Link to this heading">#</a></h2>
+<p>Let’s compare how well each subset/coreset preserves the <strong>marginal distributions</strong> of the original training data. We’ll use:</p>
+<ul class="simple">
+<li><p><strong>Wasserstein-1 distance</strong>: Measures how much we need to “move” probability mass to match distributions</p></li>
+<li><p><strong>Kolmogorov-Smirnov statistic</strong>: Measures the maximum difference between cumulative distribution functions</p></li>
+</ul>
+<p>For DDC coresets, we’ll use the <strong>weights</strong> to compute weighted distributions.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Select a few features for comparison (e.g., first 5 or high-variance features)</span>
+<span class="n">feature_indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span>
+<span class="n">feature_names</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Feature </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">feature_indices</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Comparing distributions for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">feature_indices</span><span class="p">)</span><span class="si">}</span><span class="s2"> features:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">feature_names</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">compute_wasserstein_weighted</span><span class="p">(</span><span class="n">source_data</span><span class="p">,</span> <span class="n">target_data</span><span class="p">,</span> <span class="n">source_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute Wasserstein-1 distance between weighted distributions.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">source_weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">source_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">source_data</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">source_data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">target_weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">target_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">target_data</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_data</span><span class="p">)</span>
+    
+    <span class="c1"># Sort by value for computing Wasserstein distance</span>
+    <span class="n">source_sorted_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">source_data</span><span class="p">)</span>
+    <span class="n">target_sorted_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">target_data</span><span class="p">)</span>
+    
+    <span class="n">source_sorted</span> <span class="o">=</span> <span class="n">source_data</span><span class="p">[</span><span class="n">source_sorted_idx</span><span class="p">]</span>
+    <span class="n">target_sorted</span> <span class="o">=</span> <span class="n">target_data</span><span class="p">[</span><span class="n">target_sorted_idx</span><span class="p">]</span>
+    
+    <span class="n">source_weights_sorted</span> <span class="o">=</span> <span class="n">source_weights</span><span class="p">[</span><span class="n">source_sorted_idx</span><span class="p">]</span>
+    <span class="n">target_weights_sorted</span> <span class="o">=</span> <span class="n">target_weights</span><span class="p">[</span><span class="n">target_sorted_idx</span><span class="p">]</span>
+    
+    <span class="c1"># Compute cumulative distributions</span>
+    <span class="n">source_cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">source_weights_sorted</span><span class="p">)</span>
+    <span class="n">target_cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">target_weights_sorted</span><span class="p">)</span>
+    
+    <span class="c1"># Interpolate to common grid</span>
+    <span class="n">all_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">source_sorted</span><span class="p">,</span> <span class="n">target_sorted</span><span class="p">]))</span>
+    <span class="n">all_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">all_values</span><span class="p">)</span>
+    
+    <span class="n">source_cdf_interp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">all_values</span><span class="p">,</span> <span class="n">source_sorted</span><span class="p">,</span> <span class="n">source_cdf</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">target_cdf_interp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">all_values</span><span class="p">,</span> <span class="n">target_sorted</span><span class="p">,</span> <span class="n">target_cdf</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># Wasserstein-1 is the integral of |CDF_diff|</span>
+    <span class="n">w1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">source_cdf_interp</span> <span class="o">-</span> <span class="n">target_cdf_interp</span><span class="p">),</span> <span class="n">all_values</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">w1</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_ks_weighted</span><span class="p">(</span><span class="n">source_data</span><span class="p">,</span> <span class="n">target_data</span><span class="p">,</span> <span class="n">source_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">10000</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Approximate KS statistic for weighted distributions by sampling.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">source_weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">source_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">source_data</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">source_data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">target_weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">target_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">target_data</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_data</span><span class="p">)</span>
+    
+    <span class="c1"># Sample from weighted distributions</span>
+    <span class="n">source_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
+        <span class="n">source_data</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">source_weights</span> <span class="o">/</span> <span class="n">source_weights</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">target_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
+        <span class="n">target_data</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">target_weights</span> <span class="o">/</span> <span class="n">target_weights</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># Compute KS statistic</span>
+    <span class="n">ks_stat</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ks_2samp</span><span class="p">(</span><span class="n">source_samples</span><span class="p">,</span> <span class="n">target_samples</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">ks_stat</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compare distributions for each feature</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">feat_idx</span><span class="p">,</span> <span class="n">feat_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">feature_indices</span><span class="p">,</span> <span class="n">feature_names</span><span class="p">):</span>
+    <span class="c1"># Full training data (reference)</span>
+    <span class="n">X_train_feat</span> <span class="o">=</span> <span class="n">X_train</span><span class="p">[:,</span> <span class="n">feat_idx</span><span class="p">]</span>
+    
+    <span class="c1"># Random subset</span>
+    <span class="n">X_random_feat</span> <span class="o">=</span> <span class="n">X_random</span><span class="p">[:,</span> <span class="n">feat_idx</span><span class="p">]</span>
+    <span class="n">w1_random</span> <span class="o">=</span> <span class="n">compute_wasserstein_weighted</span><span class="p">(</span><span class="n">X_train_feat</span><span class="p">,</span> <span class="n">X_random_feat</span><span class="p">)</span>
+    <span class="n">ks_random</span> <span class="o">=</span> <span class="n">compute_ks_weighted</span><span class="p">(</span><span class="n">X_train_feat</span><span class="p">,</span> <span class="n">X_random_feat</span><span class="p">)</span>
+    
+    <span class="c1"># Stratified subset</span>
+    <span class="n">X_strat_feat</span> <span class="o">=</span> <span class="n">X_strat</span><span class="p">[:,</span> <span class="n">feat_idx</span><span class="p">]</span>
+    <span class="n">w1_strat</span> <span class="o">=</span> <span class="n">compute_wasserstein_weighted</span><span class="p">(</span><span class="n">X_train_feat</span><span class="p">,</span> <span class="n">X_strat_feat</span><span class="p">)</span>
+    <span class="n">ks_strat</span> <span class="o">=</span> <span class="n">compute_ks_weighted</span><span class="p">(</span><span class="n">X_train_feat</span><span class="p">,</span> <span class="n">X_strat_feat</span><span class="p">)</span>
+    
+    <span class="c1"># Label-aware DDC</span>
+    <span class="n">S_labelaware_feat</span> <span class="o">=</span> <span class="n">S_labelaware</span><span class="p">[:,</span> <span class="n">feat_idx</span><span class="p">]</span>
+    <span class="n">w1_labelaware</span> <span class="o">=</span> <span class="n">compute_wasserstein_weighted</span><span class="p">(</span><span class="n">X_train_feat</span><span class="p">,</span> <span class="n">S_labelaware_feat</span><span class="p">,</span> <span class="n">target_weights</span><span class="o">=</span><span class="n">w_labelaware</span><span class="p">)</span>
+    <span class="n">ks_labelaware</span> <span class="o">=</span> <span class="n">compute_ks_weighted</span><span class="p">(</span><span class="n">X_train_feat</span><span class="p">,</span> <span class="n">S_labelaware_feat</span><span class="p">,</span> <span class="n">target_weights</span><span class="o">=</span><span class="n">w_labelaware</span><span class="p">)</span>
+    
+    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+        <span class="s1">&#39;feature&#39;</span><span class="p">:</span> <span class="n">feat_name</span><span class="p">,</span>
+        <span class="s1">&#39;W1_random&#39;</span><span class="p">:</span> <span class="n">w1_random</span><span class="p">,</span>
+        <span class="s1">&#39;W1_strat&#39;</span><span class="p">:</span> <span class="n">w1_strat</span><span class="p">,</span>
+        <span class="s1">&#39;W1_labelaware_ddc&#39;</span><span class="p">:</span> <span class="n">w1_labelaware</span><span class="p">,</span>
+        <span class="s1">&#39;KS_random&#39;</span><span class="p">:</span> <span class="n">ks_random</span><span class="p">,</span>
+        <span class="s1">&#39;KS_strat&#39;</span><span class="p">:</span> <span class="n">ks_strat</span><span class="p">,</span>
+        <span class="s1">&#39;KS_labelaware_ddc&#39;</span><span class="p">:</span> <span class="n">ks_labelaware</span><span class="p">,</span>
+    <span class="p">})</span>
+
+<span class="c1"># Create results DataFrame</span>
+<span class="n">dist_results_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Distribution Preservation Metrics:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Wasserstein-1 Distance (lower is better):&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dist_results_df</span><span class="p">[[</span><span class="s1">&#39;feature&#39;</span><span class="p">,</span> <span class="s1">&#39;W1_random&#39;</span><span class="p">,</span> <span class="s1">&#39;W1_strat&#39;</span><span class="p">,</span> <span class="s1">&#39;W1_labelaware_ddc&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Kolmogorov-Smirnov Statistic (lower is better):&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dist_results_df</span><span class="p">[[</span><span class="s1">&#39;feature&#39;</span><span class="p">,</span> <span class="s1">&#39;KS_random&#39;</span><span class="p">,</span> <span class="s1">&#39;KS_strat&#39;</span><span class="p">,</span> <span class="s1">&#39;KS_labelaware_ddc&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute average metrics across features</span>
+<span class="n">avg_metrics</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;Method&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Random&#39;</span><span class="p">,</span> <span class="s1">&#39;Stratified&#39;</span><span class="p">,</span> <span class="s1">&#39;Label-aware DDC&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;Avg W1&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="n">dist_results_df</span><span class="p">[</span><span class="s1">&#39;W1_random&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+        <span class="n">dist_results_df</span><span class="p">[</span><span class="s1">&#39;W1_strat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+        <span class="n">dist_results_df</span><span class="p">[</span><span class="s1">&#39;W1_labelaware_ddc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+    <span class="p">],</span>
+    <span class="s1">&#39;Avg KS&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="n">dist_results_df</span><span class="p">[</span><span class="s1">&#39;KS_random&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+        <span class="n">dist_results_df</span><span class="p">[</span><span class="s1">&#39;KS_strat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+        <span class="n">dist_results_df</span><span class="p">[</span><span class="s1">&#39;KS_labelaware_ddc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">avg_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">avg_metrics</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Average Distribution Preservation (across features):&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">avg_df</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="joint-distribution-comparison">
+<h2>7.1. Joint Distribution Comparison<a class="headerlink" href="#joint-distribution-comparison" title="Link to this heading">#</a></h2>
+<p>While marginal distributions are important, for classification tasks we also need to preserve the <strong>joint distribution</strong> structure (covariances, correlations). Let’s compute:</p>
+<ul class="simple">
+<li><p><strong>Mean Error (L2)</strong>: Difference in mean vectors</p></li>
+<li><p><strong>Covariance Error (Frobenius)</strong>: Difference in covariance matrices</p></li>
+<li><p><strong>Correlation Error (Frobenius)</strong>: Difference in correlation matrices</p></li>
+<li><p><strong>Maximum Mean Discrepancy (MMD)</strong>: Kernel-based distance between distributions</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Helper functions for joint distribution metrics</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">weighted_mean</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute weighted mean.&quot;&quot;&quot;</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">S</span> <span class="o">*</span> <span class="n">w</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">weighted_cov</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute weighted covariance matrix.&quot;&quot;&quot;</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">weighted_mean</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+    <span class="n">Xc</span> <span class="o">=</span> <span class="n">S</span> <span class="o">-</span> <span class="n">mu</span>
+    <span class="n">cov</span> <span class="o">=</span> <span class="p">(</span><span class="n">Xc</span> <span class="o">*</span> <span class="n">w</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">Xc</span>
+    <span class="k">return</span> <span class="n">cov</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">corr_from_cov</span><span class="p">(</span><span class="n">cov</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute correlation matrix from covariance matrix.&quot;&quot;&quot;</span>
+    <span class="n">cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">cov</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">cov</span><span class="p">),</span> <span class="mf">1e-12</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="n">inv_std</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">std</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">cov</span> <span class="o">*</span> <span class="n">inv_std</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">inv_std</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="k">return</span> <span class="n">C</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_mmd</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w_Y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="s1">&#39;rbf&#39;</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute Maximum Mean Discrepancy (MMD) between X and weighted Y.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : (n, d) array</span>
+<span class="sd">        Full dataset</span>
+<span class="sd">    Y : (k, d) array</span>
+<span class="sd">        Coreset representatives</span>
+<span class="sd">    w_Y : (k,) array, optional</span>
+<span class="sd">        Weights for Y (default: uniform)</span>
+<span class="sd">    kernel : str</span>
+<span class="sd">        Kernel type (&#39;rbf&#39;)</span>
+<span class="sd">    gamma : float, optional</span>
+<span class="sd">        RBF kernel bandwidth (default: median pairwise distance)</span>
+<span class="sd">    n_samples : int</span>
+<span class="sd">        Number of samples for approximation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">w_Y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">w_Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">w_Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">w_Y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">w_Y</span> <span class="o">=</span> <span class="n">w_Y</span> <span class="o">/</span> <span class="n">w_Y</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    
+    <span class="c1"># Sample from X (uniform) and Y (weighted)</span>
+    <span class="n">n_sample</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+    <span class="n">idx_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="n">n_sample</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">X_sample</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">idx_x</span><span class="p">]</span>
+    
+    <span class="n">idx_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="n">n_sample</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">w_Y</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">Y_sample</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">idx_y</span><span class="p">]</span>
+    
+    <span class="c1"># Compute pairwise distances for gamma estimation</span>
+    <span class="k">if</span> <span class="n">gamma</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">all_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">X_sample</span><span class="p">,</span> <span class="n">Y_sample</span><span class="p">])</span>
+        <span class="n">pairwise_dists</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(((</span><span class="n">all_data</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">all_data</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">pairwise_dists</span><span class="p">[</span><span class="n">pairwise_dists</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span>
+    
+    <span class="c1"># RBF kernel</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rbf_kernel</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">):</span>
+        <span class="n">dists_sq</span> <span class="o">=</span> <span class="p">((</span><span class="n">X1</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">X2</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">dists_sq</span><span class="p">)</span>
+    
+    <span class="c1"># MMD^2 = E[k(x,x&#39;)] - 2*E[k(x,y)] + E[k(y,y&#39;)]</span>
+    <span class="n">K_XX</span> <span class="o">=</span> <span class="n">rbf_kernel</span><span class="p">(</span><span class="n">X_sample</span><span class="p">,</span> <span class="n">X_sample</span><span class="p">)</span>
+    <span class="n">K_YY</span> <span class="o">=</span> <span class="n">rbf_kernel</span><span class="p">(</span><span class="n">Y_sample</span><span class="p">,</span> <span class="n">Y_sample</span><span class="p">)</span>
+    <span class="n">K_XY</span> <span class="o">=</span> <span class="n">rbf_kernel</span><span class="p">(</span><span class="n">X_sample</span><span class="p">,</span> <span class="n">Y_sample</span><span class="p">)</span>
+    
+    <span class="n">mmd_sq</span> <span class="o">=</span> <span class="n">K_XX</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">K_XY</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">+</span> <span class="n">K_YY</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">mmd_sq</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute joint distribution metrics for each method</span>
+<span class="n">joint_metrics</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># Reference: Full training data</span>
+<span class="n">mu_full</span> <span class="o">=</span> <span class="n">X_train</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">cov_full</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">rowvar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">corr_full</span> <span class="o">=</span> <span class="n">corr_from_cov</span><span class="p">(</span><span class="n">cov_full</span><span class="p">)</span>
+
+<span class="c1"># Random subset</span>
+<span class="n">mu_random</span> <span class="o">=</span> <span class="n">X_random</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">cov_random</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">X_random</span><span class="p">,</span> <span class="n">rowvar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">corr_random</span> <span class="o">=</span> <span class="n">corr_from_cov</span><span class="p">(</span><span class="n">cov_random</span><span class="p">)</span>
+<span class="n">mean_err_random</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">mu_full</span> <span class="o">-</span> <span class="n">mu_random</span><span class="p">)</span>
+<span class="n">cov_err_random</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">cov_full</span> <span class="o">-</span> <span class="n">cov_random</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="s1">&#39;fro&#39;</span><span class="p">)</span>
+<span class="n">corr_err_random</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">corr_full</span> <span class="o">-</span> <span class="n">corr_random</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="s1">&#39;fro&#39;</span><span class="p">)</span>
+<span class="n">mmd_random</span> <span class="o">=</span> <span class="n">compute_mmd</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_random</span><span class="p">)</span>
+
+<span class="n">joint_metrics</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+    <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;Random&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;mean_err_l2&#39;</span><span class="p">:</span> <span class="n">mean_err_random</span><span class="p">,</span>
+    <span class="s1">&#39;cov_err_fro&#39;</span><span class="p">:</span> <span class="n">cov_err_random</span><span class="p">,</span>
+    <span class="s1">&#39;corr_err_fro&#39;</span><span class="p">:</span> <span class="n">corr_err_random</span><span class="p">,</span>
+    <span class="s1">&#39;mmd&#39;</span><span class="p">:</span> <span class="n">mmd_random</span><span class="p">,</span>
+<span class="p">})</span>
+
+<span class="c1"># Stratified subset</span>
+<span class="n">mu_strat</span> <span class="o">=</span> <span class="n">X_strat</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">cov_strat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">X_strat</span><span class="p">,</span> <span class="n">rowvar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">corr_strat</span> <span class="o">=</span> <span class="n">corr_from_cov</span><span class="p">(</span><span class="n">cov_strat</span><span class="p">)</span>
+<span class="n">mean_err_strat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">mu_full</span> <span class="o">-</span> <span class="n">mu_strat</span><span class="p">)</span>
+<span class="n">cov_err_strat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">cov_full</span> <span class="o">-</span> <span class="n">cov_strat</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="s1">&#39;fro&#39;</span><span class="p">)</span>
+<span class="n">corr_err_strat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">corr_full</span> <span class="o">-</span> <span class="n">corr_strat</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="s1">&#39;fro&#39;</span><span class="p">)</span>
+<span class="n">mmd_strat</span> <span class="o">=</span> <span class="n">compute_mmd</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_strat</span><span class="p">)</span>
+
+<span class="n">joint_metrics</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+    <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;Stratified&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;mean_err_l2&#39;</span><span class="p">:</span> <span class="n">mean_err_strat</span><span class="p">,</span>
+    <span class="s1">&#39;cov_err_fro&#39;</span><span class="p">:</span> <span class="n">cov_err_strat</span><span class="p">,</span>
+    <span class="s1">&#39;corr_err_fro&#39;</span><span class="p">:</span> <span class="n">corr_err_strat</span><span class="p">,</span>
+    <span class="s1">&#39;mmd&#39;</span><span class="p">:</span> <span class="n">mmd_strat</span><span class="p">,</span>
+<span class="p">})</span>
+
+<span class="c1"># Label-aware DDC (use weights)</span>
+<span class="n">mu_labelaware</span> <span class="o">=</span> <span class="n">weighted_mean</span><span class="p">(</span><span class="n">S_labelaware</span><span class="p">,</span> <span class="n">w_labelaware</span><span class="p">)</span>
+<span class="n">cov_labelaware</span> <span class="o">=</span> <span class="n">weighted_cov</span><span class="p">(</span><span class="n">S_labelaware</span><span class="p">,</span> <span class="n">w_labelaware</span><span class="p">)</span>
+<span class="n">corr_labelaware</span> <span class="o">=</span> <span class="n">corr_from_cov</span><span class="p">(</span><span class="n">cov_labelaware</span><span class="p">)</span>
+<span class="n">mean_err_labelaware</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">mu_full</span> <span class="o">-</span> <span class="n">mu_labelaware</span><span class="p">)</span>
+<span class="n">cov_err_labelaware</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">cov_full</span> <span class="o">-</span> <span class="n">cov_labelaware</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="s1">&#39;fro&#39;</span><span class="p">)</span>
+<span class="n">corr_err_labelaware</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">corr_full</span> <span class="o">-</span> <span class="n">corr_labelaware</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="s1">&#39;fro&#39;</span><span class="p">)</span>
+<span class="n">mmd_labelaware</span> <span class="o">=</span> <span class="n">compute_mmd</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">S_labelaware</span><span class="p">,</span> <span class="n">w_Y</span><span class="o">=</span><span class="n">w_labelaware</span><span class="p">)</span>
+
+<span class="n">joint_metrics</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+    <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;Label-aware DDC&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;mean_err_l2&#39;</span><span class="p">:</span> <span class="n">mean_err_labelaware</span><span class="p">,</span>
+    <span class="s1">&#39;cov_err_fro&#39;</span><span class="p">:</span> <span class="n">cov_err_labelaware</span><span class="p">,</span>
+    <span class="s1">&#39;corr_err_fro&#39;</span><span class="p">:</span> <span class="n">corr_err_labelaware</span><span class="p">,</span>
+    <span class="s1">&#39;mmd&#39;</span><span class="p">:</span> <span class="n">mmd_labelaware</span><span class="p">,</span>
+<span class="p">})</span>
+
+<span class="c1"># Create DataFrame</span>
+<span class="n">joint_metrics_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">joint_metrics</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Joint Distribution Preservation Metrics:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">joint_metrics_df</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Interpretation:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Mean Error (L2): Lower is better (0 = identical means)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Covariance Error (Frobenius): Lower is better (0 = identical covariances)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Correlation Error (Frobenius): Lower is better (0 = identical correlations)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  MMD: Lower is better (0 = identical distributions)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="downstream-model-comparison">
+<h2>8. Downstream Model Comparison<a class="headerlink" href="#downstream-model-comparison" title="Link to this heading">#</a></h2>
+<p>Now let’s train logistic regression models on each subset/coreset and evaluate on the <strong>same test set</strong>. This shows the <strong>practical impact</strong> of distribution preservation on model performance.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Train models on each subset/coreset</span>
+<span class="n">models</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="c1"># 1. Random subset</span>
+<span class="n">lr_random</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span><span class="p">,</span> <span class="n">class_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">lr_random</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_random</span><span class="p">,</span> <span class="n">y_random</span><span class="p">)</span>
+<span class="n">models</span><span class="p">[</span><span class="s1">&#39;Random&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr_random</span>
+<span class="n">predictions</span><span class="p">[</span><span class="s1">&#39;Random&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr_random</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="c1"># 2. Stratified subset</span>
+<span class="n">lr_strat</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span><span class="p">,</span> <span class="n">class_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">lr_strat</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_strat</span><span class="p">,</span> <span class="n">y_strat</span><span class="p">)</span>
+<span class="n">models</span><span class="p">[</span><span class="s1">&#39;Stratified&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr_strat</span>
+<span class="n">predictions</span><span class="p">[</span><span class="s1">&#39;Stratified&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr_strat</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="c1"># 3. Label-aware DDC coreset (use weights)</span>
+<span class="n">lr_labelaware</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span><span class="p">,</span> <span class="n">class_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">sample_weights_labelaware</span> <span class="o">=</span> <span class="n">w_labelaware</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>  <span class="c1"># Scale weights to approximate sample counts</span>
+<span class="n">lr_labelaware</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">S_labelaware</span><span class="p">,</span> <span class="n">y_labelaware</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weights_labelaware</span><span class="p">)</span>
+<span class="n">models</span><span class="p">[</span><span class="s1">&#39;Label-aware DDC&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr_labelaware</span>
+<span class="n">predictions</span><span class="p">[</span><span class="s1">&#39;Label-aware DDC&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr_labelaware</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;All models trained&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Evaluate all models</span>
+<span class="n">model_results</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># Full data baseline (already computed)</span>
+<span class="n">model_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">baseline_metrics</span><span class="p">)</span>
+
+<span class="c1"># Evaluate other methods</span>
+<span class="k">for</span> <span class="n">method_name</span><span class="p">,</span> <span class="n">y_pred_proba</span> <span class="ow">in</span> <span class="n">predictions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">auc</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred_proba</span><span class="p">)</span>
+    <span class="n">brier</span> <span class="o">=</span> <span class="n">brier_score_loss</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred_proba</span><span class="p">)</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_pred_proba</span> <span class="o">&gt;=</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+    
+    <span class="n">model_results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="n">method_name</span><span class="p">,</span>
+        <span class="s1">&#39;auc&#39;</span><span class="p">:</span> <span class="n">auc</span><span class="p">,</span>
+        <span class="s1">&#39;brier&#39;</span><span class="p">:</span> <span class="n">brier</span><span class="p">,</span>
+        <span class="s1">&#39;accuracy&#39;</span><span class="p">:</span> <span class="n">accuracy</span>
+    <span class="p">})</span>
+
+<span class="c1"># Create comparison table</span>
+<span class="n">comparison_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">model_results</span><span class="p">)</span>
+<span class="n">comparison_df</span><span class="p">[</span><span class="s1">&#39;auc_diff&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comparison_df</span><span class="p">[</span><span class="s1">&#39;auc&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">baseline_auc</span>
+<span class="n">comparison_df</span><span class="p">[</span><span class="s1">&#39;brier_diff&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comparison_df</span><span class="p">[</span><span class="s1">&#39;brier&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">baseline_brier</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Model Performance Comparison:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">comparison_df</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Deviation from Full-Data Baseline:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Random&#39;</span><span class="p">,</span> <span class="s1">&#39;Stratified&#39;</span><span class="p">,</span> <span class="s1">&#39;Label-aware DDC&#39;</span><span class="p">]:</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="n">comparison_df</span><span class="p">[</span><span class="n">comparison_df</span><span class="p">[</span><span class="s1">&#39;method&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">method</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">method</span><span class="si">:</span><span class="s2">20s</span><span class="si">}</span><span class="s2">: AUC </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;auc_diff&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">+.4f</span><span class="si">}</span><span class="s2">, Brier </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;brier_diff&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">+.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="visualizations">
+<h2>9. Visualizations<a class="headerlink" href="#visualizations" title="Link to this heading">#</a></h2>
+<p>Let’s visualize the distribution preservation and spatial coverage of each method.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot marginal distributions for a couple of features</span>
+<span class="n">n_features_to_plot</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">feature_indices</span><span class="p">))</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_features_to_plot</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span> <span class="o">*</span> <span class="n">n_features_to_plot</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="k">if</span> <span class="n">n_features_to_plot</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">axes</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">plot_idx</span><span class="p">,</span> <span class="n">feat_idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">feature_indices</span><span class="p">[:</span><span class="n">n_features_to_plot</span><span class="p">]):</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">plot_idx</span><span class="p">]</span>
+    
+    <span class="c1"># Full training data (reference)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">X_train</span><span class="p">[:,</span> <span class="n">feat_idx</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> 
+            <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Full Data&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Random subset</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">X_random</span><span class="p">[:,</span> <span class="n">feat_idx</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> 
+            <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Random&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="c1"># Stratified subset</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">X_strat</span><span class="p">[:,</span> <span class="n">feat_idx</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> 
+            <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Stratified&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="c1"># Label-aware DDC (weighted)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">S_labelaware</span><span class="p">[:,</span> <span class="n">feat_idx</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">w_labelaware</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+            <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Label-aware DDC&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Feature </span><span class="si">{</span><span class="n">feat_idx</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Density&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Marginal Distribution: Feature </span><span class="si">{</span><span class="n">feat_idx</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 2D PCA projection to visualize spatial coverage</span>
+<span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span><span class="p">)</span>
+<span class="n">X_train_2d</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+
+<span class="c1"># Project subsets</span>
+<span class="n">X_random_2d</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_random</span><span class="p">)</span>
+<span class="n">X_strat_2d</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_strat</span><span class="p">)</span>
+<span class="n">S_labelaware_2d</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">S_labelaware</span><span class="p">)</span>
+
+<span class="c1"># Plot</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="n">methods_2d</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s1">&#39;Random&#39;</span><span class="p">,</span> <span class="n">X_random_2d</span><span class="p">,</span> <span class="n">y_random</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Stratified&#39;</span><span class="p">,</span> <span class="n">X_strat_2d</span><span class="p">,</span> <span class="n">y_strat</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Label-aware DDC&#39;</span><span class="p">,</span> <span class="n">S_labelaware_2d</span><span class="p">,</span> <span class="n">y_labelaware</span><span class="p">,</span> <span class="n">w_labelaware</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="p">(</span><span class="n">method_name</span><span class="p">,</span> <span class="n">subset_2d</span><span class="p">,</span> <span class="n">subset_y</span><span class="p">,</span> <span class="n">subset_w</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">methods_2d</span><span class="p">):</span>
+    <span class="c1"># Background: full data (low alpha)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X_train_2d</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X_train_2d</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> 
+              <span class="n">c</span><span class="o">=</span><span class="n">y_train</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;RdYlBu&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Full Data&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Overlay: representatives</span>
+    <span class="k">if</span> <span class="n">subset_w</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Size proportional to weight</span>
+        <span class="n">sizes</span> <span class="o">=</span> <span class="mi">200</span> <span class="o">*</span> <span class="p">(</span><span class="n">subset_w</span> <span class="o">/</span> <span class="n">subset_w</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sizes</span> <span class="o">=</span> <span class="mi">50</span>
+    
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">subset_2d</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">subset_2d</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> 
+              <span class="n">c</span><span class="o">=</span><span class="n">subset_y</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;RdYlBu&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">sizes</span><span class="p">,</span> 
+              <span class="n">edgecolors</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">method_name</span><span class="p">)</span>
+    
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;PC1&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;PC2&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">method_name</span><span class="si">}</span><span class="s1"> (n=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">subset_2d</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ROC curves comparison</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="c1"># Full data baseline</span>
+<span class="n">fpr_full</span><span class="p">,</span> <span class="n">tpr_full</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">roc_curve</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred_proba_full</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fpr_full</span><span class="p">,</span> <span class="n">tpr_full</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Full Data (AUC=</span><span class="si">{</span><span class="n">baseline_auc</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span> 
+        <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+
+<span class="c1"># Other methods</span>
+<span class="k">for</span> <span class="n">method_name</span><span class="p">,</span> <span class="n">y_pred_proba</span> <span class="ow">in</span> <span class="n">predictions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">roc_curve</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred_proba</span><span class="p">)</span>
+    <span class="n">auc</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred_proba</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">method_name</span><span class="si">}</span><span class="s1"> (AUC=</span><span class="si">{</span><span class="n">auc</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;k--&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Random Classifier&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;False Positive Rate&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;True Positive Rate&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;ROC Curves Comparison&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="discussion-and-takeaways">
+<h2>10. Discussion and Takeaways<a class="headerlink" href="#discussion-and-takeaways" title="Link to this heading">#</a></h2>
+<section id="key-observations">
+<h3>Key Observations<a class="headerlink" href="#key-observations" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Label-aware DDC preserves class balance</strong>: By applying DDC separately within each class, we maintain label proportions while still benefiting from density–diversity selection <strong>within each class</strong>. This approach:</p>
+<ul class="simple">
+<li><p>Preserves class proportions by design</p></li>
+<li><p>Maintains distributional fidelity within each class</p></li>
+<li><p>Typically performs closer to the full-data baseline than naive random sampling</p></li>
+</ul>
+</li>
+<li><p><strong>Distribution preservation matters</strong>: Methods that better preserve marginal distributions (measured by Wasserstein-1 and KS statistics) tend to produce models that perform closer to the full-data baseline.</p></li>
+<li><p><strong>Weights are essential</strong>: DDC coresets are <strong>weighted sets</strong>, not just point sets. The weights allow us to approximate the full distribution from a small number of representatives.</p></li>
+<li><p><strong>Parameter tuning matters</strong>: For label-aware DDC, we adjust parameters (alpha, m_neighbors, refine_iters) based on class size to ensure good coverage and distribution preservation.</p></li>
+</ol>
+</section>
+<section id="when-to-use-label-aware-ddc">
+<h3>When to Use Label-Aware DDC?<a class="headerlink" href="#when-to-use-label-aware-ddc" title="Link to this heading">#</a></h3>
+<p><strong>Use Label-aware DDC when:</strong></p>
+<ul class="simple">
+<li><p>You’re working on a <strong>supervised learning</strong> problem</p></li>
+<li><p>Label proportions matter (e.g., imbalanced classification)</p></li>
+<li><p>You want both distribution preservation AND label balance</p></li>
+<li><p>You need a small, interpretable subset for model prototyping</p></li>
+<li><p>You want to compress large datasets while maintaining class structure</p></li>
+</ul>
+<p><strong>Use Random/Stratified sampling when:</strong></p>
+<ul class="simple">
+<li><p>You need a simple baseline for comparison</p></li>
+<li><p>You don’t need distribution preservation</p></li>
+<li><p>Computational resources are extremely limited</p></li>
+</ul>
+</section>
+<section id="conclusion">
+<h3>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading">#</a></h3>
+<p>DDC coresets provide a principled way to compress large datasets while preserving distributional properties. For supervised learning tasks, <strong>label-aware DDC</strong> is the recommended approach as it combines the benefits of distribution preservation with label balance.</p>
+<hr class="docutils" />
+<p><strong>Resources:</strong></p>
+<ul class="simple">
+<li><p>GitHub: https://github.com/crbazevedo/dd-coresets</p></li>
+<li><p>PyPI: https://pypi.org/project/dd-coresets/</p></li>
+<li><p>Documentation: See the main README for API details and more examples</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./tutorials"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="adaptive_distances.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Adaptive Distances &amp; Presets: Advanced DDC Features</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="high_dimensional.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">High-Dimensional Data: Automatic PCA Reduction</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-you-ll-learn">What You’ll Learn</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-dataset">The Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">1. Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-loading">2. Data Loading</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preprocessing">3. Preprocessing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#full-data-baseline-model">4. Full-Data Baseline Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#baseline-subsets-random-and-stratified">5. Baseline Subsets: Random and Stratified</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#label-aware-ddc-coreset">6. Label-Aware DDC Coreset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#distribution-comparison">7. Distribution Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#joint-distribution-comparison">7.1. Joint Distribution Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#downstream-model-comparison">8. Downstream Model Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizations">9. Visualizations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#discussion-and-takeaways">10. Discussion and Takeaways</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-observations">Key Observations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-label-aware-ddc">When to Use Label-Aware DDC?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Carlos R. B. Azevedo
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
